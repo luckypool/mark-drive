@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { loadScript } from '../utils/loadScript';
 
 // 環境変数から設定を取得
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
@@ -190,23 +191,4 @@ export function useGooglePicker(): UseGooglePickerReturn {
     fileContent,
     isLoadingContent,
   };
-}
-
-// スクリプトを動的に読み込むヘルパー関数
-function loadScript(src: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    // すでに読み込まれている場合はスキップ
-    if (document.querySelector(`script[src="${src}"]`)) {
-      resolve();
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = src;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-    document.head.appendChild(script);
-  });
 }

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { loadScript } from '../utils/loadScript';
 
 // 環境変数から設定を取得
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
@@ -22,8 +23,13 @@ interface UseGoogleDriveSearchReturn {
   results: DriveFile[];
   search: (query: string) => Promise<void>;
   authenticate: () => void;
-  fetchFileContent: (fileId: string) => Promise<string | null>;
+  fetchFileContent: (fileId: string, signal?: AbortSignal) => Promise<string | null>;
   clearResults: () => void;
+}
+
+// 検索クエリをサニタイズ（シングルクォートをエスケープ）
+function sanitizeQuery(query: string): string {
+  return query.replace(/'/g, "\\'");
 }
 
 export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
@@ -128,7 +134,8 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
         .join(' or ');
 
       // ファイル名で検索（.md または .markdown 拡張子を含む）
-      const searchQuery = `(${mimeTypeQuery}) and (name contains '${query}' or name contains '.md' and fullText contains '${query}') and trashed=false`;
+      const sanitized = sanitizeQuery(query);
+      const searchQuery = `(${mimeTypeQuery}) and (name contains '${sanitized}' or name contains '.md' and fullText contains '${sanitized}') and trashed=false`;
 
       const response = await fetch(
         `https://www.googleapis.com/drive/v3/files?` +
@@ -167,7 +174,7 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
   }, []);
 
   // ファイル内容を取得
-  const fetchFileContent = useCallback(async (fileId: string): Promise<string | null> => {
+  const fetchFileContent = useCallback(async (fileId: string, signal?: AbortSignal): Promise<string | null> => {
     if (!accessTokenRef.current) {
       setError('No access token available');
       return null;
@@ -180,6 +187,7 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
           headers: {
             Authorization: `Bearer ${accessTokenRef.current}`,
           },
+          signal,
         }
       );
 
@@ -189,6 +197,10 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
 
       return await response.text();
     } catch (err) {
+      // AbortError の場合は再スロー（呼び出し側で処理）
+      if (err instanceof Error && err.name === 'AbortError') {
+        throw err;
+      }
       setError(err instanceof Error ? err.message : 'Failed to fetch file content');
       console.error('Error fetching file content:', err);
       return null;
@@ -214,20 +226,3 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
   };
 }
 
-// スクリプトを動的に読み込むヘルパー関数
-function loadScript(src: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (document.querySelector(`script[src="${src}"]`)) {
-      resolve();
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = src;
-    script.async = true;
-    script.defer = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-    document.head.appendChild(script);
-  });
-}

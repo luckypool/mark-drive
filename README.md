@@ -1,6 +1,14 @@
-# MD Viewer
-
-Google Drive に保存された Markdown ファイルをプレビューする Web アプリです。
+<div align="center">
+  <img src="public/icon.svg" alt="MD Viewer Icon" width="120" height="120">
+  
+  # MD Viewer
+  
+  Google Drive に保存された Markdown ファイルをプレビューする Web アプリです。
+  
+  [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+  [![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite)](https://vitejs.dev/)
+</div>
 
 ## 機能
 

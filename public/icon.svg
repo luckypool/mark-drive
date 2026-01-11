@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1411"/>
+      <stop offset="100%" style="stop-color:#1a2420"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#34d399"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background rounded square -->
+  <rect x="8" y="8" width="112" height="112" rx="24" fill="url(#bgGrad)" stroke="url(#accentGrad)" stroke-width="2"/>
+  
+  <!-- Document shape -->
+  <path d="M38 28 L78 28 L90 40 L90 100 L38 100 Z" fill="#111915" stroke="url(#accentGrad)" stroke-width="2"/>
+  
+  <!-- Folded corner -->
+  <path d="M78 28 L78 40 L90 40" fill="none" stroke="url(#accentGrad)" stroke-width="2"/>
+  <path d="M78 28 L90 40 L78 40 Z" fill="#1a2420"/>
+  
+  <!-- MD text -->
+  <text x="64" y="72" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="url(#accentGrad)">MD</text>
+  
+  <!-- Underline accent -->
+  <rect x="48" y="78" width="32" height="3" rx="1.5" fill="url(#accentGrad)" opacity="0.7"/>
+  
+  <!-- Small decorative lines (markdown preview hint) -->
+  <rect x="46" y="86" width="36" height="2" rx="1" fill="#64748b" opacity="0.5"/>
+  <rect x="46" y="92" width="28" height="2" rx="1" fill="#64748b" opacity="0.4"/>
+</svg>

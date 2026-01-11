@@ -13,6 +13,7 @@ export function SearchPanel({ isOpen, onClose, onFileSelect }: SearchPanelProps)
   const [isLoadingContent, setIsLoadingContent] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const {
     isLoading,
@@ -33,7 +34,7 @@ export function SearchPanel({ isOpen, onClose, onFileSelect }: SearchPanelProps)
     }
   }, [isOpen]);
 
-  // ESCキーで閉じる
+  // ESCキーで閉じる + クリーンアップ
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -42,7 +43,17 @@ export function SearchPanel({ isOpen, onClose, onFileSelect }: SearchPanelProps)
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      // デバウンスタイマーのクリーンアップ
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      // 進行中のリクエストをキャンセル
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [isOpen, onClose]);
 
   // 入力変更時のハンドラ（デバウンス付き）
@@ -69,15 +80,27 @@ export function SearchPanel({ isOpen, onClose, onFileSelect }: SearchPanelProps)
   // ファイル選択ハンドラ
   const handleFileClick = useCallback(
     async (file: DriveFile) => {
+      // 前のリクエストをキャンセル
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      abortControllerRef.current = new AbortController();
+
       setIsLoadingContent(true);
       try {
-        const content = await fetchFileContent(file.id);
+        const content = await fetchFileContent(file.id, abortControllerRef.current.signal);
         if (content) {
           onFileSelect(file, content);
           onClose();
           setQuery('');
           clearResults();
         }
+      } catch (err) {
+        // キャンセルされた場合は無視
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
+        throw err;
       } finally {
         setIsLoadingContent(false);
       }
