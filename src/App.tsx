@@ -2,6 +2,14 @@ import { useState, useCallback, useEffect } from 'react';
 import { PickerButton } from './components/PickerButton';
 import { MarkdownViewer } from './components/MarkdownViewer';
 import { SearchPanel } from './components/SearchPanel';
+import { RecentFilesList } from './components/RecentFilesList';
+import { useGoogleDriveSearch } from './hooks/useGoogleDriveSearch';
+import {
+  getFileHistory,
+  addFileToHistory,
+  clearFileHistory,
+} from './utils/fileHistoryStorage';
+import type { FileHistoryItem } from './types/fileHistory';
 import './App.css';
 
 // サンプル Markdown（API キーが未設定の場合に表示）
@@ -60,10 +68,14 @@ function App() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [showSample, setShowSample] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [fileHistory, setFileHistory] = useState<FileHistoryItem[]>([]);
+
+  // Google Drive Search フック（履歴からのファイル読み込みに使用）
+  const { fetchFileContent } = useGoogleDriveSearch();
 
   // 環境変数チェック
   const hasCredentials = Boolean(
-    import.meta.env.VITE_GOOGLE_API_KEY && 
+    import.meta.env.VITE_GOOGLE_API_KEY &&
     import.meta.env.VITE_GOOGLE_CLIENT_ID
   );
 
@@ -75,12 +87,23 @@ function App() {
     }
   }, [hasCredentials]);
 
+  // 履歴を読み込む
+  useEffect(() => {
+    const history = getFileHistory();
+    setFileHistory(history);
+  }, []);
+
   const handleFileSelect = useCallback(
     (file: google.picker.PickerDocument | null, content: string | null) => {
       if (file && content) {
         setMarkdownContent(content);
         setFileName(file.name);
         setShowSample(false);
+
+        // 履歴に保存
+        addFileToHistory({ id: file.id, name: file.name });
+        const updatedHistory = getFileHistory();
+        setFileHistory(updatedHistory);
       }
     },
     []
@@ -97,9 +120,42 @@ function App() {
       setMarkdownContent(content);
       setFileName(file.name);
       setShowSample(false);
+
+      // 履歴に保存
+      addFileToHistory({ id: file.id, name: file.name });
+      const updatedHistory = getFileHistory();
+      setFileHistory(updatedHistory);
     },
     []
   );
+
+  // 履歴からファイルを読み込む
+  const handleHistoryFileClick = useCallback(
+    async (item: FileHistoryItem) => {
+      try {
+        const content = await fetchFileContent(item.id);
+        if (content) {
+          setMarkdownContent(content);
+          setFileName(item.name);
+          setShowSample(false);
+
+          // 履歴を更新（日時を最新に）
+          addFileToHistory({ id: item.id, name: item.name });
+          const updatedHistory = getFileHistory();
+          setFileHistory(updatedHistory);
+        }
+      } catch (err) {
+        console.error('Failed to load file from history:', err);
+      }
+    },
+    [fetchFileContent]
+  );
+
+  // 履歴をクリア
+  const handleClearHistory = useCallback(() => {
+    clearFileHistory();
+    setFileHistory([]);
+  }, []);
 
   // Ctrl/Cmd + K で検索パネルを開く
   useEffect(() => {
@@ -119,7 +175,12 @@ function App() {
       <header className="app-header">
         <div className="header-content">
           <h1 className="app-title">
-            <span className="logo-icon">📄</span>
+            <img
+              src="/icon.svg"
+              alt="MD Viewer"
+              className="logo-icon"
+              style={{ width: '32px', height: '32px' }}
+            />
             MD Viewer
           </h1>
           <div className="header-actions">
@@ -169,6 +230,14 @@ function App() {
               <button className="sample-button" onClick={handleShowSample}>
                 View Sample
               </button>
+            )}
+
+            {hasCredentials && fileHistory.length > 0 && (
+              <RecentFilesList
+                items={fileHistory}
+                onFileClick={handleHistoryFileClick}
+                onClearHistory={handleClearHistory}
+              />
             )}
           </div>
         )}

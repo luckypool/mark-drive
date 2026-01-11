@@ -92,11 +92,9 @@ body {
    Header
    ============================================ */
 .app-header {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
-  background: rgba(10, 15, 13, 0.85);
-  backdrop-filter: blur(12px);
+  background: var(--color-bg-secondary);
   border-bottom: 1px solid var(--color-border);
   padding: var(--spacing-md) var(--spacing-xl);
 }
@@ -882,6 +880,131 @@ body {
 .search-result-arrow svg {
   width: 100%;
   height: 100%;
+}
+
+/* ============================================
+   Recent Files List
+   ============================================ */
+.recent-files {
+  margin-top: var(--spacing-xl);
+  width: 100%;
+  max-width: 500px;
+}
+
+.recent-files-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.recent-files-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.recent-files-clear-button {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.recent-files-clear-button:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-light);
+}
+
+.recent-files-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.recent-file-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.recent-file-item:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-light);
+  transform: translateX(4px);
+}
+
+.recent-file-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent-muted);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.recent-file-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.recent-file-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recent-file-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-file-time {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.recent-file-arrow {
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.recent-file-item:hover .recent-file-arrow {
+  opacity: 1;
 }
 
 /* ============================================

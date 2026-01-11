@@ -17,6 +17,7 @@ interface UseGooglePickerReturn {
   selectedFile: google.picker.PickerDocument | null;
   fileContent: string | null;
   isLoadingContent: boolean;
+  fetchFileById: (fileId: string, fileName: string) => Promise<void>;
 }
 
 export function useGooglePicker(): UseGooglePickerReturn {
@@ -182,6 +183,18 @@ export function useGooglePicker(): UseGooglePickerReturn {
     }
   }, [isApiLoaded, createPicker]);
 
+  // ファイルIDから直接ファイルを読み込む（履歴用）
+  const fetchFileById = useCallback(async (fileId: string, fileName: string) => {
+    // 模擬的な PickerDocument を作成
+    const mockFile: google.picker.PickerDocument = {
+      id: fileId,
+      name: fileName,
+    } as google.picker.PickerDocument;
+
+    setSelectedFile(mockFile);
+    await fetchFileContent(fileId);
+  }, [fetchFileContent]);
+
   return {
     isLoading,
     isApiLoaded,
@@ -190,5 +203,6 @@ export function useGooglePicker(): UseGooglePickerReturn {
     selectedFile,
     fileContent,
     isLoadingContent,
+    fetchFileById,
   };
 }
