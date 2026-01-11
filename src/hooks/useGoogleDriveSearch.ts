@@ -167,8 +167,14 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
     }
   }, [isApiLoaded]);
 
-  // ログアウト（トークンをクリア）
+  // ログアウト（トークンをクリア & revoke）
   const logout = useCallback(() => {
+    // Google のトークンを revoke（次回認証時にアカウント選択画面を表示させる）
+    if (accessTokenRef.current && window.google?.accounts?.oauth2?.revoke) {
+      window.google.accounts.oauth2.revoke(accessTokenRef.current, () => {
+        console.log('Google token revoked');
+      });
+    }
     accessTokenRef.current = null;
     setIsAuthenticated(false);
     setResults([]);
