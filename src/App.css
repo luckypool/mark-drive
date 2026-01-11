@@ -1090,4 +1090,34 @@ body {
   .search-body {
     max-height: calc(100vh - 60px);
   }
+
+  /* テーブル表示改善 */
+  .markdown-content .table-wrapper {
+    position: relative;
+    margin: var(--spacing-md) calc(-1 * var(--spacing-md));
+    padding: 0 var(--spacing-md);
+  }
+
+  .markdown-content table {
+    font-size: 0.8rem;
+    min-width: 100%;
+  }
+
+  .markdown-content th,
+  .markdown-content td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    white-space: nowrap;
+  }
+
+  /* スクロールヒント（右端フェード効果） */
+  .markdown-content .table-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 24px;
+    background: linear-gradient(to right, transparent, var(--color-bg-card));
+    pointer-events: none;
+  }
 }
