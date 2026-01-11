@@ -7,9 +7,10 @@ import type { Components } from 'react-markdown';
 interface MarkdownViewerProps {
   content: string;
   fileName?: string;
+  onClose?: () => void;
 }
 
-export function MarkdownViewer({ content, fileName }: MarkdownViewerProps) {
+export function MarkdownViewer({ content, fileName, onClose }: MarkdownViewerProps) {
   const components: Components = {
     code({ className, children, ...props }) {
       const match = /language-(\w+)/.exec(className || '');
@@ -66,6 +67,13 @@ export function MarkdownViewer({ content, fileName }: MarkdownViewerProps) {
       {fileName && (
         <div className="viewer-header">
           <h2 className="file-title">{fileName}</h2>
+          {onClose && (
+            <button className="close-file-button" onClick={onClose} title="ファイルを閉じる">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
       )}
       <article className="markdown-content">

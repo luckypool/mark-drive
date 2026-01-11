@@ -157,6 +157,12 @@ function App() {
     setFileHistory([]);
   }, []);
 
+  // ファイルを閉じる
+  const handleCloseFile = useCallback(() => {
+    setMarkdownContent(null);
+    setFileName(null);
+  }, []);
+
   // Ctrl/Cmd + K で検索パネルを開く
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -210,7 +216,11 @@ function App() {
 
       <main className="app-main">
         {markdownContent ? (
-          <MarkdownViewer content={markdownContent} fileName={fileName || undefined} />
+          <MarkdownViewer 
+            content={markdownContent} 
+            fileName={fileName || undefined}
+            onClose={handleCloseFile}
+          />
         ) : (
           <div className="empty-state">
             <div className="empty-icon">📂</div>
