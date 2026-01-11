@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { loadScript } from '../utils/loadScript';
+import type { UserInfo } from '../types/user';
 
 // 環境変数から設定を取得
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
@@ -25,6 +26,7 @@ interface UseGoogleDriveSearchReturn {
   isAuthenticated: boolean;
   error: string | null;
   results: DriveFile[];
+  userInfo: UserInfo | null;
   search: (query: string) => Promise<void>;
   authenticate: () => void;
   logout: () => void;
@@ -76,12 +78,32 @@ function clearStoredToken(): void {
   }
 }
 
+// ユーザー情報を取得する関数
+async function fetchUserInfo(accessToken: string): Promise<UserInfo | null> {
+  try {
+    const response = await fetch(
+      'https://www.googleapis.com/drive/v3/about?fields=user(displayName,emailAddress,photoLink)',
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    return {
+      email: data.user.emailAddress,
+      displayName: data.user.displayName,
+      photoUrl: data.user.photoLink || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<DriveFile[]>([]);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
   const accessTokenRef = useRef<string | null>(null);
   const tokenClientRef = useRef<google.accounts.oauth2.TokenClient | null>(null);
@@ -94,6 +116,10 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
     if (stored) {
       accessTokenRef.current = stored.token;
       setIsAuthenticated(true);
+      // ユーザー情報を取得
+      fetchUserInfo(stored.token).then(info => {
+        if (info) setUserInfo(info);
+      });
     }
   }, []);
 
@@ -152,7 +178,7 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
     }
 
     if (tokenClientRef.current) {
-      tokenClientRef.current.callback = (response: google.accounts.oauth2.TokenResponse) => {
+      tokenClientRef.current.callback = async (response: google.accounts.oauth2.TokenResponse) => {
         if (response.error) {
           setError(`Authentication error: ${response.error}`);
           return;
@@ -162,6 +188,9 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
         saveToken(response.access_token, response.expires_in || 3600);
         setIsAuthenticated(true);
         setError(null);
+        // ユーザー情報を取得
+        const info = await fetchUserInfo(response.access_token);
+        if (info) setUserInfo(info);
       };
       tokenClientRef.current.requestAccessToken({ prompt: '' });
     }
@@ -179,6 +208,7 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
     setIsAuthenticated(false);
     setResults([]);
     setError(null);
+    setUserInfo(null);
     clearStoredToken();
   }, []);
 
@@ -289,6 +319,7 @@ export function useGoogleDriveSearch(): UseGoogleDriveSearchReturn {
     isAuthenticated,
     error,
     results,
+    userInfo,
     search,
     authenticate,
     logout,
