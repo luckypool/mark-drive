@@ -1,32 +1,41 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { useGoogleDriveSearch } from '../hooks/useGoogleDriveSearch';
 import { SearchResults } from './SearchResults';
 
 interface SearchPanelProps {
   isOpen: boolean;
   onClose: () => void;
   onFileSelect: (file: DriveFile, content: string) => void;
+  // 認証関連のprops（App.tsxから受け取る）
+  isApiLoaded: boolean;
+  isAuthenticated: boolean;
+  authenticate: () => void;
+  search: (query: string) => Promise<void>;
+  fetchFileContent: (fileId: string, signal?: AbortSignal) => Promise<string | null>;
+  isLoading: boolean;
+  results: DriveFile[];
+  error: string | null;
+  clearResults: () => void;
 }
 
-export function SearchPanel({ isOpen, onClose, onFileSelect }: SearchPanelProps) {
+export function SearchPanel({
+  isOpen,
+  onClose,
+  onFileSelect,
+  isApiLoaded,
+  isAuthenticated,
+  authenticate,
+  search,
+  fetchFileContent,
+  isLoading,
+  results,
+  error,
+  clearResults,
+}: SearchPanelProps) {
   const [query, setQuery] = useState('');
   const [isLoadingContent, setIsLoadingContent] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-
-  const {
-    isLoading,
-    isApiLoaded,
-    isAuthenticated,
-    error,
-    results,
-    search,
-    authenticate,
-    logout,
-    fetchFileContent,
-    clearResults,
-  } = useGoogleDriveSearch();
 
   // パネルが開いたときにフォーカス
   useEffect(() => {
@@ -146,15 +155,6 @@ export function SearchPanel({ isOpen, onClose, onFileSelect }: SearchPanelProps)
             />
             {isLoading && <div className="search-spinner" />}
           </div>
-          {isAuthenticated && (
-            <button className="search-logout-button" onClick={logout} title="ログアウト">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-            </button>
-          )}
           <button className="search-close-button" onClick={handleClose}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12" />

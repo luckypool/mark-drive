@@ -70,7 +70,7 @@ function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [fileHistory, setFileHistory] = useState<FileHistoryItem[]>([]);
 
-  // Google Drive Search フック
+  // Google Drive Search フック（状態を一元管理）
   const { 
     fetchFileContent, 
     userInfo, 
@@ -78,6 +78,11 @@ function App() {
     isApiLoaded,
     authenticate,
     logout,
+    search,
+    isLoading,
+    results,
+    error,
+    clearResults,
   } = useGoogleDriveSearch();
 
   // 環境変数チェック
@@ -239,6 +244,15 @@ function App() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         onFileSelect={handleSearchFileSelect}
+        isApiLoaded={isApiLoaded}
+        isAuthenticated={isAuthenticated}
+        authenticate={authenticate}
+        search={search}
+        fetchFileContent={fetchFileContent}
+        isLoading={isLoading}
+        results={results}
+        error={error}
+        clearResults={clearResults}
       />
     </div>
   );
