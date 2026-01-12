@@ -4,6 +4,7 @@ import { SearchPanel } from './components/SearchPanel';
 import { RecentFilesList } from './components/RecentFilesList';
 import { FABMenu } from './components/FABMenu';
 import { useGoogleDriveSearch } from './hooks/useGoogleDriveSearch';
+import { useLocalFilePicker } from './hooks/useLocalFilePicker';
 import {
   getFileHistory,
   addFileToHistory,
@@ -71,10 +72,10 @@ function App() {
   const [fileHistory, setFileHistory] = useState<FileHistoryItem[]>([]);
 
   // Google Drive Search フック（状態を一元管理）
-  const { 
-    fetchFileContent, 
-    userInfo, 
-    isAuthenticated, 
+  const {
+    fetchFileContent,
+    userInfo,
+    isAuthenticated,
     isApiLoaded,
     authenticate,
     logout,
@@ -84,6 +85,9 @@ function App() {
     error,
     clearResults,
   } = useGoogleDriveSearch();
+
+  // ローカルファイルピッカーフック
+  const { openPicker: openLocalFilePicker } = useLocalFilePicker();
 
   // 環境変数チェック
   const hasCredentials = Boolean(
@@ -153,6 +157,16 @@ function App() {
     setFileHistory([]);
   }, []);
 
+  // ローカルファイルを選択して読み込む
+  const handleLocalFileSelect = useCallback(async () => {
+    const file = await openLocalFilePicker();
+    if (file) {
+      setMarkdownContent(file.content);
+      setFileName(file.name);
+      setShowSample(false);
+    }
+  }, [openLocalFilePicker]);
+
   // ファイルを閉じる
   const handleCloseFile = useCallback(() => {
     setMarkdownContent(null);
@@ -201,12 +215,21 @@ function App() {
               // 認証情報未設定
               <>
                 <div className="empty-icon">📂</div>
-                <h2>No file selected</h2>
-                <p>Select a Markdown file from Google Drive to preview it here.</p>
+                <h2>Markdownファイルをプレビュー</h2>
+                <p>ローカルファイルを選択してプレビューできます</p>
+                <button className="local-file-button" onClick={handleLocalFileSelect}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="12" y1="18" x2="12" y2="12" />
+                    <line x1="9" y1="15" x2="15" y2="15" />
+                  </svg>
+                  ローカルファイルを開く
+                </button>
                 <div className="credentials-warning">
-                  <p>Google API credentials not configured.</p>
+                  <p>Google Drive連携を使用するには:</p>
                   <p className="hint">
-                    Set <code>VITE_GOOGLE_API_KEY</code> and <code>VITE_GOOGLE_CLIENT_ID</code> in your <code>.env</code> file.
+                    <code>VITE_GOOGLE_API_KEY</code> と <code>VITE_GOOGLE_CLIENT_ID</code> を <code>.env</code> ファイルに設定してください
                   </p>
                 </div>
                 {showSample && (
@@ -235,6 +258,18 @@ function App() {
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                   </svg>
                   Googleでログイン
+                </button>
+                <div className="login-divider">
+                  <span>または</span>
+                </div>
+                <button className="local-file-button" onClick={handleLocalFileSelect}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="12" y1="18" x2="12" y2="12" />
+                    <line x1="9" y1="15" x2="15" y2="15" />
+                  </svg>
+                  ローカルファイルを開く
                 </button>
               </div>
             ) : (
@@ -273,6 +308,7 @@ function App() {
 
       <FABMenu
         onSearchClick={() => setIsSearchOpen(true)}
+        onLocalFileClick={handleLocalFileSelect}
         userInfo={userInfo}
         isAuthenticated={isAuthenticated}
         isApiLoaded={isApiLoaded}
