@@ -5,6 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import type { Components } from 'react-markdown';
 import mermaid from 'mermaid';
+import { usePdfExport } from '../hooks/usePdfExport';
 
 // Mermaid 初期化
 mermaid.initialize({
@@ -53,6 +54,14 @@ interface MarkdownViewerProps {
 }
 
 export function MarkdownViewer({ content, fileName, onClose }: MarkdownViewerProps) {
+  const contentRef = useRef<HTMLElement>(null);
+  const { shareOrDownload, isProcessing, canShareFiles } = usePdfExport();
+
+  const handleShare = async () => {
+    if (!contentRef.current || !fileName) return;
+    await shareOrDownload(contentRef.current, fileName);
+  };
+
   const components: Components = {
     code({ className, children, ...props }) {
       const match = /language-(\w+)/.exec(className || '');
@@ -115,16 +124,46 @@ export function MarkdownViewer({ content, fileName, onClose }: MarkdownViewerPro
       {fileName && (
         <div className="viewer-header">
           <h2 className="file-title">{fileName}</h2>
-          {onClose && (
-            <button className="close-file-button" onClick={onClose} title="ファイルを閉じる">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
+          <div className="viewer-header-actions">
+            <button
+              className="share-button"
+              onClick={handleShare}
+              disabled={isProcessing}
+              title={canShareFiles ? 'PDFとして共有' : 'PDFをダウンロード'}
+            >
+              {isProcessing ? (
+                <span className="share-spinner" />
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  {canShareFiles ? (
+                    <>
+                      <circle cx="18" cy="5" r="3" />
+                      <circle cx="6" cy="12" r="3" />
+                      <circle cx="18" cy="19" r="3" />
+                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                    </>
+                  ) : (
+                    <>
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </>
+                  )}
+                </svg>
+              )}
             </button>
-          )}
+            {onClose && (
+              <button className="close-file-button" onClick={onClose} title="ファイルを閉じる">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
       )}
-      <article className="markdown-content">
+      <article className="markdown-content" ref={contentRef}>
         <ReactMarkdown 
           remarkPlugins={[remarkGfm]} 
           components={components}
