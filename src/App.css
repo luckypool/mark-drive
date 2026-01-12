@@ -322,6 +322,13 @@ body {
   gap: var(--spacing-md);
 }
 
+.viewer-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
 .file-title {
   font-size: 1.25rem;
   color: var(--color-accent);
@@ -359,6 +366,47 @@ body {
 .close-file-button svg {
   width: 18px;
   height: 18px;
+}
+
+/* Share Button */
+.share-button {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.share-button:hover:not(:disabled) {
+  background: var(--color-accent-muted);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.share-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.share-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.share-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
 .file-title::before {
