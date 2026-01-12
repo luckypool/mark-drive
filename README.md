@@ -3,22 +3,26 @@
   
   # MD Viewer
   
-  Google Drive に保存された Markdown ファイルをプレビューする Web アプリです。
+  Google Drive やローカルに保存された Markdown ファイルをプレビューする Web アプリです。
   
   [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-  [![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite)](https://vitejs.dev/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+  [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite)](https://vitejs.dev/)
 </div>
 
 ## 機能
 
-- 📁 Google Drive からファイルを選択
+- 📁 Google Drive からファイルを検索・選択
+- 💻 ローカルファイルのプレビュー対応
 - 👁️ Markdown をリアルタイムプレビュー
 - 🎨 シンタックスハイライト付きコードブロック
 - 📊 GitHub Flavored Markdown (GFM) サポート
   - テーブル
   - タスクリスト
   - 打ち消し線
+- 📈 Mermaid ダイアグラム対応
+- 🕐 最近使ったファイルの履歴
+- ⌨️ キーボードショートカット（`⌘K` / `Ctrl+K` で検索）
 
 ## セットアップ
 
@@ -29,6 +33,8 @@ npm install
 ```
 
 ### 2. Google Cloud Console の設定
+
+> **Note:** Google Drive 連携を使用しない場合は、この手順をスキップしてローカルファイルのみでご利用いただけます。
 
 1. [Google Cloud Console](https://console.cloud.google.com/) にアクセス
 2. 新しいプロジェクトを作成（または既存のプロジェクトを選択）
@@ -83,10 +89,24 @@ http://localhost:5173 でアプリにアクセスできます。
 
 ## 使い方
 
-1. 「Select from Drive」ボタンをクリック
-2. Google アカウントでログイン（初回のみ）
-3. Markdown ファイル (`.md`) を選択
-4. プレビューが表示されます
+### Google Drive から開く
+
+1. 「Google でログイン」ボタンをクリック
+2. Google アカウントでログイン
+3. `⌘K`（Mac）/ `Ctrl+K`（Windows/Linux）で検索パネルを開く
+4. ファイル名を入力して検索
+5. ファイルを選択するとプレビューが表示されます
+
+### ローカルファイルを開く
+
+1. 「ローカルファイルを開く」ボタンをクリック
+2. Markdown ファイル (`.md`) を選択
+3. プレビューが表示されます
+
+### 最近使ったファイル
+
+ログイン後、ホーム画面に最近開いたファイルの履歴が表示されます。
+クリックするだけで素早くファイルを開くことができます。
 
 ## ビルド
 
@@ -96,15 +116,37 @@ npm run build
 
 `dist/` フォルダに本番用ファイルが生成されます。
 
+## プロジェクト構造
+
+```
+md-viewer/
+├── src/
+│   ├── components/        # React コンポーネント
+│   │   ├── MarkdownViewer.tsx   # Markdown 表示
+│   │   ├── FABMenu.tsx          # フローティングメニュー
+│   │   ├── SearchPanel.tsx      # 検索パネル
+│   │   ├── SearchResults.tsx    # 検索結果表示
+│   │   └── RecentFilesList.tsx  # 履歴表示
+│   ├── hooks/             # カスタムフック
+│   │   ├── useGoogleDriveSearch.ts  # Google Drive 連携
+│   │   └── useLocalFilePicker.ts    # ローカルファイル選択
+│   ├── types/             # 型定義
+│   ├── utils/             # ユーティリティ
+│   ├── App.tsx            # メインアプリケーション
+│   └── main.tsx           # エントリポイント
+├── public/                # 静的ファイル
+└── .claude/               # Claude Code 設定
+```
+
 ## 技術スタック
 
 - **React 19** + **TypeScript**
-- **Vite** - ビルドツール
+- **Vite 5** - ビルドツール
 - **react-markdown** - Markdown レンダリング
 - **remark-gfm** - GFM サポート
 - **react-syntax-highlighter** - コードハイライト
-- **Google Picker API** - ファイル選択 UI
-- **Google Drive API** - ファイル取得
+- **Mermaid** - ダイアグラム描画
+- **Google Drive API** - ファイル検索・取得
 
 ## ライセンス
 
