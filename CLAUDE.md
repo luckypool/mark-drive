@@ -9,7 +9,7 @@ Google Drive に保存された Markdown ファイルをプレビューする We
 ### 技術スタック
 
 - **フレームワーク**: React 19 + TypeScript
-- **ビルドツール**: Vite 5
+- **ビルドツール**: Vite 7
 - **Linter**: ESLint 9
 - **主要ライブラリ**:
   - react-markdown - Markdown レンダリング
