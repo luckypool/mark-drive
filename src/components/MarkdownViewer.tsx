@@ -57,6 +57,40 @@ export function MarkdownViewer({ content, fileName, onClose }: MarkdownViewerPro
   const contentRef = useRef<HTMLElement>(null);
   const { shareOrDownload, isProcessing, canShareFiles } = usePdfExport();
 
+  // テーブルのスクロール位置を監視して影を制御
+  useEffect(() => {
+    if (!contentRef.current) return;
+
+    const handleScroll = (e: Event) => {
+      const wrapper = e.target as HTMLElement;
+      if (!wrapper.classList.contains('table-wrapper')) return;
+
+      const isAtEnd = wrapper.scrollLeft + wrapper.clientWidth >= wrapper.scrollWidth - 1;
+
+      if (isAtEnd) {
+        wrapper.classList.add('scrolled-to-end');
+      } else {
+        wrapper.classList.remove('scrolled-to-end');
+      }
+    };
+
+    const tableWrappers = contentRef.current.querySelectorAll('.table-wrapper');
+    tableWrappers.forEach((wrapper) => {
+      wrapper.addEventListener('scroll', handleScroll);
+      // 初期状態をチェック
+      const isAtEnd = wrapper.scrollLeft + wrapper.clientWidth >= wrapper.scrollWidth - 1;
+      if (isAtEnd) {
+        wrapper.classList.add('scrolled-to-end');
+      }
+    });
+
+    return () => {
+      tableWrappers.forEach((wrapper) => {
+        wrapper.removeEventListener('scroll', handleScroll);
+      });
+    };
+  }, [content]);
+
   const handleShare = async () => {
     if (!contentRef.current || !fileName) return;
     await shareOrDownload(contentRef.current, fileName);

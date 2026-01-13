@@ -1220,6 +1220,12 @@ body {
     width: 24px;
     background: linear-gradient(to right, transparent, var(--color-bg-card));
     pointer-events: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  /* 右端までスクロールしたときは影を非表示 */
+  .markdown-content .table-wrapper.scrolled-to-end::after {
+    opacity: 0;
   }
 }
 

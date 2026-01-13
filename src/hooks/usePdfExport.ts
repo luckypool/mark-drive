@@ -48,6 +48,28 @@ export function usePdfExport() {
         clone.style.color = '#1a1a1a';
         clone.style.padding = '20px';
 
+        // すべてのテキスト要素に濃い色を設定
+        clone.querySelectorAll('p, td, th, li, span, div').forEach((el) => {
+          (el as HTMLElement).style.color = '#1a1a1a';
+        });
+
+        // 見出しは更に濃く
+        clone.querySelectorAll('h1, h2, h3, h4, h5, h6, strong').forEach((el) => {
+          (el as HTMLElement).style.color = '#000000';
+        });
+
+        // テーブルのヘッダーと境界線を濃く
+        clone.querySelectorAll('th').forEach((el) => {
+          (el as HTMLElement).style.backgroundColor = '#f5f5f5';
+          (el as HTMLElement).style.color = '#000000';
+          (el as HTMLElement).style.borderColor = '#cccccc';
+        });
+
+        clone.querySelectorAll('td').forEach((el) => {
+          (el as HTMLElement).style.color = '#1a1a1a';
+          (el as HTMLElement).style.borderColor = '#cccccc';
+        });
+
         // コードブロックの背景色を調整
         clone.querySelectorAll('pre, code').forEach((el) => {
           (el as HTMLElement).style.backgroundColor = '#f5f5f5';
