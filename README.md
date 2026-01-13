@@ -7,7 +7,7 @@
   
   [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-  [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite)](https://vitejs.dev/)
+  [![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite)](https://vitejs.dev/)
 </div>
 
 ## 機能
@@ -21,6 +21,7 @@
   - タスクリスト
   - 打ち消し線
 - 📈 Mermaid ダイアグラム対応
+- 📄 PDF 出力・共有機能（Web Share API 対応）
 - 🕐 最近使ったファイルの履歴
 - ⌨️ キーボードショートカット（`⌘K` / `Ctrl+K` で検索）
 
@@ -108,6 +109,12 @@ http://localhost:5173 でアプリにアクセスできます。
 ログイン後、ホーム画面に最近開いたファイルの履歴が表示されます。
 クリックするだけで素早くファイルを開くことができます。
 
+### PDF として出力・共有
+
+1. Markdown ファイルを開いた状態で、共有ボタンをクリック
+2. Web Share API 対応デバイス（iOS、Android など）では共有シートが表示されます
+3. 非対応デバイスでは PDF ファイルが自動ダウンロードされます
+
 ## ビルド
 
 ```bash
@@ -129,7 +136,8 @@ md-viewer/
 │   │   └── RecentFilesList.tsx  # 履歴表示
 │   ├── hooks/             # カスタムフック
 │   │   ├── useGoogleDriveSearch.ts  # Google Drive 連携
-│   │   └── useLocalFilePicker.ts    # ローカルファイル選択
+│   │   ├── useLocalFilePicker.ts    # ローカルファイル選択
+│   │   └── usePdfExport.ts          # PDF 出力・共有
 │   ├── types/             # 型定義
 │   ├── utils/             # ユーティリティ
 │   ├── App.tsx            # メインアプリケーション
@@ -141,11 +149,12 @@ md-viewer/
 ## 技術スタック
 
 - **React 19** + **TypeScript**
-- **Vite 5** - ビルドツール
+- **Vite 7** - ビルドツール
 - **react-markdown** - Markdown レンダリング
 - **remark-gfm** - GFM サポート
 - **react-syntax-highlighter** - コードハイライト
 - **Mermaid** - ダイアグラム描画
+- **html2pdf.js** - PDF 出力
 - **Google Drive API** - ファイル検索・取得
 
 ## ライセンス

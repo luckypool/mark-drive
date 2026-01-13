@@ -69,7 +69,7 @@ function App() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [showSample, setShowSample] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [fileHistory, setFileHistory] = useState<FileHistoryItem[]>([]);
+  const [fileHistory, setFileHistory] = useState<FileHistoryItem[]>(() => getFileHistory());
 
   // Google Drive Search フック（状態を一元管理）
   const {
@@ -103,11 +103,6 @@ function App() {
     }
   }, [hasCredentials]);
 
-  // 履歴を読み込む
-  useEffect(() => {
-    const history = getFileHistory();
-    setFileHistory(history);
-  }, []);
 
   const handleShowSample = () => {
     setMarkdownContent(SAMPLE_MARKDOWN);
