@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { StyleSheet, Linking } from 'react-native';
+import { StyleSheet, Linking, ScrollView, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
 import type { MarkdownRendererProps } from '../../types/markdown';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
@@ -19,12 +19,41 @@ export function MarkdownRenderer({ content, onLinkPress }: MarkdownRendererProps
     return true;
   };
 
+  // カスタムルール: テーブルを水平スクロール可能にする
+  const rules = {
+    table: (
+      node: { key: string },
+      children: React.ReactNode,
+      _parent: unknown,
+      styles: Record<string, object>
+    ) => (
+      <ScrollView
+        key={node.key}
+        horizontal
+        showsHorizontalScrollIndicator={true}
+        style={tableWrapperStyles.wrapper}
+        contentContainerStyle={tableWrapperStyles.content}
+      >
+        <View style={styles.table}>{children}</View>
+      </ScrollView>
+    ),
+  };
+
   return (
-    <Markdown style={markdownStyles} onLinkPress={handleLinkPress}>
+    <Markdown style={markdownStyles} onLinkPress={handleLinkPress} rules={rules}>
       {content}
     </Markdown>
   );
 }
+
+const tableWrapperStyles = StyleSheet.create({
+  wrapper: {
+    marginVertical: spacing.md,
+  },
+  content: {
+    flexGrow: 1,
+  },
+});
 
 const markdownStyles = StyleSheet.create({
   body: {
@@ -191,6 +220,7 @@ const markdownStyles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderColor: colors.border,
+    minWidth: 80,
   },
   tr: {
     borderBottomWidth: 1,
@@ -200,6 +230,7 @@ const markdownStyles = StyleSheet.create({
     padding: spacing.sm,
     borderRightWidth: 1,
     borderColor: colors.border,
+    minWidth: 80,
   },
 
   // Image
