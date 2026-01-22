@@ -106,10 +106,12 @@ const webStyles = `
   .markdown-content .table-wrapper {
     overflow-x: auto;
     margin: ${spacing.md}px 0;
+    -webkit-overflow-scrolling: touch;
   }
 
   .markdown-content table {
-    width: 100%;
+    min-width: 100%;
+    width: max-content;
     border-collapse: collapse;
     font-size: 0.9rem;
   }
@@ -119,6 +121,13 @@ const webStyles = `
     padding: ${spacing.sm}px ${spacing.md}px;
     text-align: left;
     border: 1px solid ${colors.border};
+    white-space: nowrap;
+  }
+
+  .markdown-content td {
+    white-space: normal;
+    min-width: 100px;
+    max-width: 300px;
   }
 
   .markdown-content th {
