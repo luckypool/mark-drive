@@ -1,7 +1,0 @@
-/* Reset and base styles are handled in App.css */
-/* This file kept minimal for Vite defaults */
-
-#root {
-  width: 100%;
-  min-height: 100vh;
-}

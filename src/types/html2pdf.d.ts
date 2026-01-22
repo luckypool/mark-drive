@@ -1,6 +1,10 @@
+/**
+ * html2pdf.js 型定義
+ */
+
 declare module 'html2pdf.js' {
   interface Html2PdfOptions {
-    margin?: number | [number, number, number, number];
+    margin?: number | number[];
     filename?: string;
     image?: {
       type?: 'jpeg' | 'png' | 'webp';
@@ -14,7 +18,7 @@ declare module 'html2pdf.js' {
     };
     jsPDF?: {
       unit?: 'pt' | 'mm' | 'cm' | 'in';
-      format?: 'a4' | 'letter' | [number, number];
+      format?: string | [number, number];
       orientation?: 'portrait' | 'landscape';
     };
     pagebreak?: {
@@ -22,19 +26,14 @@ declare module 'html2pdf.js' {
     };
   }
 
-  interface Html2PdfWorker {
-    set(options: Html2PdfOptions): Html2PdfWorker;
-    from(element: HTMLElement | string): Html2PdfWorker;
-    toCanvas(): Html2PdfWorker;
-    toPdf(): Html2PdfWorker;
+  interface Html2Pdf {
+    set(options: Html2PdfOptions): Html2Pdf;
+    from(element: HTMLElement | string): Html2Pdf;
     save(): Promise<void>;
-    output(type: 'blob'): Promise<Blob>;
-    output(type: 'datauristring'): Promise<string>;
     outputPdf(type: 'blob'): Promise<Blob>;
+    outputPdf(type: 'datauristring'): Promise<string>;
   }
 
-  function html2pdf(): Html2PdfWorker;
-  function html2pdf(element: HTMLElement, options?: Html2PdfOptions): Html2PdfWorker;
-
+  function html2pdf(): Html2Pdf;
   export default html2pdf;
 }

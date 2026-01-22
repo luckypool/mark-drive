@@ -30,7 +30,7 @@
 ### 1. 依存パッケージのインストール
 
 ```bash
-npm install
+bun install
 ```
 
 ### 2. Google Cloud Console の設定
@@ -83,7 +83,7 @@ VITE_GOOGLE_APP_ID=your_project_number (optional)
 ### 7. 開発サーバーの起動
 
 ```bash
-npm run dev
+bun dev
 ```
 
 http://localhost:5173 でアプリにアクセスできます。
@@ -118,7 +118,7 @@ http://localhost:5173 でアプリにアクセスできます。
 ## ビルド
 
 ```bash
-npm run build
+bun run build
 ```
 
 `dist/` フォルダに本番用ファイルが生成されます。

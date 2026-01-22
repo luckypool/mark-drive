@@ -3,10 +3,15 @@
  */
 
 /**
+ * ファイルのソース種別
+ */
+export type FileSource = 'google-drive' | 'local';
+
+/**
  * 履歴に保存されるファイル情報
  */
 export interface FileHistoryItem {
-  /** Google Drive ファイルID */
+  /** ファイルID（Google Drive ファイルID または ローカルファイルパス） */
   id: string;
 
   /** ファイル名 */
@@ -14,6 +19,9 @@ export interface FileHistoryItem {
 
   /** 選択日時（ISO 8601形式） */
   selectedAt: string;
+
+  /** ファイルのソース */
+  source: FileSource;
 }
 
 /**
@@ -23,6 +31,6 @@ export interface FileHistoryConfig {
   /** 最大保存件数 */
   maxItems: number;
 
-  /** localStorageのキー名 */
+  /** ストレージのキー名 */
   storageKey: string;
 }
