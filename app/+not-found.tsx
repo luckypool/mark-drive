@@ -5,11 +5,11 @@ import { colors, spacing, fontSize } from '../src/theme';
 export default function NotFoundScreen() {
   return (
     <>
-      <Stack.Screen options={{ title: 'ページが見つかりません' }} />
+      <Stack.Screen options={{ title: 'Page Not Found' }} />
       <View style={styles.container}>
-        <Text style={styles.title}>ページが見つかりません</Text>
+        <Text style={styles.title}>Page Not Found</Text>
         <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>ホームに戻る</Text>
+          <Text style={styles.linkText}>Go to Home</Text>
         </Link>
       </View>
     </>

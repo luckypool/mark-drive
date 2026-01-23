@@ -37,7 +37,6 @@ export default function HomeScreen() {
   const [recentFiles, setRecentFiles] = useState<FileHistoryItem[]>([]);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // 履歴を読み込む
   useEffect(() => {
     loadHistory();
   }, []);
@@ -47,7 +46,6 @@ export default function HomeScreen() {
     setRecentFiles(history);
   };
 
-  // ローカルファイルを選択
   const handleLocalFile = useCallback(async () => {
     setIsUserMenuOpen(false);
     const file = await openPicker();
@@ -57,7 +55,6 @@ export default function HomeScreen() {
         name: file.name,
         source: 'local',
       });
-      // ビューアーに遷移（内容をパラメータで渡す）
       router.push({
         pathname: '/viewer',
         params: {
@@ -70,12 +67,10 @@ export default function HomeScreen() {
     }
   }, [openPicker]);
 
-  // Google Drive 検索を開く
   const handleOpenSearch = useCallback(() => {
     router.push('/search');
   }, []);
 
-  // 履歴からファイルを開く
   const handleOpenHistoryFile = useCallback((item: FileHistoryItem) => {
     router.push({
       pathname: '/viewer',
@@ -87,13 +82,15 @@ export default function HomeScreen() {
     });
   }, []);
 
-  // 履歴をクリア
   const handleClearHistory = useCallback(async () => {
     await clearFileHistory();
     setRecentFiles([]);
   }, []);
 
-  // 相対時間を計算
+  const handleOpenAbout = useCallback(() => {
+    router.push('/about');
+  }, []);
+
   const formatRelativeTime = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
@@ -102,11 +99,11 @@ export default function HomeScreen() {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (minutes < 1) return 'たった今';
-    if (minutes < 60) return `${minutes}分前`;
-    if (hours < 24) return `${hours}時間前`;
-    if (days < 7) return `${days}日前`;
-    return date.toLocaleDateString('ja-JP');
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString('en-US');
   };
 
   return (
@@ -135,42 +132,93 @@ export default function HomeScreen() {
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
       >
-        {/* Empty State / Login Prompt */}
+        {/* Landing Page for Non-authenticated Users */}
         {!isAuthenticated ? (
-          <View style={styles.emptyState}>
-            <Image
-              source={require('../assets/images/icon.png')}
-              style={styles.welcomeIcon}
-              resizeMode="contain"
-            />
-            <Text style={styles.emptyTitle}>MD Viewer へようこそ</Text>
-            <Text style={styles.emptyDescription}>
-              Google Drive の Markdown ファイルを{'\n'}美しく表示します
-            </Text>
-
-            <Button
-              onPress={authenticate}
-              disabled={!isApiLoaded}
-              loading={isLoading}
-              style={styles.loginButton}
-              icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
-            >
-              Google でログイン
-            </Button>
-
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>または</Text>
-              <View style={styles.dividerLine} />
+          <View style={styles.landingContainer}>
+            {/* Hero Section */}
+            <View style={styles.heroSection}>
+              <Image
+                source={require('../assets/images/icon.png')}
+                style={styles.heroIcon}
+                resizeMode="contain"
+              />
+              <Text style={styles.heroTitle}>Welcome to MD Viewer</Text>
+              <Text style={styles.heroSubtitle}>
+                A beautiful Markdown viewer for{'\n'}Google Drive
+              </Text>
             </View>
 
-            <Button
-              variant="outline"
-              onPress={handleLocalFile}
-              icon={<Ionicons name="folder-outline" size={20} color={colors.accent} />}
-            >
-              ローカルファイルを開く
-            </Button>
+            {/* Features Section */}
+            <View style={styles.featuresSection}>
+              <View style={styles.featureCard}>
+                <View style={styles.featureIconContainer}>
+                  <Ionicons name="logo-google" size={24} color={colors.accent} />
+                </View>
+                <View style={styles.featureContent}>
+                  <Text style={styles.featureTitle}>Google Drive Integration</Text>
+                  <Text style={styles.featureDescription}>
+                    Search and open Markdown files directly from your Google Drive
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.featureCard}>
+                <View style={styles.featureIconContainer}>
+                  <Ionicons name="color-palette-outline" size={24} color={colors.accent} />
+                </View>
+                <View style={styles.featureContent}>
+                  <Text style={styles.featureTitle}>Beautiful Rendering</Text>
+                  <Text style={styles.featureDescription}>
+                    Syntax highlighting, Mermaid diagrams, and clean typography
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.featureCard}>
+                <View style={styles.featureIconContainer}>
+                  <Ionicons name="share-outline" size={24} color={colors.accent} />
+                </View>
+                <View style={styles.featureContent}>
+                  <Text style={styles.featureTitle}>Export to PDF</Text>
+                  <Text style={styles.featureDescription}>
+                    Share your documents as beautifully formatted PDFs
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* CTA Section */}
+            <View style={styles.ctaSection}>
+              <Button
+                onPress={authenticate}
+                disabled={!isApiLoaded}
+                loading={isLoading}
+                style={styles.ctaButton}
+                icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
+              >
+                Sign in with Google
+              </Button>
+
+              <View style={styles.divider}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>or</Text>
+                <View style={styles.dividerLine} />
+              </View>
+
+              <Button
+                variant="outline"
+                onPress={handleLocalFile}
+                icon={<Ionicons name="folder-outline" size={20} color={colors.accent} />}
+              >
+                Open Local File
+              </Button>
+            </View>
+
+            {/* Learn More Link */}
+            <TouchableOpacity style={styles.learnMoreLink} onPress={handleOpenAbout}>
+              <Text style={styles.learnMoreText}>Learn more about MD Viewer</Text>
+              <Ionicons name="arrow-forward" size={16} color={colors.accent} />
+            </TouchableOpacity>
           </View>
         ) : (
           <View style={styles.authenticatedContent}>
@@ -178,7 +226,7 @@ export default function HomeScreen() {
             <Pressable style={styles.searchBox} onPress={handleOpenSearch}>
               <Ionicons name="search" size={20} color={colors.textMuted} />
               <Text style={styles.searchPlaceholder}>
-                Google Drive を検索...
+                Search Google Drive...
               </Text>
               {Platform.OS === 'web' && (
                 <View style={styles.kbd}>
@@ -191,9 +239,9 @@ export default function HomeScreen() {
             {recentFiles.length > 0 && (
               <View style={styles.recentSection}>
                 <View style={styles.recentHeader}>
-                  <Text style={styles.recentTitle}>最近のファイル</Text>
+                  <Text style={styles.recentTitle}>Recent Files</Text>
                   <TouchableOpacity onPress={handleClearHistory}>
-                    <Text style={styles.clearButton}>クリア</Text>
+                    <Text style={styles.clearButton}>Clear</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -249,14 +297,18 @@ export default function HomeScreen() {
             )}
             <TouchableOpacity style={styles.userMenuItem} onPress={handleLocalFile}>
               <Ionicons name="folder-outline" size={20} color={colors.textSecondary} />
-              <Text style={styles.userMenuText}>ローカルファイルを開く</Text>
+              <Text style={styles.userMenuText}>Open Local File</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.userMenuItem} onPress={handleOpenAbout}>
+              <Ionicons name="information-circle-outline" size={20} color={colors.textSecondary} />
+              <Text style={styles.userMenuText}>About MD Viewer</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.userMenuItem, styles.userMenuLogout]}
               onPress={logout}
             >
               <Ionicons name="log-out-outline" size={20} color={colors.error} />
-              <Text style={[styles.userMenuText, { color: colors.error }]}>ログアウト</Text>
+              <Text style={[styles.userMenuText, { color: colors.error }]}>Sign Out</Text>
             </TouchableOpacity>
           </View>
         </>
@@ -312,41 +364,88 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
   },
 
-  // Empty State
-  emptyState: {
+  // Landing Page
+  landingContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing['2xl'],
+    maxWidth: 600,
+    alignSelf: 'center',
+    width: '100%',
   },
-  welcomeIcon: {
-    width: 120,
-    height: 120,
+  heroSection: {
+    alignItems: 'center',
+    paddingVertical: spacing.xl,
+  },
+  heroIcon: {
+    width: 100,
+    height: 100,
     borderRadius: borderRadius.xl,
   },
-  emptyTitle: {
+  heroTitle: {
     fontSize: fontSize['2xl'],
-    fontWeight: fontWeight.semibold,
+    fontWeight: fontWeight.bold,
     color: colors.textPrimary,
     marginTop: spacing.lg,
     marginBottom: spacing.sm,
+    textAlign: 'center',
   },
-  emptyDescription: {
-    fontSize: fontSize.base,
+  heroSubtitle: {
+    fontSize: fontSize.lg,
     color: colors.textSecondary,
     textAlign: 'center',
-    marginBottom: spacing.xl,
-    lineHeight: fontSize.base * 1.5,
+    lineHeight: fontSize.lg * 1.5,
   },
-  loginButton: {
-    marginBottom: spacing.lg,
+
+  // Features
+  featuresSection: {
+    marginTop: spacing.xl,
+    gap: spacing.md,
+  },
+  featureCard: {
+    flexDirection: 'row',
+    backgroundColor: colors.bgCard,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    gap: spacing.md,
+  },
+  featureIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.accentMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  featureContent: {
+    flex: 1,
+  },
+  featureTitle: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  featureDescription: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    lineHeight: fontSize.sm * 1.5,
+  },
+
+  // CTA
+  ctaSection: {
+    marginTop: spacing['2xl'],
+    alignItems: 'center',
+  },
+  ctaButton: {
+    marginBottom: spacing.md,
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
     maxWidth: 280,
-    marginVertical: spacing.lg,
+    marginVertical: spacing.md,
   },
   dividerLine: {
     flex: 1,
@@ -357,6 +456,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     color: colors.textMuted,
     fontSize: fontSize.sm,
+  },
+
+  // Learn More
+  learnMoreLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing.xl,
+    gap: spacing.xs,
+  },
+  learnMoreText: {
+    fontSize: fontSize.sm,
+    color: colors.accent,
   },
 
   // Authenticated Content

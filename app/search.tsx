@@ -34,21 +34,15 @@ export default function SearchScreen() {
   const [query, setQuery] = useState('');
   const inputRef = useRef<TextInput>(null);
 
-  // 画面表示時に入力欄にフォーカス
   useEffect(() => {
-    console.log('[SearchScreen] フォーカス useEffect - isAuthenticated:', isAuthenticated);
-    console.log('[SearchScreen] inputRef.current:', inputRef.current);
     if (isAuthenticated) {
-      // 少し遅延させてフォーカス（モーダルアニメーション後）
       const timer = setTimeout(() => {
-        console.log('[SearchScreen] フォーカス実行, inputRef:', inputRef.current);
         inputRef.current?.focus();
       }, 100);
       return () => clearTimeout(timer);
     }
   }, [isAuthenticated]);
 
-  // 検索を実行
   const handleSearch = useCallback(
     (text: string) => {
       setQuery(text);
@@ -61,7 +55,6 @@ export default function SearchScreen() {
     [search, clearResults]
   );
 
-  // ファイルを選択
   const handleSelectFile = useCallback((file: DriveFile) => {
     router.replace({
       pathname: '/viewer',
@@ -73,12 +66,10 @@ export default function SearchScreen() {
     });
   }, []);
 
-  // 閉じる
   const handleClose = useCallback(() => {
     router.back();
   }, []);
 
-  // 相対時間を計算
   const formatRelativeTime = (dateString?: string): string => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -88,14 +79,13 @@ export default function SearchScreen() {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (days > 30) return date.toLocaleDateString('ja-JP');
-    if (days > 0) return `${days}日前`;
-    if (hours > 0) return `${hours}時間前`;
-    if (minutes > 0) return `${minutes}分前`;
-    return 'たった今';
+    if (days > 30) return date.toLocaleDateString('en-US');
+    if (days > 0) return `${days}d ago`;
+    if (hours > 0) return `${hours}h ago`;
+    if (minutes > 0) return `${minutes}m ago`;
+    return 'Just now';
   };
 
-  // ファイルサイズをフォーマット
   const formatFileSize = (sizeString?: string): string => {
     if (!sizeString) return '';
     const bytes = parseInt(sizeString, 10);
@@ -104,7 +94,6 @@ export default function SearchScreen() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  // 検索結果のアイテムをレンダリング
   const renderResultItem = useCallback(
     ({ item }: { item: DriveFile }) => (
       <TouchableOpacity
@@ -151,7 +140,7 @@ export default function SearchScreen() {
             <TextInput
               ref={inputRef}
               style={styles.searchInput}
-              placeholder="Google Drive を検索..."
+              placeholder="Search Google Drive..."
               placeholderTextColor={colors.textMuted}
               value={query}
               onChangeText={handleSearch}
@@ -172,11 +161,11 @@ export default function SearchScreen() {
           {!isAuthenticated ? (
             <View style={styles.authPrompt}>
               <Text style={styles.authText}>
-                Google Drive を検索するには{'\n'}ログインしてください
+                Please sign in to search{'\n'}Google Drive
               </Text>
               <TouchableOpacity style={styles.authButton} onPress={authenticate}>
                 <Ionicons name="logo-google" size={20} color={colors.bgPrimary} />
-                <Text style={styles.authButtonText}>Google でログイン</Text>
+                <Text style={styles.authButtonText}>Sign in with Google</Text>
               </TouchableOpacity>
             </View>
           ) : query.length === 0 ? (
@@ -184,23 +173,23 @@ export default function SearchScreen() {
               <View style={styles.emptyIcon}>
                 <Ionicons name="search-outline" size={48} color={colors.textMuted} />
               </View>
-              <Text style={styles.emptyTitle}>Markdown ファイルを検索</Text>
+              <Text style={styles.emptyTitle}>Search Markdown Files</Text>
               <Text style={styles.emptyHint}>
-                2文字以上入力すると検索が開始されます
+                Type at least 2 characters to start searching
               </Text>
             </View>
           ) : query.length < 2 ? (
             <View style={styles.messageContainer}>
-              <Text style={styles.messageText}>2文字以上入力してください</Text>
+              <Text style={styles.messageText}>Type at least 2 characters</Text>
             </View>
           ) : results.length === 0 && !isLoading ? (
             <View style={styles.emptyState}>
               <View style={styles.emptyIcon}>
                 <Ionicons name="document-outline" size={48} color={colors.textMuted} />
               </View>
-              <Text style={styles.emptyTitle}>結果が見つかりません</Text>
+              <Text style={styles.emptyTitle}>No Results Found</Text>
               <Text style={styles.emptyHint}>
-                別のキーワードで検索してみてください
+                Try searching with different keywords
               </Text>
             </View>
           ) : (
@@ -213,7 +202,7 @@ export default function SearchScreen() {
               ListHeaderComponent={
                 results.length > 0 ? (
                   <Text style={styles.resultsHeader}>
-                    {results.length} 件の結果
+                    {results.length} {results.length === 1 ? 'result' : 'results'}
                   </Text>
                 ) : null
               }
