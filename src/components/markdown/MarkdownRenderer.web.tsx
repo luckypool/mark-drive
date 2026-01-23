@@ -101,6 +101,9 @@ const webStyles = `
     margin: ${spacing.md}px 0;
     border-radius: ${borderRadius.md}px !important;
     font-size: 0.9rem !important;
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
   }
 
   .markdown-content .table-wrapper {
