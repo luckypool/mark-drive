@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
-import { Card, IconButton } from '../src/components/ui';
+import { Card } from '../src/components/ui';
 import { MarkdownRenderer } from '../src/components/markdown';
 import { useGoogleAuth, useShare } from '../src/hooks';
 import { addFileToHistory } from '../src/services';
@@ -73,7 +73,7 @@ export default function ViewerScreen() {
     }
   };
 
-  const handleShare = async () => {
+  const handleDownloadPdf = async () => {
     if (content && params.name) {
       await shareContent(content, params.name);
     }
@@ -105,17 +105,24 @@ export default function ViewerScreen() {
           </Text>
         </View>
         <View style={styles.headerActions}>
-          <IconButton
-            icon={
-              isProcessing ? (
-                <ActivityIndicator size="small" color={colors.accent} />
-              ) : (
-                <Ionicons name="share-outline" size={20} color={colors.textMuted} />
-              )
-            }
-            onPress={handleShare}
+          <TouchableOpacity
+            style={[
+              styles.pdfButton,
+              (isProcessing || !content) && styles.pdfButtonDisabled,
+            ]}
+            onPress={handleDownloadPdf}
             disabled={isProcessing || !content}
-          />
+            activeOpacity={0.7}
+          >
+            {isProcessing ? (
+              <ActivityIndicator size="small" color={colors.bgPrimary} />
+            ) : (
+              <>
+                <Ionicons name="download-outline" size={16} color={colors.bgPrimary} />
+                <Text style={styles.pdfButtonText}>PDF</Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -190,6 +197,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
+  },
+  pdfButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.accent,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+  },
+  pdfButtonDisabled: {
+    opacity: 0.5,
+  },
+  pdfButtonText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.bgPrimary,
   },
 
   // Loading
