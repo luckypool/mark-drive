@@ -148,15 +148,20 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
 
   // 初期化時にトークンを復元
   useEffect(() => {
+    console.log('[useGoogleAuth] トークン復元開始');
     restoreToken().then((stored) => {
+      console.log('[useGoogleAuth] restoreToken結果:', stored ? 'トークンあり' : 'トークンなし');
       if (stored) {
+        console.log('[useGoogleAuth] トークン設定:', stored.token.substring(0, 20) + '...');
         setAccessToken(stored.token);
         setIsAuthenticated(true);
         fetchUserInfo(stored.token).then((info) => {
+          console.log('[useGoogleAuth] ユーザー情報:', info);
           if (info) setUserInfo(info);
         });
       }
       setIsTokenRestored(true);
+      console.log('[useGoogleAuth] トークン復元完了');
     });
   }, []);
 
@@ -273,29 +278,38 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   // ファイル内容を取得
   const fetchFileContent = useCallback(
     async (fileId: string, signal?: AbortSignal): Promise<string | null> => {
+      console.log('[fetchFileContent] 開始 fileId:', fileId);
+      console.log('[fetchFileContent] accessToken:', accessToken ? accessToken.substring(0, 20) + '...' : 'null');
+      console.log('[fetchFileContent] isTokenRestored:', isTokenRestored);
+      console.log('[fetchFileContent] isAuthenticated:', isAuthenticated);
+
       if (!accessToken) {
+        console.error('[fetchFileContent] トークンなし!');
         setError('認証が必要です。再度ログインしてください。');
         return null;
       }
 
       try {
-        return await fetchDriveFileContent(
+        console.log('[fetchFileContent] API呼び出し開始');
+        const result = await fetchDriveFileContent(
           accessToken,
           fileId,
           signal
         );
+        console.log('[fetchFileContent] API呼び出し成功, 長さ:', result?.length);
+        return result;
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
           throw err;
         }
+        console.error('[fetchFileContent] エラー:', err);
         setError(
           err instanceof Error ? err.message : 'Failed to fetch file content'
         );
-        console.error('Error fetching file content:', err);
         return null;
       }
     },
-    [accessToken]
+    [accessToken, isTokenRestored, isAuthenticated]
   );
 
   // 検索結果をクリア

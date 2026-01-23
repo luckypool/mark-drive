@@ -36,9 +36,12 @@ export default function SearchScreen() {
 
   // 画面表示時に入力欄にフォーカス
   useEffect(() => {
+    console.log('[SearchScreen] フォーカス useEffect - isAuthenticated:', isAuthenticated);
+    console.log('[SearchScreen] inputRef.current:', inputRef.current);
     if (isAuthenticated) {
       // 少し遅延させてフォーカス（モーダルアニメーション後）
       const timer = setTimeout(() => {
+        console.log('[SearchScreen] フォーカス実行, inputRef:', inputRef.current);
         inputRef.current?.focus();
       }, 100);
       return () => clearTimeout(timer);

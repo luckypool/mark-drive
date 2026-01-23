@@ -29,26 +29,48 @@ type ViewerParams = {
 
 export default function ViewerScreen() {
   const params = useLocalSearchParams<ViewerParams>();
-  const { fetchFileContent } = useGoogleAuth();
+  const { fetchFileContent, isLoading: isAuthLoading, isAuthenticated, accessToken } = useGoogleAuth();
   const { shareContent, isProcessing } = useShare();
 
   const [content, setContent] = useState<string | null>(params.content || null);
   const [isLoading, setIsLoading] = useState(!params.content);
   const [error, setError] = useState<string | null>(null);
 
+  console.log('[ViewerScreen] render - params:', params);
+  console.log('[ViewerScreen] isAuthLoading:', isAuthLoading, 'isAuthenticated:', isAuthenticated);
+  console.log('[ViewerScreen] accessToken:', accessToken ? 'あり' : 'なし');
+
   // Google Drive からファイル内容を取得
   useEffect(() => {
+    console.log('[ViewerScreen] useEffect triggered');
+    console.log('[ViewerScreen] source:', params.source, 'content:', params.content ? 'あり' : 'なし');
+    console.log('[ViewerScreen] isAuthLoading:', isAuthLoading, 'accessToken:', accessToken ? 'あり' : 'なし');
+
     if (params.source === 'google-drive' && !params.content) {
+      // トークン復元が完了するまで待つ
+      if (isAuthLoading) {
+        console.log('[ViewerScreen] 認証ローディング中、待機...');
+        return;
+      }
+      if (!accessToken) {
+        console.log('[ViewerScreen] トークンなし、エラー設定');
+        setError('認証が必要です。ホームに戻ってログインしてください。');
+        setIsLoading(false);
+        return;
+      }
+      console.log('[ViewerScreen] loadFileContent呼び出し');
       loadFileContent();
     }
-  }, [params.id]);
+  }, [params.id, params.source, params.content, isAuthLoading, accessToken]);
 
   const loadFileContent = async () => {
+    console.log('[loadFileContent] 開始');
     setIsLoading(true);
     setError(null);
 
     try {
       const fileContent = await fetchFileContent(params.id);
+      console.log('[loadFileContent] 結果:', fileContent ? `${fileContent.length}文字` : 'null');
       if (fileContent) {
         setContent(fileContent);
         // 履歴に追加
@@ -61,6 +83,7 @@ export default function ViewerScreen() {
         setError('ファイルの読み込みに失敗しました');
       }
     } catch (err) {
+      console.error('[loadFileContent] エラー:', err);
       setError(err instanceof Error ? err.message : 'エラーが発生しました');
     } finally {
       setIsLoading(false);
