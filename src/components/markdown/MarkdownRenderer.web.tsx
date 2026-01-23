@@ -186,14 +186,15 @@ const webStyles = `
     font-size: 0.85em;
   }
 
-  .markdown-content .code-block-wrapper {
+  /* Fence コードブロック - シンタックスハイライト付き */
+  .markdown-content .fence-block-wrapper {
     margin: ${spacing.md}px 0;
     border: 1px solid #30363d;
     border-radius: 6px;
     overflow: hidden;
   }
 
-  .markdown-content .code-block-language {
+  .markdown-content .fence-block-language {
     background: #161b22;
     border-bottom: 1px solid #30363d;
     padding: 8px 16px;
@@ -202,16 +203,37 @@ const webStyles = `
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   }
 
-  .markdown-content .code-block {
+  .markdown-content .fence-block {
     font-size: 0.875rem !important;
     overflow-x: auto;
     max-width: 100%;
     -webkit-overflow-scrolling: touch;
   }
 
-  .markdown-content .code-block code,
-  .markdown-content .code-block span {
+  .markdown-content .fence-block code,
+  .markdown-content .fence-block span {
     background: transparent !important;
+  }
+
+  /* Indented コードブロック (4スペース) - シンプルなスタイル */
+  .markdown-content .indented-code-block {
+    margin: ${spacing.md}px 0;
+    padding: ${spacing.md}px;
+    background: ${colors.bgTertiary};
+    border: 1px solid ${colors.border};
+    border-radius: ${borderRadius.md}px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .markdown-content .indented-code-block code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: ${colors.textSecondary};
+    background: transparent;
+    white-space: pre;
+    display: block;
   }
 
   .markdown-content .table-wrapper {
@@ -290,43 +312,65 @@ export function MarkdownRenderer({ content, onLinkPress }: MarkdownRendererProps
   const id = useId().replace(/:/g, '-');
 
   const components: Components = {
-    code({ className, children, ...props }) {
-      const match = /language-(\w+)/.exec(className || '');
-      const language = match ? match[1] : null;
-      const isInline = !match && !className;
+    // pre タグ: fence/indented code block のラッパー
+    pre({ children, node, ...props }) {
+      // children が code 要素かチェック（React要素であればOK）
+      const child = React.Children.toArray(children)[0];
+      if (React.isValidElement(child)) {
+        const codeProps = child.props as { className?: string; children?: React.ReactNode };
+        const className = codeProps.className || '';
+        const match = /language-(\w+)/.exec(className);
+        const language = match ? match[1] : null;
+        const codeContent = String(codeProps.children || '').replace(/\n$/, '');
 
-      // Mermaid ダイアグラムの場合
-      if (language === 'mermaid') {
-        return <MermaidDiagram chart={String(children).trim()} />;
-      }
+        // Mermaid ダイアグラムの場合
+        if (language === 'mermaid') {
+          return <MermaidDiagram chart={codeContent.trim()} />;
+        }
 
-      if (isInline) {
+        // Fence コードブロック (``` で囲まれたもの) - 言語指定があればシンタックスハイライト
+        if (language) {
+          return (
+            <div className="fence-block-wrapper">
+              <div className="fence-block-language">{language}</div>
+              <SyntaxHighlighter
+                style={githubDarkTheme}
+                language={language}
+                PreTag="div"
+                className="fence-block"
+                customStyle={{
+                  background: '#161b22',
+                  padding: '16px',
+                  margin: 0,
+                  overflow: 'auto',
+                  borderRadius: '0 0 6px 6px',
+                }}
+              >
+                {codeContent}
+              </SyntaxHighlighter>
+            </div>
+          );
+        }
+
+        // Indented コードブロック (4スペースインデント) または言語指定なしの fence
+        // シンプルなスタイルで表示
         return (
-          <code className="inline-code" {...props}>
-            {children}
-          </code>
+          <div className="indented-code-block">
+            <code>{codeContent}</code>
+          </div>
         );
       }
 
+      // その他の場合はデフォルトの pre タグ
+      return <pre {...props}>{children}</pre>;
+    },
+    // インラインコード
+    code({ className, children, ...props }) {
+      // pre の中の code は pre コンポーネントで処理されるので、ここに来るのはインラインのみ
       return (
-        <div className="code-block-wrapper">
-          {language && <div className="code-block-language">{language}</div>}
-          <SyntaxHighlighter
-            style={githubDarkTheme}
-            language={language || 'text'}
-            PreTag="div"
-            className="code-block"
-            customStyle={{
-              background: '#161b22',
-              padding: '16px',
-              margin: 0,
-              overflow: 'auto',
-              borderRadius: language ? '0 0 6px 6px' : '6px',
-            }}
-          >
-            {String(children).replace(/\n$/, '')}
-          </SyntaxHighlighter>
-        </div>
+        <code className="inline-code" {...props}>
+          {children}
+        </code>
       );
     },
     a({ href, children, ...props }) {

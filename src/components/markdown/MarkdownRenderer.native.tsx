@@ -167,7 +167,7 @@ const markdownStyles = StyleSheet.create({
     borderBottomRightRadius: borderRadius.md,
   },
 
-  // Code
+  // Code - インライン
   code_inline: {
     backgroundColor: colors.accentMuted,
     color: colors.accent,
@@ -177,23 +177,29 @@ const markdownStyles = StyleSheet.create({
     fontFamily: 'monospace',
     fontSize: fontSize.sm,
   },
+  // Indented コードブロック (4スペース) - シンプルなスタイル
   code_block: {
     backgroundColor: colors.bgTertiary,
+    borderWidth: 1,
+    borderColor: colors.border,
     padding: spacing.md,
     borderRadius: borderRadius.md,
     marginVertical: spacing.md,
     fontFamily: 'monospace',
     fontSize: fontSize.sm,
-    color: colors.textPrimary,
+    color: colors.textSecondary,
   },
+  // Fence コードブロック - 濃い背景色でハイライト風
   fence: {
-    backgroundColor: colors.bgTertiary,
+    backgroundColor: '#161b22',
+    borderWidth: 1,
+    borderColor: '#30363d',
     padding: spacing.md,
     borderRadius: borderRadius.md,
     marginVertical: spacing.md,
     fontFamily: 'monospace',
     fontSize: fontSize.sm,
-    color: colors.textPrimary,
+    color: '#e6edf3',
   },
 
   // Horizontal Rule
