@@ -1,0 +1,18 @@
+<svg width="400" height="100" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon part -->
+  <rect x="10" y="10" width="80" height="80" rx="16" fill="#0a0f0d"/>
+
+  <!-- Document icon -->
+  <path d="M30 25C30 22.239 32.239 20 35 20H55L70 35V75C70 77.761 67.761 80 65 80H35C32.239 80 30 77.761 30 75V25Z" fill="#111915" stroke="#1e2e28" stroke-width="1.5"/>
+  <path d="M55 20L70 35H60C57.239 35 55 32.761 55 30V20Z" fill="#1a2420"/>
+
+  <!-- MD in icon -->
+  <text x="50" y="62" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#10b981" text-anchor="middle">MD</text>
+
+  <!-- Text part -->
+  <text x="115" y="62" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="600" fill="#e2e8f0">MD</text>
+  <text x="175" y="62" font-family="system-ui, -apple-system, sans-serif" font-size="36" font-weight="300" fill="#94a3b8">Viewer</text>
+
+  <!-- Accent underline -->
+  <rect x="115" y="72" width="160" height="3" rx="1.5" fill="#10b981" opacity="0.6"/>
+</svg>

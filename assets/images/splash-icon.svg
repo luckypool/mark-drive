@@ -1,0 +1,18 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Document shape centered -->
+  <path d="M128 80C128 62.327 142.327 48 160 48H288L384 144V432C384 449.673 369.673 464 352 464H160C142.327 464 128 449.673 128 432V80Z" fill="#111915" stroke="#1e2e28" stroke-width="3"/>
+
+  <!-- Folded corner -->
+  <path d="M288 48L384 144H320C302.327 144 288 129.673 288 112V48Z" fill="#1a2420"/>
+
+  <!-- MD text -->
+  <text x="256" y="290" font-family="system-ui, -apple-system, sans-serif" font-size="140" font-weight="700" fill="#10b981" text-anchor="middle">MD</text>
+
+  <!-- Accent line -->
+  <rect x="160" y="320" width="192" height="8" rx="4" fill="#10b981" opacity="0.6"/>
+
+  <!-- Text lines -->
+  <rect x="176" y="360" width="100" height="8" rx="4" fill="#64748b" opacity="0.5"/>
+  <rect x="176" y="384" width="140" height="8" rx="4" fill="#64748b" opacity="0.5"/>
+  <rect x="176" y="408" width="80" height="8" rx="4" fill="#64748b" opacity="0.5"/>
+</svg>

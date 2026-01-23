@@ -1,7 +1,7 @@
 /**
  * 共有 hook
- * プラットフォームに応じて適切な実装を選択
+ * Web 専用実装
  */
 
-export type { UseShareReturn } from './useShare.native';
-export { useShare } from './useShare.native';
+export type { UseShareReturn } from './useShare.web';
+export { useShare } from './useShare.web';

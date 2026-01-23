@@ -1,7 +1,7 @@
 /**
  * ファイルピッカー hook
- * プラットフォームに応じて適切な実装を選択
+ * Web 専用実装
  */
 
-export type { LocalFile } from './useFilePicker.native';
-export { useFilePicker } from './useFilePicker.native';
+export type { LocalFile } from './useFilePicker.web';
+export { useFilePicker } from './useFilePicker.web';

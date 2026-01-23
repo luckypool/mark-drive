@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Pressable,
   Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -75,12 +76,6 @@ export default function HomeScreen() {
     router.push('/search');
   }, []);
 
-  // Google Drive フォルダを参照
-  const handleOpenBrowse = useCallback(() => {
-    setIsFabOpen(false);
-    router.push('/browse');
-  }, []);
-
   // 履歴からファイルを開く
   const handleOpenHistoryFile = useCallback((item: FileHistoryItem) => {
     router.push({
@@ -120,7 +115,11 @@ export default function HomeScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <Text style={styles.title}>MD Viewer</Text>
+          <Image
+            source={require('../assets/images/logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
           {userInfo && (
             <Text style={styles.userEmail}>{userInfo.email}</Text>
           )}
@@ -134,7 +133,11 @@ export default function HomeScreen() {
         {/* Empty State / Login Prompt */}
         {!isAuthenticated ? (
           <View style={styles.emptyState}>
-            <Ionicons name="document-text-outline" size={64} color={colors.textMuted} />
+            <Image
+              source={require('../assets/images/icon.png')}
+              style={styles.welcomeIcon}
+              resizeMode="contain"
+            />
             <Text style={styles.emptyTitle}>MD Viewer へようこそ</Text>
             <Text style={styles.emptyDescription}>
               Google Drive の Markdown ファイルを{'\n'}美しく表示します
@@ -246,10 +249,6 @@ export default function HomeScreen() {
                 <Ionicons name="search" size={20} color={colors.textSecondary} />
                 <Text style={styles.fabMenuText}>Drive を検索</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.fabMenuItem} onPress={handleOpenBrowse}>
-                <Ionicons name="folder" size={20} color={colors.textSecondary} />
-                <Text style={styles.fabMenuText}>フォルダを参照</Text>
-              </TouchableOpacity>
               <TouchableOpacity style={styles.fabMenuItem} onPress={handleLocalFile}>
                 <Ionicons name="document-outline" size={20} color={colors.textSecondary} />
                 <Text style={styles.fabMenuText}>ローカルファイル</Text>
@@ -291,10 +290,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  title: {
-    fontSize: fontSize['2xl'],
-    fontWeight: fontWeight.semibold,
-    color: colors.textPrimary,
+  logo: {
+    width: 160,
+    height: 40,
   },
   userEmail: {
     fontSize: fontSize.sm,
@@ -314,6 +312,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: spacing['2xl'],
+  },
+  welcomeIcon: {
+    width: 120,
+    height: 120,
+    borderRadius: borderRadius.xl,
   },
   emptyTitle: {
     fontSize: fontSize['2xl'],

@@ -5,18 +5,18 @@
 ## プロジェクト概要
 
 Google Drive に保存された Markdown ファイルをプレビューするアプリケーション。
-Expo + React Native Web で Web / iOS / Android に対応。
+Expo + React Native Web で Web に対応。
 
 ### 技術スタック
 
-- **フレームワーク**: Expo SDK 54 + React Native 0.81
+- **フレームワーク**: Expo SDK 54 + React Native Web
 - **ルーティング**: Expo Router 6
 - **言語**: TypeScript 5.9
 - **主要ライブラリ**:
-  - react-markdown / react-native-markdown-display - Markdown レンダリング
-  - expo-auth-session - Native OAuth
-  - expo-document-picker - ファイル選択
-  - expo-print / expo-sharing - PDF 出力・共有
+  - react-markdown - Markdown レンダリング
+  - react-syntax-highlighter - コードハイライト
+  - html2pdf.js - PDF 出力
+  - mermaid - ダイアグラム表示
 
 ## 開発コマンド
 
@@ -25,10 +25,11 @@ Expo + React Native Web で Web / iOS / Android に対応。
 npm install
 
 # 開発サーバー起動
-npm start        # 全プラットフォーム
-npm run web      # Web のみ
-npm run ios      # iOS のみ
-npm run android  # Android のみ
+npm start        # Web
+npm run web      # Web
+
+# ビルド
+npm run build    # 静的ファイル出力
 
 # 型チェック
 npx tsc --noEmit
@@ -46,13 +47,13 @@ md-viewer/
 ├── src/
 │   ├── components/
 │   │   ├── ui/               # 共通 UI コンポーネント
-│   │   └── markdown/         # Markdown レンダラー（プラットフォーム別）
-│   ├── hooks/                # カスタムフック（プラットフォーム別）
-│   │   ├── useGoogleAuth     # Google OAuth
+│   │   └── markdown/         # Markdown レンダラー
+│   ├── hooks/                # カスタムフック
+│   │   ├── useGoogleAuth     # Google OAuth (GIS)
 │   │   ├── useFilePicker     # ファイル選択
 │   │   └── useShare          # PDF 出力・共有
 │   ├── services/             # サービス層
-│   │   ├── storage.ts        # ストレージ抽象化
+│   │   ├── storage.ts        # localStorage ラッパー
 │   │   ├── fileHistory.ts    # ファイル履歴
 │   │   └── googleDrive.ts    # Drive API
 │   ├── theme/                # テーマ定義
@@ -62,12 +63,6 @@ md-viewer/
 ```
 
 ## コーディング規約
-
-### プラットフォーム別実装
-
-- Web 専用: `*.web.ts` / `*.web.tsx`
-- Native 専用: `*.native.ts` / `*.native.tsx`
-- 共通エントリ: `*.ts` / `*.tsx` で適切なものを re-export
 
 ### TypeScript
 
@@ -87,13 +82,11 @@ md-viewer/
 ```
 EXPO_PUBLIC_GOOGLE_API_KEY=xxx
 EXPO_PUBLIC_GOOGLE_CLIENT_ID=xxx
-EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=xxx      # iOS 用（オプション）
-EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=xxx  # Android 用（オプション）
 ```
 
 ## 重要な注意事項
 
-1. **プラットフォーム分岐**: ファイル拡張子で自動分岐（Metro bundler）
-2. **OAuth**: Web は GIS、Native は expo-auth-session を使用
-3. **ストレージ**: Web は localStorage、Native は AsyncStorage
+1. **Web 専用**: 現在は Web のみ対応（Native は未実装）
+2. **OAuth**: Google Identity Services (GIS) を使用
+3. **ストレージ**: localStorage を使用
 4. **セキュリティ**: API キーは環境変数から読み込み

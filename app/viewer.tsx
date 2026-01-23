@@ -81,10 +81,7 @@ export default function ViewerScreen() {
 
   // リンクを開く
   const handleLinkPress = (url: string) => {
-    // WebBrowser で開く
-    import('expo-web-browser').then((WebBrowser) => {
-      WebBrowser.openBrowserAsync(url);
-    });
+    window.open(url, '_blank');
   };
 
   return (

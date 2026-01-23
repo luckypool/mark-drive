@@ -1,9 +1,7 @@
 /**
  * Markdown レンダラー
- * プラットフォームに応じて適切な実装を選択
+ * Web 専用実装
  */
 
-import { Platform } from 'react-native';
-
-// プラットフォーム固有のエクスポート
-export { MarkdownRenderer } from './MarkdownRenderer.native';
+// Web 実装をエクスポート
+export { MarkdownRenderer } from './MarkdownRenderer.web';

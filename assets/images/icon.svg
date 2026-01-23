@@ -1,0 +1,22 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" fill="#0a0f0d"/>
+
+  <!-- Document shape -->
+  <path d="M256 160C256 124.654 284.654 96 320 96H576L768 288V864C768 899.346 739.346 928 704 928H320C284.654 928 256 899.346 256 864V160Z" fill="#111915" stroke="#1e2e28" stroke-width="4"/>
+
+  <!-- Folded corner -->
+  <path d="M576 96V224C576 259.346 604.654 288 640 288H768" fill="#1a2420" stroke="#1e2e28" stroke-width="4"/>
+  <path d="M576 96L768 288H640C604.654 288 576 259.346 576 224V96Z" fill="#1a2420"/>
+
+  <!-- MD text -->
+  <text x="512" y="580" font-family="system-ui, -apple-system, sans-serif" font-size="280" font-weight="700" fill="#10b981" text-anchor="middle">MD</text>
+
+  <!-- Underline accent -->
+  <rect x="320" y="640" width="384" height="16" rx="8" fill="#10b981" opacity="0.6"/>
+
+  <!-- Small lines representing text -->
+  <rect x="352" y="720" width="200" height="12" rx="6" fill="#64748b" opacity="0.5"/>
+  <rect x="352" y="760" width="280" height="12" rx="6" fill="#64748b" opacity="0.5"/>
+  <rect x="352" y="800" width="160" height="12" rx="6" fill="#64748b" opacity="0.5"/>
+</svg>

@@ -3,11 +3,7 @@
  */
 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet } from 'react-native';
 import { colors } from '../src/theme';
 
@@ -17,32 +13,9 @@ export const unstable_settings = {
   initialRouteName: 'index',
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
-  });
-
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
       <Stack
         screenOptions={{
           headerShown: false,
@@ -62,13 +35,6 @@ export default function RootLayout() {
           options={{
             presentation: 'modal',
             animation: 'fade',
-          }}
-        />
-        <Stack.Screen
-          name="browse"
-          options={{
-            presentation: 'card',
-            animation: 'slide_from_right',
           }}
         />
       </Stack>

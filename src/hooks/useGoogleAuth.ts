@@ -21,5 +21,5 @@ export interface UseGoogleAuthReturn {
   clearResults: () => void;
 }
 
-// プラットフォーム固有の実装をエクスポート
-export { useGoogleAuth } from './useGoogleAuth.native';
+// Web 実装をエクスポート
+export { useGoogleAuth } from './useGoogleAuth.web';
