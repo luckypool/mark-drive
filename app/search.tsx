@@ -2,7 +2,7 @@
  * MD Viewer - Search Screen
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -32,6 +32,18 @@ export default function SearchScreen() {
   } = useGoogleAuth();
 
   const [query, setQuery] = useState('');
+  const inputRef = useRef<TextInput>(null);
+
+  // 画面表示時に入力欄にフォーカス
+  useEffect(() => {
+    if (isAuthenticated) {
+      // 少し遅延させてフォーカス（モーダルアニメーション後）
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated]);
 
   // 検索を実行
   const handleSearch = useCallback(
@@ -134,12 +146,12 @@ export default function SearchScreen() {
           <View style={styles.searchInputWrapper}>
             <Ionicons name="search" size={20} color={colors.textMuted} />
             <TextInput
+              ref={inputRef}
               style={styles.searchInput}
               placeholder="Google Drive を検索..."
               placeholderTextColor={colors.textMuted}
               value={query}
               onChangeText={handleSearch}
-              autoFocus
               autoCapitalize="none"
               autoCorrect={false}
               returnKeyType="search"

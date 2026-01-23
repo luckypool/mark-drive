@@ -136,11 +136,12 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isTokenRestored, setIsTokenRestored] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<DriveFile[]>([]);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
-  const accessTokenRef = useRef<string | null>(null);
   const tokenClientRef = useRef<TokenClient | null>(null);
   const pickerInited = useRef(false);
   const gisInited = useRef(false);
@@ -149,12 +150,13 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   useEffect(() => {
     restoreToken().then((stored) => {
       if (stored) {
-        accessTokenRef.current = stored.token;
+        setAccessToken(stored.token);
         setIsAuthenticated(true);
         fetchUserInfo(stored.token).then((info) => {
           if (info) setUserInfo(info);
         });
       }
+      setIsTokenRestored(true);
     });
   }, []);
 
@@ -216,7 +218,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
           setError(`Authentication error: ${response.error}`);
           return;
         }
-        accessTokenRef.current = response.access_token;
+        setAccessToken(response.access_token);
         await saveToken(response.access_token, response.expires_in || 3600);
         setIsAuthenticated(true);
         setError(null);
@@ -229,22 +231,22 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
 
   // ログアウト
   const logout = useCallback(() => {
-    if (accessTokenRef.current && window.google?.accounts?.oauth2?.revoke) {
-      window.google.accounts.oauth2.revoke(accessTokenRef.current, () => {
+    if (accessToken && window.google?.accounts?.oauth2?.revoke) {
+      window.google.accounts.oauth2.revoke(accessToken, () => {
         console.log('Google token revoked');
       });
     }
-    accessTokenRef.current = null;
+    setAccessToken(null);
     setIsAuthenticated(false);
     setResults([]);
     setError(null);
     setUserInfo(null);
     clearStoredToken();
-  }, []);
+  }, [accessToken]);
 
   // 検索
   const search = useCallback(async (query: string) => {
-    if (!accessTokenRef.current) {
+    if (!accessToken) {
       setError('Please authenticate first');
       return;
     }
@@ -258,7 +260,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     setError(null);
 
     try {
-      const files = await searchMarkdownFiles(accessTokenRef.current, query);
+      const files = await searchMarkdownFiles(accessToken, query);
       setResults(files);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');
@@ -266,19 +268,19 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [accessToken]);
 
   // ファイル内容を取得
   const fetchFileContent = useCallback(
     async (fileId: string, signal?: AbortSignal): Promise<string | null> => {
-      if (!accessTokenRef.current) {
-        setError('No access token available');
+      if (!accessToken) {
+        setError('認証が必要です。再度ログインしてください。');
         return null;
       }
 
       try {
         return await fetchDriveFileContent(
-          accessTokenRef.current,
+          accessToken,
           fileId,
           signal
         );
@@ -293,7 +295,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         return null;
       }
     },
-    []
+    [accessToken]
   );
 
   // 検索結果をクリア
@@ -303,10 +305,10 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   }, []);
 
   return {
-    isLoading,
+    isLoading: isLoading || !isTokenRestored,
     isApiLoaded,
     isAuthenticated,
-    accessToken: accessTokenRef.current,
+    accessToken,
     error,
     results,
     userInfo,
