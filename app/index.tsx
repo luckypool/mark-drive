@@ -35,7 +35,7 @@ export default function HomeScreen() {
 
   const { openPicker } = useFilePicker();
   const [recentFiles, setRecentFiles] = useState<FileHistoryItem[]>([]);
-  const [isFabOpen, setIsFabOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   // 履歴を読み込む
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function HomeScreen() {
 
   // ローカルファイルを選択
   const handleLocalFile = useCallback(async () => {
-    setIsFabOpen(false);
+    setIsUserMenuOpen(false);
     const file = await openPicker();
     if (file) {
       await addFileToHistory({
@@ -72,7 +72,6 @@ export default function HomeScreen() {
 
   // Google Drive 検索を開く
   const handleOpenSearch = useCallback(() => {
-    setIsFabOpen(false);
     router.push('/search');
   }, []);
 
@@ -120,8 +119,14 @@ export default function HomeScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          {userInfo && (
-            <Text style={styles.userEmail}>{userInfo.email}</Text>
+          {isAuthenticated && userInfo && (
+            <TouchableOpacity
+              style={styles.userAvatar}
+              onPress={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="person" size={20} color={colors.textSecondary} />
+            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -223,51 +228,46 @@ export default function HomeScreen() {
         )}
       </ScrollView>
 
-      {/* FAB Menu */}
-      {isAuthenticated && (
+      {/* User Menu */}
+      {isAuthenticated && isUserMenuOpen && (
         <>
-          {isFabOpen && (
-            <Pressable
-              style={styles.fabOverlay}
-              onPress={() => setIsFabOpen(false)}
-            />
-          )}
-          {isFabOpen && (
-            <View style={styles.fabMenu}>
-              {userInfo && (
-                <View style={styles.fabUserInfo}>
-                  <View style={styles.fabAvatar}>
-                    <Ionicons name="person" size={24} color={colors.textMuted} />
-                  </View>
-                  <View style={styles.fabUserDetails}>
-                    <Text style={styles.fabUserName}>{userInfo.displayName}</Text>
-                    <Text style={styles.fabUserEmail}>{userInfo.email}</Text>
-                  </View>
-                </View>
-              )}
-              <TouchableOpacity style={styles.fabMenuItem} onPress={handleOpenSearch}>
-                <Ionicons name="search" size={20} color={colors.textSecondary} />
-                <Text style={styles.fabMenuText}>Drive を検索</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.fabMenuItem} onPress={handleLocalFile}>
-                <Ionicons name="document-outline" size={20} color={colors.textSecondary} />
-                <Text style={styles.fabMenuText}>ローカルファイル</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.fabMenuItem, styles.fabMenuLogout]}
-                onPress={logout}
-              >
-                <Ionicons name="log-out-outline" size={20} color={colors.error} />
-                <Text style={[styles.fabMenuText, { color: colors.error }]}>ログアウト</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          <FAB
-            onPress={() => setIsFabOpen(!isFabOpen)}
-            isOpen={isFabOpen}
-            icon={<Ionicons name="add" size={28} color={colors.bgPrimary} />}
+          <Pressable
+            style={styles.userMenuOverlay}
+            onPress={() => setIsUserMenuOpen(false)}
           />
+          <View style={styles.userMenu}>
+            {userInfo && (
+              <View style={styles.userMenuInfo}>
+                <View style={styles.userMenuAvatar}>
+                  <Ionicons name="person" size={24} color={colors.textMuted} />
+                </View>
+                <View style={styles.userMenuDetails}>
+                  <Text style={styles.userMenuName}>{userInfo.displayName}</Text>
+                  <Text style={styles.userMenuEmail}>{userInfo.email}</Text>
+                </View>
+              </View>
+            )}
+            <TouchableOpacity style={styles.userMenuItem} onPress={handleLocalFile}>
+              <Ionicons name="folder-outline" size={20} color={colors.textSecondary} />
+              <Text style={styles.userMenuText}>ローカルファイルを開く</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.userMenuItem, styles.userMenuLogout]}
+              onPress={logout}
+            >
+              <Ionicons name="log-out-outline" size={20} color={colors.error} />
+              <Text style={[styles.userMenuText, { color: colors.error }]}>ログアウト</Text>
+            </TouchableOpacity>
+          </View>
         </>
+      )}
+
+      {/* Search FAB */}
+      {isAuthenticated && (
+        <FAB
+          onPress={handleOpenSearch}
+          icon={<Ionicons name="search" size={24} color={colors.bgPrimary} />}
+        />
       )}
     </SafeAreaView>
   );
@@ -294,9 +294,15 @@ const styles = StyleSheet.create({
     width: 160,
     height: 40,
   },
-  userEmail: {
-    fontSize: fontSize.sm,
-    color: colors.textMuted,
+  userAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.bgTertiary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   content: {
     flex: 1,
@@ -446,26 +452,26 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 
-  // FAB Menu
-  fabOverlay: {
+  // User Menu
+  userMenuOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: colors.overlayLight,
     zIndex: 898,
   },
-  fabMenu: {
+  userMenu: {
     position: 'absolute',
-    bottom: 90,
-    right: 24,
+    top: 70,
+    right: spacing.xl,
     backgroundColor: colors.bgSecondary,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: borderRadius.lg,
     padding: spacing.sm,
-    minWidth: 220,
+    minWidth: 240,
     zIndex: 899,
     ...shadows.lg,
   },
-  fabUserInfo: {
+  userMenuInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: spacing.md,
@@ -475,7 +481,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     gap: spacing.md,
   },
-  fabAvatar: {
+  userMenuAvatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -483,19 +489,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  fabUserDetails: {
+  userMenuDetails: {
     flex: 1,
   },
-  fabUserName: {
+  userMenuName: {
     fontSize: fontSize.base,
     fontWeight: fontWeight.medium,
     color: colors.textPrimary,
   },
-  fabUserEmail: {
+  userMenuEmail: {
     fontSize: fontSize.xs,
     color: colors.textMuted,
   },
-  fabMenuItem: {
+  userMenuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: spacing.md,
@@ -503,11 +509,11 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     gap: spacing.md,
   },
-  fabMenuText: {
+  userMenuText: {
     fontSize: fontSize.base,
     color: colors.textPrimary,
   },
-  fabMenuLogout: {
+  userMenuLogout: {
     marginTop: spacing.xs,
   },
 });
