@@ -4,7 +4,8 @@
  */
 
 import { useState, useCallback } from 'react';
-import { markdownToHtml } from '../utils/markdownToHtml';
+import { markdownToHtml, PdfFontSettings } from '../utils/markdownToHtml';
+import { useFontSettings, fontFamilyStacks, fontSizeMultipliers } from '../contexts/FontSettingsContext';
 
 export interface UseShareReturn {
   shareContent: (content: string, fileName: string) => Promise<void>;
@@ -16,6 +17,7 @@ export interface UseShareReturn {
 export function useShare(): UseShareReturn {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { settings: fontSettings } = useFontSettings();
 
   // Generate PDF and return Blob URL
   const exportToPdf = useCallback(
@@ -26,10 +28,16 @@ export function useShare(): UseShareReturn {
       try {
         const html2pdf = (await import('html2pdf.js')).default;
 
-        const htmlContent = await markdownToHtml(content);
+        const pdfFontSettings: PdfFontSettings = {
+          fontSize: fontSettings.fontSize,
+          fontFamily: fontSettings.fontFamily,
+        };
+        const htmlContent = await markdownToHtml(content, pdfFontSettings);
+        const fontStack = fontFamilyStacks[fontSettings.fontFamily];
+        const baseFontSize = Math.round(11 * fontSizeMultipliers[fontSettings.fontSize]);
         const container = document.createElement('div');
         container.innerHTML = `
-          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:11px;color:#1a1a1a;line-height:1.6;padding:16px;">
+          <div style="font-family:${fontStack};font-size:${baseFontSize}px;color:#1a1a1a;line-height:1.6;padding:16px;">
             ${htmlContent}
           </div>
         `;
@@ -61,7 +69,7 @@ export function useShare(): UseShareReturn {
         setIsProcessing(false);
       }
     },
-    []
+    [fontSettings]
   );
 
   // Generate and download PDF
@@ -73,10 +81,16 @@ export function useShare(): UseShareReturn {
       try {
         const html2pdf = (await import('html2pdf.js')).default;
 
-        const htmlContent = await markdownToHtml(content);
+        const pdfFontSettings: PdfFontSettings = {
+          fontSize: fontSettings.fontSize,
+          fontFamily: fontSettings.fontFamily,
+        };
+        const htmlContent = await markdownToHtml(content, pdfFontSettings);
+        const fontStack = fontFamilyStacks[fontSettings.fontFamily];
+        const baseFontSize = Math.round(11 * fontSizeMultipliers[fontSettings.fontSize]);
         const container = document.createElement('div');
         container.innerHTML = `
-          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:11px;color:#1a1a1a;line-height:1.6;padding:16px;">
+          <div style="font-family:${fontStack};font-size:${baseFontSize}px;color:#1a1a1a;line-height:1.6;padding:16px;">
             ${htmlContent}
           </div>
         `;
@@ -115,7 +129,7 @@ export function useShare(): UseShareReturn {
         setIsProcessing(false);
       }
     },
-    []
+    [fontSettings]
   );
 
   return {

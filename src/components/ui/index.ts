@@ -5,3 +5,4 @@ export { Card } from './Card';
 export { FAB } from './FAB';
 export { ThemeToggle } from './ThemeToggle';
 export { LanguageToggle } from './LanguageToggle';
+export { FontSettingsPanel } from './FontSettingsPanel';

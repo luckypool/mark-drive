@@ -127,4 +127,19 @@ export const ja: Translations = {
     hoursAgo: '{hours}時間前',
     daysAgo: '{days}日前',
   },
+
+  // Font Settings
+  fontSettings: {
+    title: '表示設定',
+    fontSize: 'フォントサイズ',
+    fontFamily: 'フォント',
+    small: '小',
+    medium: '中',
+    large: '大',
+    system: 'システム',
+    serif: '明朝体',
+    sansSerif: 'ゴシック体',
+    preview: 'プレビュー',
+    previewText: 'あのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら。',
+  },
 };

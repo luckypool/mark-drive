@@ -125,6 +125,21 @@ export const en = {
     hoursAgo: '{hours}h ago',
     daysAgo: '{days}d ago',
   },
+
+  // Font Settings
+  fontSettings: {
+    title: 'Display Settings',
+    fontSize: 'Font Size',
+    fontFamily: 'Font Family',
+    small: 'Small',
+    medium: 'Medium',
+    large: 'Large',
+    system: 'System',
+    serif: 'Serif',
+    sansSerif: 'Sans-serif',
+    preview: 'Preview',
+    previewText: 'The quick brown fox jumps over the lazy dog.',
+  },
 };
 
 export type Translations = {
@@ -211,5 +226,18 @@ export type Translations = {
     minutesAgo: string;
     hoursAgo: string;
     daysAgo: string;
+  };
+  fontSettings: {
+    title: string;
+    fontSize: string;
+    fontFamily: string;
+    small: string;
+    medium: string;
+    large: string;
+    system: string;
+    serif: string;
+    sansSerif: string;
+    preview: string;
+    previewText: string;
   };
 };

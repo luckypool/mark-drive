@@ -2,6 +2,9 @@
  * Markdown to HTML converter for PDF export
  */
 
+import type { FontSize, FontFamily } from '../contexts/FontSettingsContext';
+import { fontSizeMultipliers, fontFamilyStacks } from '../contexts/FontSettingsContext';
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, '&amp;')
@@ -16,7 +19,36 @@ interface MermaidBlock {
   code: string;
 }
 
-export async function markdownToHtml(content: string): Promise<string> {
+export interface PdfFontSettings {
+  fontSize: FontSize;
+  fontFamily: FontFamily;
+}
+
+// Default PDF font settings
+const defaultPdfFontSettings: PdfFontSettings = {
+  fontSize: 'medium',
+  fontFamily: 'system',
+};
+
+// Get PDF-specific font sizes based on settings
+function getPdfFontSizes(settings: PdfFontSettings) {
+  const multiplier = fontSizeMultipliers[settings.fontSize];
+  return {
+    base: Math.round(11 * multiplier),
+    h1: Math.round(18 * multiplier),
+    h2: Math.round(15 * multiplier),
+    h3: Math.round(13 * multiplier),
+    h4: Math.round(12 * multiplier),
+    h5: Math.round(11 * multiplier),
+    h6: Math.round(10 * multiplier),
+    code: Math.round(9 * multiplier),
+    table: Math.round(9 * multiplier),
+  };
+}
+
+export async function markdownToHtml(content: string, fontSettings?: PdfFontSettings): Promise<string> {
+  const settings = fontSettings || defaultPdfFontSettings;
+  const sizes = getPdfFontSizes(settings);
   let html = content;
 
   // Store code blocks and mermaid blocks separately
@@ -33,9 +65,9 @@ export async function markdownToHtml(content: string): Promise<string> {
   // Extract other code blocks
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
     const index = codeBlocks.length;
-    const langLabel = lang ? `<div style="font-size:9px;color:#666;margin-bottom:4px;">${lang}</div>` : '';
+    const langLabel = lang ? `<div style="font-size:${sizes.code - 1}px;color:#666;margin-bottom:4px;">${lang}</div>` : '';
     codeBlocks.push(
-      `<pre style="background:#f5f5f5;padding:10px;border-radius:4px;overflow-x:auto;font-size:10px;page-break-inside:avoid;">${langLabel}<code>${escapeHtml(code.trimEnd())}</code></pre>`
+      `<pre style="background:#f5f5f5;padding:10px;border-radius:4px;overflow-x:auto;font-size:${sizes.code}px;page-break-inside:avoid;">${langLabel}<code>${escapeHtml(code.trimEnd())}</code></pre>`
     );
     return `\n<<<CODEBLOCK${index}>>>\n`;
   });
@@ -51,7 +83,7 @@ export async function markdownToHtml(content: string): Promise<string> {
       const headerRow = headerCells
         .map(
           (c: string) =>
-            `<th style="border:1px solid #ddd;padding:6px;background:#f5f5f5;text-align:left;font-size:10px;">${c}</th>`
+            `<th style="border:1px solid #ddd;padding:6px;background:#f5f5f5;text-align:left;font-size:${sizes.table}px;">${c}</th>`
         )
         .join('');
 
@@ -63,7 +95,7 @@ export async function markdownToHtml(content: string): Promise<string> {
             .split('|')
             .map((c: string) => c.trim())
             .filter(Boolean);
-          return `<tr>${cells.map((c: string) => `<td style="border:1px solid #ddd;padding:6px;font-size:10px;">${c}</td>`).join('')}</tr>`;
+          return `<tr>${cells.map((c: string) => `<td style="border:1px solid #ddd;padding:6px;font-size:${sizes.table}px;">${c}</td>`).join('')}</tr>`;
         })
         .join('');
 
@@ -74,22 +106,22 @@ export async function markdownToHtml(content: string): Promise<string> {
   // Inline code (before other inline formatting)
   html = html.replace(
     /`([^`]+)`/g,
-    '<code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:10px;">$1</code>'
+    `<code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:${sizes.code}px;">$1</code>`
   );
 
   // Headings (order matters: h6 to h1)
   // page-break-after: avoid prevents heading from being at bottom of page without content
-  html = html.replace(/^###### (.+)$/gm, '<h6 style="color:#000;margin:8px 0 4px;font-size:11px;page-break-after:avoid;">$1</h6>');
-  html = html.replace(/^##### (.+)$/gm, '<h5 style="color:#000;margin:8px 0 4px;font-size:12px;page-break-after:avoid;">$1</h5>');
-  html = html.replace(/^#### (.+)$/gm, '<h4 style="color:#000;margin:10px 0 5px;font-size:13px;page-break-after:avoid;">$1</h4>');
-  html = html.replace(/^### (.+)$/gm, '<h3 style="color:#000;margin:12px 0 6px;font-size:14px;page-break-after:avoid;">$1</h3>');
+  html = html.replace(/^###### (.+)$/gm, `<h6 style="color:#000;margin:8px 0 4px;font-size:${sizes.h6}px;page-break-after:avoid;">$1</h6>`);
+  html = html.replace(/^##### (.+)$/gm, `<h5 style="color:#000;margin:8px 0 4px;font-size:${sizes.h5}px;page-break-after:avoid;">$1</h5>`);
+  html = html.replace(/^#### (.+)$/gm, `<h4 style="color:#000;margin:10px 0 5px;font-size:${sizes.h4}px;page-break-after:avoid;">$1</h4>`);
+  html = html.replace(/^### (.+)$/gm, `<h3 style="color:#000;margin:12px 0 6px;font-size:${sizes.h3}px;page-break-after:avoid;">$1</h3>`);
   html = html.replace(
     /^## (.+)$/gm,
-    '<h2 style="color:#000;margin:14px 0 7px;font-size:16px;border-bottom:1px solid #ddd;padding-bottom:3px;page-break-after:avoid;">$1</h2>'
+    `<h2 style="color:#000;margin:14px 0 7px;font-size:${sizes.h2}px;border-bottom:1px solid #ddd;padding-bottom:3px;page-break-after:avoid;">$1</h2>`
   );
   html = html.replace(
     /^# (.+)$/gm,
-    '<h1 style="color:#000;margin:16px 0 8px;font-size:20px;border-bottom:2px solid #ddd;padding-bottom:4px;page-break-after:avoid;">$1</h1>'
+    `<h1 style="color:#000;margin:16px 0 8px;font-size:${sizes.h1}px;border-bottom:2px solid #ddd;padding-bottom:4px;page-break-after:avoid;">$1</h1>`
   );
 
   // Blockquotes (before list processing)

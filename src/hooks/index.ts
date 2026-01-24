@@ -14,3 +14,6 @@ export type { UseShareReturn } from './useShare';
 export { useTheme } from './useTheme';
 
 export { useLanguage } from './useLanguage';
+
+export { useFontSettings } from '../contexts/FontSettingsContext';
+export type { FontSize, FontFamily, FontSettings } from '../contexts/FontSettingsContext';

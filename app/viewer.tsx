@@ -15,10 +15,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
-import { Card, ThemeToggle, LanguageToggle } from '../src/components/ui';
+import { Card, ThemeToggle, LanguageToggle, FontSettingsPanel } from '../src/components/ui';
 import { MarkdownRenderer } from '../src/components/markdown';
 import { useGoogleAuth, useShare, useTheme, useLanguage } from '../src/hooks';
 import { addFileToHistory } from '../src/services';
+import { IconButton } from '../src/components/ui';
 
 type ViewerParams = {
   id: string;
@@ -37,6 +38,7 @@ export default function ViewerScreen() {
   const [content, setContent] = useState<string | null>(params.content || null);
   const [isLoading, setIsLoading] = useState(!params.content);
   const [error, setError] = useState<string | null>(null);
+  const [showFontSettings, setShowFontSettings] = useState(false);
 
   useEffect(() => {
     if (params.source === 'google-drive' && !params.content) {
@@ -107,6 +109,12 @@ export default function ViewerScreen() {
           </Text>
         </View>
         <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={[styles.settingsButton, { backgroundColor: colors.bgTertiary }]}
+            onPress={() => setShowFontSettings(true)}
+          >
+            <Ionicons name="text-outline" size={18} color={colors.textSecondary} />
+          </TouchableOpacity>
           <LanguageToggle />
           <ThemeToggle />
           <TouchableOpacity
@@ -164,6 +172,12 @@ export default function ViewerScreen() {
           <Text style={[styles.emptyText, { color: colors.textMuted }]}>{t.viewer.noContent}</Text>
         </View>
       )}
+
+      {/* Font Settings Panel */}
+      <FontSettingsPanel
+        visible={showFontSettings}
+        onClose={() => setShowFontSettings(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -201,6 +215,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
+  },
+  settingsButton: {
+    width: 36,
+    height: 36,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   pdfButton: {
     flexDirection: 'row',

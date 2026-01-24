@@ -14,7 +14,9 @@ import type { Components } from 'react-markdown';
 import type { MarkdownRendererProps } from '../../types/markdown';
 import { spacing, borderRadius, fontSize } from '../../theme';
 import { useTheme } from '../../hooks/useTheme';
+import { useFontSettings, fontSizeMultipliers, fontFamilyStacks } from '../../contexts/FontSettingsContext';
 import type { ThemeMode, ThemeColors } from '../../contexts/ThemeContext';
+import type { FontSettings } from '../../contexts/FontSettingsContext';
 
 // Initialize Mermaid with a theme
 const initializeMermaid = (mode: ThemeMode) => {
@@ -162,11 +164,17 @@ const githubLightTheme: { [key: string]: React.CSSProperties } = {
   important: { color: '#cf222e', fontWeight: 'bold' },
 };
 
-// Generate CSS styles based on theme
-const generateWebStyles = (colors: ThemeColors, isDark: boolean) => `
+// Generate CSS styles based on theme and font settings
+const generateWebStyles = (colors: ThemeColors, isDark: boolean, fontSettings: FontSettings) => {
+  const multiplier = fontSizeMultipliers[fontSettings.fontSize];
+  const fontStack = fontFamilyStacks[fontSettings.fontFamily];
+  const baseFontSize = Math.round(fontSize.base * multiplier);
+
+  return `
   .markdown-content {
     color: ${colors.textSecondary};
-    font-size: ${fontSize.base}px;
+    font-size: ${baseFontSize}px;
+    font-family: ${fontStack};
     line-height: 1.6;
     word-wrap: break-word;
   }
@@ -185,19 +193,19 @@ const generateWebStyles = (colors: ThemeColors, isDark: boolean) => `
   }
 
   .markdown-content h1 {
-    font-size: ${fontSize['3xl']}px;
+    font-size: ${Math.round(fontSize['3xl'] * multiplier)}px;
     padding-bottom: ${spacing.sm}px;
     border-bottom: 2px solid ${colors.borderLight};
   }
 
   .markdown-content h2 {
-    font-size: ${fontSize['2xl']}px;
+    font-size: ${Math.round(fontSize['2xl'] * multiplier)}px;
     padding-bottom: ${spacing.xs}px;
     border-bottom: 1px solid ${colors.border};
   }
 
-  .markdown-content h3 { font-size: ${fontSize.xl}px; }
-  .markdown-content h4 { font-size: ${fontSize.lg}px; }
+  .markdown-content h3 { font-size: ${Math.round(fontSize.xl * multiplier)}px; }
+  .markdown-content h4 { font-size: ${Math.round(fontSize.lg * multiplier)}px; }
 
   .markdown-content p {
     margin-bottom: ${spacing.md}px;
@@ -367,6 +375,7 @@ const generateWebStyles = (colors: ThemeColors, isDark: boolean) => `
     font-size: ${fontSize.sm}px;
   }
 `;
+};
 
 interface ExtendedMarkdownRendererProps extends MarkdownRendererProps {
   themeMode?: ThemeMode;
@@ -374,10 +383,11 @@ interface ExtendedMarkdownRendererProps extends MarkdownRendererProps {
 
 export function MarkdownRenderer({ content, onLinkPress, themeMode: propThemeMode }: ExtendedMarkdownRendererProps) {
   const { colors, mode: contextMode } = useTheme();
+  const { settings: fontSettings } = useFontSettings();
   const themeMode = propThemeMode ?? contextMode;
   const isDark = themeMode === 'dark';
 
-  const webStyles = useMemo(() => generateWebStyles(colors, isDark), [colors, isDark]);
+  const webStyles = useMemo(() => generateWebStyles(colors, isDark, fontSettings), [colors, isDark, fontSettings]);
   const syntaxTheme = isDark ? githubDarkTheme : githubLightTheme;
   const codeBlockBg = isDark ? '#161b22' : '#f6f8fa';
 
