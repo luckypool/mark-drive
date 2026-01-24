@@ -54,6 +54,8 @@ export const en = {
     noResultsHint: 'Try searching with different keywords',
     resultCount: '{count} result',
     resultsCount: '{count} results',
+    privacyTitle: 'Your Privacy Matters',
+    privacyDesc: 'Files are fetched directly from Google Drive and rendered in your browser. Nothing is stored on our servers.',
   },
 
   // About Screen
@@ -204,6 +206,8 @@ export type Translations = {
     noResultsHint: string;
     resultCount: string;
     resultsCount: string;
+    privacyTitle: string;
+    privacyDesc: string;
   };
   about: {
     title: string;

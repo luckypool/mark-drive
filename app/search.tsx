@@ -198,6 +198,19 @@ export default function SearchScreen() {
               <Text style={[styles.emptyHint, { color: colors.textMuted }]}>
                 {t.search.emptyHint}
               </Text>
+
+              {/* Privacy Notice */}
+              <View style={[styles.privacyNotice, { backgroundColor: colors.accentMuted, borderColor: colors.accent }]}>
+                <Ionicons name="shield-checkmark-outline" size={20} color={colors.accent} />
+                <View style={styles.privacyContent}>
+                  <Text style={[styles.privacyTitle, { color: colors.accent }]}>
+                    {t.search.privacyTitle}
+                  </Text>
+                  <Text style={[styles.privacyDesc, { color: colors.textSecondary }]}>
+                    {t.search.privacyDesc}
+                  </Text>
+                </View>
+              </View>
             </View>
           ) : query.length < 2 ? (
             <View style={styles.messageContainer}>
@@ -320,6 +333,30 @@ const styles = StyleSheet.create({
   },
   emptyHint: {
     fontSize: fontSize.sm,
+  },
+
+  // Privacy Notice
+  privacyNotice: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    marginTop: spacing['2xl'],
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    maxWidth: 320,
+  },
+  privacyContent: {
+    flex: 1,
+  },
+  privacyTitle: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    marginBottom: spacing.xs,
+  },
+  privacyDesc: {
+    fontSize: fontSize.xs,
+    lineHeight: fontSize.xs * 1.5,
   },
 
   // Message

@@ -206,7 +206,7 @@ export default function HomeScreen() {
         {/* Landing Page for Non-authenticated Users */}
         {!isAuthenticated ? (
           <View style={styles.landingContainer}>
-            {/* Hero Section */}
+            {/* Hero Section with CTA */}
             <View style={styles.heroSection}>
               <Image
                 source={require('../assets/images/icon.png')}
@@ -217,6 +217,30 @@ export default function HomeScreen() {
               <Text style={[styles.heroSubtitle, { color: colors.textSecondary }]}>
                 {t.home.subtitle}
               </Text>
+
+              {/* Primary CTA */}
+              <Button
+                onPress={authenticate}
+                disabled={!isApiLoaded}
+                loading={isLoading}
+                style={styles.heroCta}
+                icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
+              >
+                {t.home.signIn}
+              </Button>
+
+              {/* Privacy Notice */}
+              <View style={[styles.privacyNotice, { backgroundColor: colors.accentMuted, borderColor: colors.accent }]}>
+                <Ionicons name="shield-checkmark-outline" size={20} color={colors.accent} />
+                <View style={styles.privacyContent}>
+                  <Text style={[styles.privacyTitle, { color: colors.accent }]}>
+                    {t.search.privacyTitle}
+                  </Text>
+                  <Text style={[styles.privacyDesc, { color: colors.textSecondary }]}>
+                    {t.search.privacyDesc}
+                  </Text>
+                </View>
+              </View>
             </View>
 
             {/* Features Section */}
@@ -258,18 +282,8 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            {/* CTA Section */}
-            <View style={styles.ctaSection}>
-              <Button
-                onPress={authenticate}
-                disabled={!isApiLoaded}
-                loading={isLoading}
-                style={styles.ctaButton}
-                icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
-              >
-                {t.home.signIn}
-              </Button>
-
+            {/* Secondary CTA */}
+            <View style={styles.secondaryCta}>
               <View style={styles.divider}>
                 <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
                 <Text style={[styles.dividerText, { color: colors.textMuted }]}>{t.home.or}</Text>
@@ -333,10 +347,23 @@ export default function HomeScreen() {
 
             {recentFiles.length === 0 && (
               <View style={styles.emptyState}>
-                <Ionicons name="document-text-outline" size={48} color={colors.textMuted} />
+                <Ionicons name="search-outline" size={48} color={colors.textMuted} />
                 <Text style={[styles.emptyStateText, { color: colors.textMuted }]}>
                   {t.home.searchPlaceholder}
                 </Text>
+
+                {/* Privacy Notice */}
+                <View style={[styles.privacyNotice, { backgroundColor: colors.accentMuted, borderColor: colors.accent }]}>
+                  <Ionicons name="shield-checkmark-outline" size={20} color={colors.accent} />
+                  <View style={styles.privacyContent}>
+                    <Text style={[styles.privacyTitle, { color: colors.accent }]}>
+                      {t.search.privacyTitle}
+                    </Text>
+                    <Text style={[styles.privacyDesc, { color: colors.textSecondary }]}>
+                      {t.search.privacyDesc}
+                    </Text>
+                  </View>
+                </View>
               </View>
             )}
           </View>
@@ -663,20 +690,22 @@ const styles = StyleSheet.create({
     lineHeight: fontSize.sm * 1.5,
   },
 
-  // CTA
-  ctaSection: {
-    marginTop: spacing['2xl'],
-    alignItems: 'center',
+  // Hero CTA
+  heroCta: {
+    marginTop: spacing.xl,
   },
-  ctaButton: {
-    marginBottom: spacing.md,
+
+  // Secondary CTA
+  secondaryCta: {
+    marginTop: spacing.xl,
+    alignItems: 'center',
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
     maxWidth: 280,
-    marginVertical: spacing.md,
+    marginBottom: spacing.md,
   },
   dividerLine: {
     flex: 1,
@@ -697,6 +726,30 @@ const styles = StyleSheet.create({
   },
   learnMoreText: {
     fontSize: fontSize.sm,
+  },
+
+  // Privacy Notice
+  privacyNotice: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    marginTop: spacing.xl,
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    maxWidth: 320,
+  },
+  privacyContent: {
+    flex: 1,
+  },
+  privacyTitle: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    marginBottom: spacing.xs,
+  },
+  privacyDesc: {
+    fontSize: fontSize.xs,
+    lineHeight: fontSize.xs * 1.5,
   },
 
   // Authenticated Content
