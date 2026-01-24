@@ -4,3 +4,4 @@ export { LoadingSpinner } from './LoadingSpinner';
 export { Card } from './Card';
 export { FAB } from './FAB';
 export { ThemeToggle } from './ThemeToggle';
+export { LanguageToggle } from './LanguageToggle';

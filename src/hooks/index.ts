@@ -12,3 +12,5 @@ export { useShare } from './useShare';
 export type { UseShareReturn } from './useShare';
 
 export { useTheme } from './useTheme';
+
+export { useLanguage } from './useLanguage';

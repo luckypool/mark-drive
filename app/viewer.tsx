@@ -15,9 +15,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
-import { Card, ThemeToggle } from '../src/components/ui';
+import { Card, ThemeToggle, LanguageToggle } from '../src/components/ui';
 import { MarkdownRenderer } from '../src/components/markdown';
-import { useGoogleAuth, useShare, useTheme } from '../src/hooks';
+import { useGoogleAuth, useShare, useTheme, useLanguage } from '../src/hooks';
 import { addFileToHistory } from '../src/services';
 
 type ViewerParams = {
@@ -29,6 +29,7 @@ type ViewerParams = {
 
 export default function ViewerScreen() {
   const { colors, mode } = useTheme();
+  const { t } = useLanguage();
   const params = useLocalSearchParams<ViewerParams>();
   const { fetchFileContent, isLoading: isAuthLoading, isAuthenticated, accessToken } = useGoogleAuth();
   const { shareContent, isProcessing } = useShare();
@@ -43,13 +44,13 @@ export default function ViewerScreen() {
         return;
       }
       if (!accessToken) {
-        setError('Authentication required. Please go back to home and sign in.');
+        setError(t.viewer.authRequired);
         setIsLoading(false);
         return;
       }
       loadFileContent();
     }
-  }, [params.id, params.source, params.content, isAuthLoading, accessToken]);
+  }, [params.id, params.source, params.content, isAuthLoading, accessToken, t.viewer.authRequired]);
 
   const loadFileContent = async () => {
     setIsLoading(true);
@@ -65,10 +66,10 @@ export default function ViewerScreen() {
           source: 'google-drive',
         });
       } else {
-        setError('Failed to load file');
+        setError(t.viewer.loadFailed);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : t.viewer.errorOccurred);
     } finally {
       setIsLoading(false);
     }
@@ -106,6 +107,7 @@ export default function ViewerScreen() {
           </Text>
         </View>
         <View style={styles.headerActions}>
+          <LanguageToggle />
           <ThemeToggle />
           <TouchableOpacity
             style={[
@@ -133,7 +135,7 @@ export default function ViewerScreen() {
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.accent} />
-          <Text style={[styles.loadingText, { color: colors.textMuted }]}>Loading...</Text>
+          <Text style={[styles.loadingText, { color: colors.textMuted }]}>{t.viewer.loading}</Text>
         </View>
       ) : error ? (
         <View style={styles.errorContainer}>
@@ -143,7 +145,7 @@ export default function ViewerScreen() {
             style={[styles.retryButton, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}
             onPress={loadFileContent}
           >
-            <Text style={[styles.retryText, { color: colors.textPrimary }]}>Retry</Text>
+            <Text style={[styles.retryText, { color: colors.textPrimary }]}>{t.viewer.retry}</Text>
           </TouchableOpacity>
         </View>
       ) : content ? (
@@ -159,7 +161,7 @@ export default function ViewerScreen() {
       ) : (
         <View style={styles.emptyContainer}>
           <Ionicons name="document-outline" size={48} color={colors.textMuted} />
-          <Text style={[styles.emptyText, { color: colors.textMuted }]}>No content</Text>
+          <Text style={[styles.emptyText, { color: colors.textMuted }]}>{t.viewer.noContent}</Text>
         </View>
       )}
     </SafeAreaView>

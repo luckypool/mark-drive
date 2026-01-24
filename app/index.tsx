@@ -17,14 +17,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight, shadows } from '../src/theme';
-import { Button, LoadingSpinner, FAB, ThemeToggle } from '../src/components/ui';
-import { useGoogleAuth, useTheme } from '../src/hooks';
+import { Button, LoadingSpinner, FAB, ThemeToggle, LanguageToggle } from '../src/components/ui';
+import { useGoogleAuth, useTheme, useLanguage } from '../src/hooks';
 import { useFilePicker } from '../src/hooks';
 import { getFileHistory, clearFileHistory, addFileToHistory } from '../src/services';
 import type { FileHistoryItem } from '../src/types';
 
 export default function HomeScreen() {
   const { colors } = useTheme();
+  const { t, language } = useLanguage();
   const {
     isLoading,
     isApiLoaded,
@@ -100,11 +101,11 @@ export default function HomeScreen() {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
-    return date.toLocaleDateString('en-US');
+    if (minutes < 1) return t.common.justNow;
+    if (minutes < 60) return t.common.minutesAgo.replace('{min}', String(minutes));
+    if (hours < 24) return t.common.hoursAgo.replace('{hours}', String(hours));
+    if (days < 7) return t.common.daysAgo.replace('{days}', String(days));
+    return date.toLocaleDateString(language === 'ja' ? 'ja-JP' : 'en-US');
   };
 
   return (
@@ -118,6 +119,7 @@ export default function HomeScreen() {
             resizeMode="contain"
           />
           <View style={styles.headerActions}>
+            <LanguageToggle />
             <ThemeToggle />
             {isAuthenticated && userInfo && (
               <TouchableOpacity
@@ -146,9 +148,9 @@ export default function HomeScreen() {
                 style={styles.heroIcon}
                 resizeMode="contain"
               />
-              <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>Welcome to MD Viewer</Text>
+              <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>{t.home.welcome}</Text>
               <Text style={[styles.heroSubtitle, { color: colors.textSecondary }]}>
-                A beautiful Markdown viewer for{'\n'}Google Drive
+                {t.home.subtitle}
               </Text>
             </View>
 
@@ -159,9 +161,9 @@ export default function HomeScreen() {
                   <Ionicons name="logo-google" size={24} color={colors.accent} />
                 </View>
                 <View style={styles.featureContent}>
-                  <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Google Drive Integration</Text>
+                  <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.home.feature.drive.title}</Text>
                   <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                    Search and open Markdown files directly from your Google Drive
+                    {t.home.feature.drive.desc}
                   </Text>
                 </View>
               </View>
@@ -171,9 +173,9 @@ export default function HomeScreen() {
                   <Ionicons name="color-palette-outline" size={24} color={colors.accent} />
                 </View>
                 <View style={styles.featureContent}>
-                  <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Beautiful Rendering</Text>
+                  <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.home.feature.rendering.title}</Text>
                   <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                    Syntax highlighting, Mermaid diagrams, and clean typography
+                    {t.home.feature.rendering.desc}
                   </Text>
                 </View>
               </View>
@@ -183,9 +185,9 @@ export default function HomeScreen() {
                   <Ionicons name="share-outline" size={24} color={colors.accent} />
                 </View>
                 <View style={styles.featureContent}>
-                  <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Export to PDF</Text>
+                  <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.home.feature.pdf.title}</Text>
                   <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                    Share your documents as beautifully formatted PDFs
+                    {t.home.feature.pdf.desc}
                   </Text>
                 </View>
               </View>
@@ -200,12 +202,12 @@ export default function HomeScreen() {
                 style={styles.ctaButton}
                 icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
               >
-                Sign in with Google
+                {t.home.signIn}
               </Button>
 
               <View style={styles.divider}>
                 <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
-                <Text style={[styles.dividerText, { color: colors.textMuted }]}>or</Text>
+                <Text style={[styles.dividerText, { color: colors.textMuted }]}>{t.home.or}</Text>
                 <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
               </View>
 
@@ -214,13 +216,13 @@ export default function HomeScreen() {
                 onPress={handleLocalFile}
                 icon={<Ionicons name="folder-outline" size={20} color={colors.accent} />}
               >
-                Open Local File
+                {t.home.openLocal}
               </Button>
             </View>
 
             {/* Learn More Link */}
             <TouchableOpacity style={styles.learnMoreLink} onPress={handleOpenAbout}>
-              <Text style={[styles.learnMoreText, { color: colors.accent }]}>Learn more about MD Viewer</Text>
+              <Text style={[styles.learnMoreText, { color: colors.accent }]}>{t.home.learnMore}</Text>
               <Ionicons name="arrow-forward" size={16} color={colors.accent} />
             </TouchableOpacity>
           </View>
@@ -230,7 +232,7 @@ export default function HomeScreen() {
             <Pressable style={[styles.searchBox, { backgroundColor: colors.bgSecondary, borderColor: colors.border }]} onPress={handleOpenSearch}>
               <Ionicons name="search" size={20} color={colors.textMuted} />
               <Text style={[styles.searchPlaceholder, { color: colors.textMuted }]}>
-                Search Google Drive...
+                {t.home.searchPlaceholder}
               </Text>
               {Platform.OS === 'web' && (
                 <View style={[styles.kbd, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}>
@@ -243,9 +245,9 @@ export default function HomeScreen() {
             {recentFiles.length > 0 && (
               <View style={styles.recentSection}>
                 <View style={[styles.recentHeader, { borderBottomColor: colors.border }]}>
-                  <Text style={[styles.recentTitle, { color: colors.textSecondary }]}>Recent Files</Text>
+                  <Text style={[styles.recentTitle, { color: colors.textSecondary }]}>{t.home.recentFiles}</Text>
                   <TouchableOpacity onPress={handleClearHistory}>
-                    <Text style={[styles.clearButton, { color: colors.textMuted }]}>Clear</Text>
+                    <Text style={[styles.clearButton, { color: colors.textMuted }]}>{t.home.clear}</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -301,18 +303,18 @@ export default function HomeScreen() {
             )}
             <TouchableOpacity style={styles.userMenuItem} onPress={handleLocalFile}>
               <Ionicons name="folder-outline" size={20} color={colors.textSecondary} />
-              <Text style={[styles.userMenuText, { color: colors.textPrimary }]}>Open Local File</Text>
+              <Text style={[styles.userMenuText, { color: colors.textPrimary }]}>{t.home.openLocal}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.userMenuItem} onPress={handleOpenAbout}>
               <Ionicons name="information-circle-outline" size={20} color={colors.textSecondary} />
-              <Text style={[styles.userMenuText, { color: colors.textPrimary }]}>About MD Viewer</Text>
+              <Text style={[styles.userMenuText, { color: colors.textPrimary }]}>{t.home.about}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.userMenuItem, styles.userMenuLogout]}
               onPress={logout}
             >
               <Ionicons name="log-out-outline" size={20} color={colors.error} />
-              <Text style={[styles.userMenuText, { color: colors.error }]}>Sign Out</Text>
+              <Text style={[styles.userMenuText, { color: colors.error }]}>{t.home.signOut}</Text>
             </TouchableOpacity>
           </View>
         </>

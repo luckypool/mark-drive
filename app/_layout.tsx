@@ -5,6 +5,7 @@
 import { Stack } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import { ThemeProvider } from '../src/contexts/ThemeContext';
+import { LanguageProvider } from '../src/contexts/LanguageContext';
 import { useTheme } from '../src/hooks';
 
 export { ErrorBoundary } from 'expo-router';
@@ -47,7 +48,9 @@ function RootLayoutContent() {
 export default function RootLayout() {
   return (
     <ThemeProvider>
-      <RootLayoutContent />
+      <LanguageProvider>
+        <RootLayoutContent />
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

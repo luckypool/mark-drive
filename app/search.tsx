@@ -18,11 +18,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
-import { useGoogleAuth, useTheme } from '../src/hooks';
+import { useGoogleAuth, useTheme, useLanguage } from '../src/hooks';
 import type { DriveFile } from '../src/types';
 
 export default function SearchScreen() {
   const { colors } = useTheme();
+  const { t, language } = useLanguage();
   const {
     isLoading,
     isAuthenticated,
@@ -80,11 +81,11 @@ export default function SearchScreen() {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (days > 30) return date.toLocaleDateString('en-US');
-    if (days > 0) return `${days}d ago`;
-    if (hours > 0) return `${hours}h ago`;
-    if (minutes > 0) return `${minutes}m ago`;
-    return 'Just now';
+    if (days > 30) return date.toLocaleDateString(language === 'ja' ? 'ja-JP' : 'en-US');
+    if (days > 0) return t.common.daysAgo.replace('{days}', String(days));
+    if (hours > 0) return t.common.hoursAgo.replace('{hours}', String(hours));
+    if (minutes > 0) return t.common.minutesAgo.replace('{min}', String(minutes));
+    return t.common.justNow;
   };
 
   const formatFileSize = (sizeString?: string): string => {
@@ -141,7 +142,7 @@ export default function SearchScreen() {
             <TextInput
               ref={inputRef}
               style={[styles.searchInput, { color: colors.textPrimary }]}
-              placeholder="Search Google Drive..."
+              placeholder={t.search.placeholder}
               placeholderTextColor={colors.textMuted}
               value={query}
               onChangeText={handleSearch}
@@ -162,11 +163,11 @@ export default function SearchScreen() {
           {!isAuthenticated ? (
             <View style={styles.authPrompt}>
               <Text style={[styles.authText, { color: colors.textSecondary }]}>
-                Please sign in to search{'\n'}Google Drive
+                {t.search.signInPrompt}
               </Text>
               <TouchableOpacity style={[styles.authButton, { backgroundColor: colors.accent }]} onPress={authenticate}>
                 <Ionicons name="logo-google" size={20} color={colors.bgPrimary} />
-                <Text style={[styles.authButtonText, { color: colors.bgPrimary }]}>Sign in with Google</Text>
+                <Text style={[styles.authButtonText, { color: colors.bgPrimary }]}>{t.search.signIn}</Text>
               </TouchableOpacity>
             </View>
           ) : query.length === 0 ? (
@@ -174,23 +175,23 @@ export default function SearchScreen() {
               <View style={styles.emptyIcon}>
                 <Ionicons name="search-outline" size={48} color={colors.textMuted} />
               </View>
-              <Text style={[styles.emptyTitle, { color: colors.textSecondary }]}>Search Markdown Files</Text>
+              <Text style={[styles.emptyTitle, { color: colors.textSecondary }]}>{t.search.emptyTitle}</Text>
               <Text style={[styles.emptyHint, { color: colors.textMuted }]}>
-                Type at least 2 characters to start searching
+                {t.search.emptyHint}
               </Text>
             </View>
           ) : query.length < 2 ? (
             <View style={styles.messageContainer}>
-              <Text style={[styles.messageText, { color: colors.textSecondary }]}>Type at least 2 characters</Text>
+              <Text style={[styles.messageText, { color: colors.textSecondary }]}>{t.search.minChars}</Text>
             </View>
           ) : results.length === 0 && !isLoading ? (
             <View style={styles.emptyState}>
               <View style={styles.emptyIcon}>
                 <Ionicons name="document-outline" size={48} color={colors.textMuted} />
               </View>
-              <Text style={[styles.emptyTitle, { color: colors.textSecondary }]}>No Results Found</Text>
+              <Text style={[styles.emptyTitle, { color: colors.textSecondary }]}>{t.search.noResults}</Text>
               <Text style={[styles.emptyHint, { color: colors.textMuted }]}>
-                Try searching with different keywords
+                {t.search.noResultsHint}
               </Text>
             </View>
           ) : (
@@ -203,7 +204,9 @@ export default function SearchScreen() {
               ListHeaderComponent={
                 results.length > 0 ? (
                   <Text style={[styles.resultsHeader, { color: colors.textMuted }]}>
-                    {results.length} {results.length === 1 ? 'result' : 'results'}
+                    {results.length === 1
+                      ? t.search.resultCount.replace('{count}', '1')
+                      : t.search.resultsCount.replace('{count}', String(results.length))}
                   </Text>
                 ) : null
               }

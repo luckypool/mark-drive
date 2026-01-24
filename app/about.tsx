@@ -15,11 +15,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
-import { useTheme } from '../src/hooks';
-import { ThemeToggle } from '../src/components/ui';
+import { useTheme, useLanguage } from '../src/hooks';
+import { ThemeToggle, LanguageToggle } from '../src/components/ui';
 
 export default function AboutScreen() {
   const { colors } = useTheme();
+  const { t } = useLanguage();
 
   const handleBack = () => {
     router.back();
@@ -32,8 +33,11 @@ export default function AboutScreen() {
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
           <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>About MD Viewer</Text>
-        <ThemeToggle />
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>{t.about.title}</Text>
+        <View style={styles.headerActions}>
+          <LanguageToggle />
+          <ThemeToggle />
+        </View>
       </View>
 
       <ScrollView
@@ -48,23 +52,21 @@ export default function AboutScreen() {
             style={styles.heroIcon}
             resizeMode="contain"
           />
-          <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>MD Viewer</Text>
-          <Text style={[styles.heroVersion, { color: colors.textMuted }]}>Version 1.0.0</Text>
+          <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>{t.about.appName}</Text>
+          <Text style={[styles.heroVersion, { color: colors.textMuted }]}>{t.about.version.replace('{version}', '1.0.0')}</Text>
         </View>
 
         {/* Description */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>What is MD Viewer?</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.about.whatIs}</Text>
           <Text style={[styles.sectionText, { color: colors.textSecondary }]}>
-            MD Viewer is a web application that beautifully renders Markdown files
-            stored in your Google Drive. It provides a seamless reading experience
-            with syntax highlighting, diagram support, and PDF export capabilities.
+            {t.about.description}
           </Text>
         </View>
 
         {/* Features */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Features</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.about.features}</Text>
 
           <View style={styles.featureList}>
             <View style={styles.featureItem}>
@@ -72,11 +74,9 @@ export default function AboutScreen() {
                 <Ionicons name="logo-google" size={20} color={colors.accent} />
               </View>
               <View style={styles.featureContent}>
-                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Google Drive Integration</Text>
+                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.about.feature.drive.title}</Text>
                 <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                  Connect your Google account and search for Markdown files
-                  directly from your Drive. Quick access to your documents
-                  without downloading.
+                  {t.about.feature.drive.desc}
                 </Text>
               </View>
             </View>
@@ -86,11 +86,9 @@ export default function AboutScreen() {
                 <Ionicons name="code-slash-outline" size={20} color={colors.accent} />
               </View>
               <View style={styles.featureContent}>
-                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Syntax Highlighting</Text>
+                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.about.feature.syntax.title}</Text>
                 <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                  Code blocks are rendered with syntax highlighting for
-                  various programming languages including JavaScript, Python,
-                  TypeScript, and more.
+                  {t.about.feature.syntax.desc}
                 </Text>
               </View>
             </View>
@@ -100,11 +98,9 @@ export default function AboutScreen() {
                 <Ionicons name="git-network-outline" size={20} color={colors.accent} />
               </View>
               <View style={styles.featureContent}>
-                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Mermaid Diagrams</Text>
+                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.about.feature.mermaid.title}</Text>
                 <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                  Create flowcharts, sequence diagrams, and other visualizations
-                  using Mermaid syntax. Diagrams are rendered automatically
-                  within your documents.
+                  {t.about.feature.mermaid.desc}
                 </Text>
               </View>
             </View>
@@ -114,11 +110,9 @@ export default function AboutScreen() {
                 <Ionicons name="document-outline" size={20} color={colors.accent} />
               </View>
               <View style={styles.featureContent}>
-                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>PDF Export</Text>
+                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.about.feature.pdf.title}</Text>
                 <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                  Export your rendered Markdown documents as PDF files.
-                  Perfect for sharing documentation or creating printable
-                  versions of your notes.
+                  {t.about.feature.pdf.desc}
                 </Text>
               </View>
             </View>
@@ -128,10 +122,9 @@ export default function AboutScreen() {
                 <Ionicons name="folder-outline" size={20} color={colors.accent} />
               </View>
               <View style={styles.featureContent}>
-                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Local File Support</Text>
+                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.about.feature.local.title}</Text>
                 <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                  Open Markdown files from your local device without signing in.
-                  Great for quick previews or when working offline.
+                  {t.about.feature.local.desc}
                 </Text>
               </View>
             </View>
@@ -141,10 +134,9 @@ export default function AboutScreen() {
                 <Ionicons name="time-outline" size={20} color={colors.accent} />
               </View>
               <View style={styles.featureContent}>
-                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>Recent Files</Text>
+                <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.about.feature.recent.title}</Text>
                 <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                  Quick access to recently viewed files. Your reading history
-                  is stored locally for convenience.
+                  {t.about.feature.recent.desc}
                 </Text>
               </View>
             </View>
@@ -153,9 +145,22 @@ export default function AboutScreen() {
 
         {/* Supported Formats */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Supported Markdown Features</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.about.supported}</Text>
           <View style={styles.chipContainer}>
-            {['Headers', 'Bold / Italic', 'Lists', 'Tables', 'Code Blocks', 'Links', 'Images', 'Blockquotes', 'Task Lists', 'Strikethrough', 'Mermaid', 'GFM'].map((label) => (
+            {[
+              t.about.chips.headers,
+              t.about.chips.boldItalic,
+              t.about.chips.lists,
+              t.about.chips.tables,
+              t.about.chips.codeBlocks,
+              t.about.chips.links,
+              t.about.chips.images,
+              t.about.chips.blockquotes,
+              t.about.chips.taskLists,
+              t.about.chips.strikethrough,
+              t.about.chips.mermaid,
+              t.about.chips.gfm,
+            ].map((label) => (
               <View key={label} style={[styles.chip, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}>
                 <Text style={[styles.chipText, { color: colors.textSecondary }]}>{label}</Text>
               </View>
@@ -165,20 +170,16 @@ export default function AboutScreen() {
 
         {/* Privacy */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Privacy & Security</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>{t.about.privacy}</Text>
           <Text style={[styles.sectionText, { color: colors.textSecondary }]}>
-            MD Viewer only requests read-only access to your Google Drive files.
-            Your documents are never stored on our servers - they are fetched
-            directly from Google Drive and rendered in your browser.
-            Your authentication tokens are stored securely in your browser's
-            local storage.
+            {t.about.privacyDesc}
           </Text>
         </View>
 
         {/* Footer */}
         <View style={[styles.footer, { borderTopColor: colors.border }]}>
           <Text style={[styles.footerText, { color: colors.textMuted }]}>
-            Built with Expo and React Native Web
+            {t.about.footer}
           </Text>
         </View>
       </ScrollView>
@@ -208,6 +209,11 @@ const styles = StyleSheet.create({
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
     textAlign: 'center',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   content: {
     flex: 1,
