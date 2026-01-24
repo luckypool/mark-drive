@@ -1,0 +1,60 @@
+<svg width="800" height="500" viewBox="0 0 800 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Browser Frame -->
+  <rect x="0" y="0" width="800" height="500" rx="12" fill="#ffffff"/>
+  <rect x="0" y="0" width="800" height="500" rx="12" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Title Bar -->
+  <rect x="0" y="0" width="800" height="40" rx="12" fill="#f9fafb"/>
+  <rect x="0" y="28" width="800" height="12" fill="#f9fafb"/>
+
+  <!-- Window Controls -->
+  <circle cx="20" cy="20" r="6" fill="#ff5f57"/>
+  <circle cx="40" cy="20" r="6" fill="#febc2e"/>
+  <circle cx="60" cy="20" r="6" fill="#28c840"/>
+
+  <!-- URL Bar -->
+  <rect x="100" y="10" width="600" height="20" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="120" y="24" font-family="system-ui, sans-serif" font-size="11" fill="#6b7280">md-viewer.vercel.app</text>
+
+  <!-- App Header -->
+  <rect x="20" y="56" width="760" height="48" rx="8" fill="#f9fafb"/>
+  <text x="40" y="86" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="#1f2937">README.md</text>
+
+  <!-- Content Area -->
+  <rect x="20" y="120" width="760" height="360" rx="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Markdown Content -->
+  <!-- H1 -->
+  <text x="40" y="160" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#111827"># Welcome to MD Viewer</text>
+
+  <!-- Paragraph -->
+  <text x="40" y="200" font-family="system-ui, sans-serif" font-size="14" fill="#4b5563">A beautiful Markdown viewer for Google Drive files.</text>
+
+  <!-- H2 -->
+  <text x="40" y="250" font-family="system-ui, sans-serif" font-size="18" font-weight="600" fill="#1f2937">## Features</text>
+
+  <!-- List items -->
+  <circle cx="50" cy="285" r="3" fill="#10b981"/>
+  <text x="65" y="290" font-family="system-ui, sans-serif" font-size="14" fill="#4b5563">Google Drive integration</text>
+
+  <circle cx="50" cy="315" r="3" fill="#10b981"/>
+  <text x="65" y="320" font-family="system-ui, sans-serif" font-size="14" fill="#4b5563">Beautiful syntax highlighting</text>
+
+  <circle cx="50" cy="345" r="3" fill="#10b981"/>
+  <text x="65" y="350" font-family="system-ui, sans-serif" font-size="14" fill="#4b5563">Mermaid diagram support</text>
+
+  <!-- Code Block -->
+  <rect x="40" y="375" width="720" height="80" rx="6" fill="#f6f8fa"/>
+  <text x="55" y="400" font-family="monospace" font-size="12" fill="#116329">```javascript</text>
+  <text x="55" y="420" font-family="monospace" font-size="12" fill="#24292f">const viewer = new MDViewer();</text>
+  <text x="55" y="440" font-family="monospace" font-size="12" fill="#24292f">viewer.render(markdown);</text>
+
+  <!-- Decorative gradient overlay -->
+  <defs>
+    <linearGradient id="fadeBottomLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0.7" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.8"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="400" width="800" height="100" fill="url(#fadeBottomLight)"/>
+</svg>

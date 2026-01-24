@@ -243,6 +243,19 @@ export default function HomeScreen() {
               </View>
             </View>
 
+            {/* App Preview */}
+            <View style={styles.previewSection}>
+              <View style={[styles.previewContainer, { backgroundColor: colors.bgTertiary }]}>
+                {Platform.OS === 'web' && (
+                  <img
+                    src={themeMode === 'dark' ? '/app-preview.svg' : '/app-preview-light.svg'}
+                    alt="MD Viewer Preview"
+                    style={{ width: '100%', height: 'auto', borderRadius: 8 }}
+                  />
+                )}
+              </View>
+            </View>
+
             {/* Features Section */}
             <View style={styles.featuresSection}>
               <View style={[styles.featureCard, { backgroundColor: colors.bgCard, borderColor: colors.border }]}>
@@ -663,9 +676,27 @@ const styles = StyleSheet.create({
     lineHeight: fontSize.lg * 1.5,
   },
 
+  // App Preview
+  previewSection: {
+    marginTop: spacing['2xl'],
+    alignItems: 'center',
+  },
+  previewContainer: {
+    width: '100%',
+    maxWidth: 600,
+    borderRadius: borderRadius.xl,
+    padding: spacing.md,
+    overflow: 'hidden',
+  },
+  previewImage: {
+    width: '100%',
+    height: undefined,
+    aspectRatio: 800 / 500,
+  },
+
   // Features
   featuresSection: {
-    marginTop: spacing.xl,
+    marginTop: spacing['2xl'],
     gap: spacing.md,
   },
   featureCard: {
