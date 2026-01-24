@@ -17,15 +17,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight, shadows } from '../src/theme';
-import { Button, LoadingSpinner, FAB, ThemeToggle, LanguageToggle } from '../src/components/ui';
+import { Button, LoadingSpinner, FAB } from '../src/components/ui';
 import { useGoogleAuth, useTheme, useLanguage } from '../src/hooks';
 import { useFilePicker } from '../src/hooks';
 import { getFileHistory, clearFileHistory, addFileToHistory } from '../src/services';
 import type { FileHistoryItem } from '../src/types';
 
 export default function HomeScreen() {
-  const { colors } = useTheme();
-  const { t, language } = useLanguage();
+  const { colors, mode: themeMode, setTheme } = useTheme();
+  const { t, language, setLanguage } = useLanguage();
   const {
     isLoading,
     isApiLoaded,
@@ -38,6 +38,7 @@ export default function HomeScreen() {
   const { openPicker } = useFilePicker();
   const [recentFiles, setRecentFiles] = useState<FileHistoryItem[]>([]);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
 
   useEffect(() => {
     loadHistory();
@@ -119,8 +120,13 @@ export default function HomeScreen() {
             resizeMode="contain"
           />
           <View style={styles.headerActions}>
-            <LanguageToggle />
-            <ThemeToggle />
+            <TouchableOpacity
+              style={[styles.menuButton, { backgroundColor: colors.bgTertiary }]}
+              onPress={() => setIsSettingsMenuOpen(!isSettingsMenuOpen)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="ellipsis-vertical" size={20} color={colors.textSecondary} />
+            </TouchableOpacity>
             {isAuthenticated && userInfo && (
               <TouchableOpacity
                 style={[styles.userAvatar, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}
@@ -282,6 +288,90 @@ export default function HomeScreen() {
         )}
       </ScrollView>
 
+      {/* Settings Menu */}
+      {isSettingsMenuOpen && (
+        <>
+          <Pressable
+            style={[styles.settingsMenuOverlay, { backgroundColor: colors.overlayLight }]}
+            onPress={() => setIsSettingsMenuOpen(false)}
+          />
+          <View style={[styles.settingsMenu, { backgroundColor: colors.bgSecondary, borderColor: colors.border }]}>
+            {/* Theme Setting */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: colors.textMuted }]}>
+                {t.settings.theme}
+              </Text>
+              <View style={styles.settingsOptions}>
+                <TouchableOpacity
+                  style={[
+                    styles.settingsOption,
+                    { backgroundColor: themeMode === 'light' ? colors.accentMuted : colors.bgTertiary }
+                  ]}
+                  onPress={() => setTheme('light')}
+                >
+                  <Ionicons name="sunny-outline" size={18} color={themeMode === 'light' ? colors.accent : colors.textSecondary} />
+                  <Text style={[styles.settingsOptionText, { color: themeMode === 'light' ? colors.accent : colors.textSecondary }]}>
+                    {t.settings.light}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.settingsOption,
+                    { backgroundColor: themeMode === 'dark' ? colors.accentMuted : colors.bgTertiary }
+                  ]}
+                  onPress={() => setTheme('dark')}
+                >
+                  <Ionicons name="moon-outline" size={18} color={themeMode === 'dark' ? colors.accent : colors.textSecondary} />
+                  <Text style={[styles.settingsOptionText, { color: themeMode === 'dark' ? colors.accent : colors.textSecondary }]}>
+                    {t.settings.dark}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Language Setting */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: colors.textMuted }]}>
+                {t.settings.language}
+              </Text>
+              <View style={styles.settingsOptions}>
+                <TouchableOpacity
+                  style={[
+                    styles.settingsOption,
+                    { backgroundColor: language === 'en' ? colors.accentMuted : colors.bgTertiary }
+                  ]}
+                  onPress={() => setLanguage('en')}
+                >
+                  <Text style={[styles.settingsOptionText, { color: language === 'en' ? colors.accent : colors.textSecondary }]}>
+                    English
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.settingsOption,
+                    { backgroundColor: language === 'ja' ? colors.accentMuted : colors.bgTertiary }
+                  ]}
+                  onPress={() => setLanguage('ja')}
+                >
+                  <Text style={[styles.settingsOptionText, { color: language === 'ja' ? colors.accent : colors.textSecondary }]}>
+                    日本語
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* About Link */}
+            <TouchableOpacity
+              style={[styles.settingsMenuItem, { borderTopColor: colors.border }]}
+              onPress={() => { setIsSettingsMenuOpen(false); handleOpenAbout(); }}
+            >
+              <Ionicons name="information-circle-outline" size={20} color={colors.textSecondary} />
+              <Text style={[styles.settingsMenuItemText, { color: colors.textPrimary }]}>{t.home.about}</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
+
       {/* User Menu */}
       {isAuthenticated && isUserMenuOpen && (
         <>
@@ -304,10 +394,6 @@ export default function HomeScreen() {
             <TouchableOpacity style={styles.userMenuItem} onPress={handleLocalFile}>
               <Ionicons name="folder-outline" size={20} color={colors.textSecondary} />
               <Text style={[styles.userMenuText, { color: colors.textPrimary }]}>{t.home.openLocal}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.userMenuItem} onPress={handleOpenAbout}>
-              <Ionicons name="information-circle-outline" size={20} color={colors.textSecondary} />
-              <Text style={[styles.userMenuText, { color: colors.textPrimary }]}>{t.home.about}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.userMenuItem, styles.userMenuLogout]}
@@ -348,7 +434,14 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.sm,
+  },
+  menuButton: {
+    width: 36,
+    height: 36,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   logo: {
     width: 160,
@@ -544,6 +637,62 @@ const styles = StyleSheet.create({
   recentTime: {
     fontSize: fontSize.xs,
     marginTop: 2,
+  },
+
+  // Settings Menu
+  settingsMenuOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 896,
+  },
+  settingsMenu: {
+    position: 'absolute',
+    top: 70,
+    right: spacing.xl,
+    borderWidth: 1,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    minWidth: 220,
+    zIndex: 897,
+    ...shadows.lg,
+  },
+  settingsSection: {
+    marginBottom: spacing.md,
+  },
+  settingsSectionTitle: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.medium,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: spacing.sm,
+  },
+  settingsOptions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  settingsOption: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+  },
+  settingsOptionText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.medium,
+  },
+  settingsMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingTop: spacing.md,
+    marginTop: spacing.sm,
+    borderTopWidth: 1,
+  },
+  settingsMenuItemText: {
+    fontSize: fontSize.base,
   },
 
   // User Menu

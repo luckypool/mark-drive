@@ -126,6 +126,14 @@ export const en = {
     daysAgo: '{days}d ago',
   },
 
+  // Settings Menu
+  settings: {
+    theme: 'Theme',
+    light: 'Light',
+    dark: 'Dark',
+    language: 'Language',
+  },
+
   // Font Settings
   fontSettings: {
     title: 'Display Settings',
@@ -226,6 +234,12 @@ export type Translations = {
     minutesAgo: string;
     hoursAgo: string;
     daysAgo: string;
+  };
+  settings: {
+    theme: string;
+    light: string;
+    dark: string;
+    language: string;
   };
   fontSettings: {
     title: string;

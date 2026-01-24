@@ -128,6 +128,14 @@ export const ja: Translations = {
     daysAgo: '{days}日前',
   },
 
+  // Settings Menu
+  settings: {
+    theme: 'テーマ',
+    light: 'ライト',
+    dark: 'ダーク',
+    language: '言語',
+  },
+
   // Font Settings
   fontSettings: {
     title: '表示設定',
