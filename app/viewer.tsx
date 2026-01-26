@@ -19,7 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
-import { Card, Button } from '../src/components/ui';
+import { Button } from '../src/components/ui';
 import { MarkdownRenderer } from '../src/components/markdown';
 import { useGoogleAuth, useShare, useTheme, useLanguage } from '../src/hooks';
 import { useFontSettings, FontSize, FontFamily } from '../src/contexts/FontSettingsContext';
@@ -324,9 +324,9 @@ export default function ViewerScreen() {
             ]}
             showsVerticalScrollIndicator={!isFullscreen}
           >
-            <Card style={isFullscreen ? { ...styles.contentCard, ...styles.fullscreenCard } : styles.contentCard}>
+            <View style={isFullscreen ? [styles.contentContainer, styles.fullscreenCard] : styles.contentContainer}>
               <MarkdownRenderer content={content} onLinkPress={handleLinkPress} themeMode={themeMode} />
-            </Card>
+            </View>
           </ScrollView>
         </Pressable>
       ) : (
@@ -594,14 +594,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: spacing.lg,
-    paddingBottom: spacing['2xl'],
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.md,
   },
   fullscreenContent: {
     paddingTop: spacing['2xl'],
   },
-  contentCard: {
-    padding: spacing.lg,
+  contentContainer: {
   },
   fullscreenCard: {
     maxWidth: 900,
