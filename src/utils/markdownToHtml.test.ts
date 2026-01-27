@@ -3,7 +3,7 @@
  * Run with: npx tsx src/utils/markdownToHtml.test.ts
  */
 
-import { markdownToHtml } from './markdownToHtml';
+import { markdownToHtml, PdfFontSettings } from './markdownToHtml';
 
 interface TestCase {
   name: string;
@@ -238,6 +238,108 @@ function hello() {
     expectedContains: ['<pre', '<code>', 'graph TD'], // Fallback in Node.js environment
     expectedNotContains: ['```mermaid'],
   },
+
+  // ==========================================================
+  // PDF display quality tests
+  // These tests verify CSS properties that prevent text overlap,
+  // overflow, and other rendering issues in PDF export.
+  // ==========================================================
+
+  // Table layout constraints
+  {
+    name: 'PDF: Table has table-layout:fixed for width control',
+    input: '| Col1 | Col2 |\n|------|------|\n| A | B |',
+    expectedContains: ['table-layout:fixed'],
+  },
+  {
+    name: 'PDF: Table cells have word-break for long text',
+    input: '| Col1 | Col2 |\n|------|------|\n| A | B |',
+    expectedContains: ['word-break:break-word'],
+  },
+
+  // Code block overflow handling
+  {
+    name: 'PDF: Code block has overflow-wrap for PDF rendering',
+    input: '```js\nconst x = 1;\n```',
+    expectedContains: ['overflow-wrap:break-word', 'white-space:pre-wrap'],
+  },
+
+  // Inline code padding
+  {
+    name: 'PDF: Inline code has sufficient vertical padding',
+    input: 'Use `code` here',
+    expectedContains: ['padding:2px 5px'],
+  },
+
+  // Container-level text wrapping (paragraph)
+  {
+    name: 'PDF: Paragraphs have overflow-wrap for long words',
+    input: 'This is a paragraph with potentially long words.',
+    expectedContains: ['overflow-wrap:break-word'],
+  },
+
+  // Heading line-height
+  {
+    name: 'PDF: H1 has explicit line-height',
+    input: '# Heading',
+    expectedContains: ['line-height:'],
+  },
+  {
+    name: 'PDF: H2 has explicit line-height',
+    input: '## Heading',
+    expectedContains: ['line-height:'],
+  },
+];
+
+// ==========================================================
+// Font size constraint tests
+// Verify minimum font sizes to prevent unreadable PDF output
+// ==========================================================
+
+interface FontSizeTest {
+  name: string;
+  fontSettings: PdfFontSettings;
+  element: string;
+  input: string;
+  minFontSize: number;
+}
+
+const fontSizeTests: FontSizeTest[] = [
+  {
+    name: 'Font: Base body text >= 9px (small)',
+    fontSettings: { fontSize: 'small', fontFamily: 'system' },
+    element: 'p',
+    input: 'Body text paragraph.',
+    minFontSize: 9,
+  },
+  {
+    name: 'Font: Code block text >= 8px (small)',
+    fontSettings: { fontSize: 'small', fontFamily: 'system' },
+    element: 'pre',
+    input: '```js\ncode\n```',
+    minFontSize: 8,
+  },
+  {
+    name: 'Font: Table text >= 8px (small)',
+    fontSettings: { fontSize: 'small', fontFamily: 'system' },
+    element: 'td',
+    input: '| A | B |\n|---|---|\n| 1 | 2 |',
+    minFontSize: 8,
+  },
+  {
+    name: 'Font: H6 heading >= 9px (small)',
+    fontSettings: { fontSize: 'small', fontFamily: 'system' },
+    element: 'h6',
+    input: '###### Small heading',
+    minFontSize: 9,
+  },
+  {
+    name: 'Font: Inline code >= 8px (small)',
+    fontSettings: { fontSize: 'small', fontFamily: 'system' },
+    element: 'code',
+    input: 'Use `snippet` here',
+    minFontSize: 8,
+  },
 ];
 
 async function runTests(): Promise<void> {
@@ -246,6 +348,9 @@ async function runTests(): Promise<void> {
   const failures: { name: string; error: string; html: string }[] = [];
 
   console.log('Running markdownToHtml tests...\n');
+
+  // --- Existing HTML content tests ---
+  console.log('--- HTML Content Tests ---\n');
 
   for (const testCase of testCases) {
     const html = await markdownToHtml(testCase.input);
@@ -277,6 +382,42 @@ async function runTests(): Promise<void> {
       console.log(`✗ ${testCase.name}`);
       errorMessages.forEach((msg) => console.log(`  ${msg}`));
       failures.push({ name: testCase.name, error: errorMessages.join('; '), html });
+      failed++;
+    }
+  }
+
+  // --- Font size constraint tests ---
+  console.log('\n--- Font Size Constraint Tests ---\n');
+
+  for (const test of fontSizeTests) {
+    const html = await markdownToHtml(test.input, test.fontSettings);
+    let testPassed = true;
+    let errorMessages: string[] = [];
+
+    // Extract font-size values from the target element
+    const fontSizeRegex = new RegExp(`<${test.element}[^>]*font-size:(\\d+)px`, 'g');
+    const matches = [...html.matchAll(fontSizeRegex)];
+
+    if (matches.length === 0) {
+      testPassed = false;
+      errorMessages.push(`No font-size found on <${test.element}> element`);
+    } else {
+      for (const match of matches) {
+        const size = parseInt(match[1], 10);
+        if (size < test.minFontSize) {
+          testPassed = false;
+          errorMessages.push(`font-size ${size}px < minimum ${test.minFontSize}px`);
+        }
+      }
+    }
+
+    if (testPassed) {
+      console.log(`✓ ${test.name}`);
+      passed++;
+    } else {
+      console.log(`✗ ${test.name}`);
+      errorMessages.forEach((msg) => console.log(`  ${msg}`));
+      failures.push({ name: test.name, error: errorMessages.join('; '), html });
       failed++;
     }
   }
