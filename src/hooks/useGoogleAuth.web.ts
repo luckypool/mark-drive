@@ -24,6 +24,7 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 // ストレージのキー
 const TOKEN_KEY = 'googleDriveAccessToken';
 const TOKEN_EXPIRY_KEY = 'googleDriveTokenExpiry';
+const OAUTH_STATE_KEY = 'oauth_state';
 
 // Google API の型定義
 declare global {
@@ -50,7 +51,7 @@ declare global {
 }
 
 interface TokenClient {
-  requestAccessToken: (options?: { prompt?: string }) => void;
+  requestAccessToken: (options?: { prompt?: string; state?: string }) => void;
   callback: (response: TokenResponse) => void;
 }
 
@@ -58,6 +59,7 @@ interface TokenResponse {
   access_token: string;
   error?: string;
   expires_in?: number;
+  state?: string;
 }
 
 export interface UseGoogleAuthReturn {
@@ -222,7 +224,20 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     }
 
     if (tokenClientRef.current) {
+      // CSRF対策: state パラメータを生成して保存
+      const state = crypto.randomUUID();
+      sessionStorage.setItem(OAUTH_STATE_KEY, state);
+
       tokenClientRef.current.callback = async (response: TokenResponse) => {
+        // state パラメータを検証
+        const expectedState = sessionStorage.getItem(OAUTH_STATE_KEY);
+        sessionStorage.removeItem(OAUTH_STATE_KEY);
+
+        if (response.state !== expectedState) {
+          setError('Authentication failed: invalid state parameter');
+          return;
+        }
+
         if (response.error) {
           setError(`Authentication error: ${response.error}`);
           return;
@@ -234,7 +249,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         const info = await fetchUserInfo(response.access_token);
         if (info) setUserInfo(info);
       };
-      tokenClientRef.current.requestAccessToken({ prompt: '' });
+      tokenClientRef.current.requestAccessToken({ prompt: '', state });
     }
   }, [isApiLoaded]);
 
