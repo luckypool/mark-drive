@@ -16,7 +16,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight, shadows } from '../src/theme';
 import { Button, LoadingSpinner, FAB } from '../src/components/ui';
@@ -321,13 +321,13 @@ export default function HomeScreen() {
 
             {/* Footer Legal Links */}
             <View style={styles.footerLegal}>
-              <TouchableOpacity onPress={() => router.push('/privacy')}>
-                <Text style={[styles.footerLegalText, { color: colors.textMuted }]}>{t.about.viewPrivacy}</Text>
-              </TouchableOpacity>
+              <Link href="/privacy" style={[styles.footerLegalText, { color: colors.textMuted }]}>
+                {t.about.viewPrivacy}
+              </Link>
               <Text style={[styles.footerLegalSeparator, { color: colors.textMuted }]}>|</Text>
-              <TouchableOpacity onPress={() => router.push('/terms')}>
-                <Text style={[styles.footerLegalText, { color: colors.textMuted }]}>{t.about.viewTerms}</Text>
-              </TouchableOpacity>
+              <Link href="/terms" style={[styles.footerLegalText, { color: colors.textMuted }]}>
+                {t.about.viewTerms}
+              </Link>
             </View>
           </View>
         ) : (
