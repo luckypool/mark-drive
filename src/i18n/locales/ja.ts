@@ -234,7 +234,7 @@ export const ja: Translations = {
         },
         notCollect: {
           title: '3. 収集しない情報',
-          body: '以下の情報は収集、保存、送信しません。\n\n• Markdownファイルの内容\n• 個人情報やプロフィールデータ\n• アナリティクスや使用状況のトラッキングデータ\n• トラッキング目的のCookie\n• 外部サーバーへのいかなるデータ',
+          body: '以下の情報は収集、保存、送信しません。\n\n• Markdownファイルの内容\n• 個人情報やプロフィールデータ\n• Google Driveのファイル名やファイルID\n\nなお、サービス改善のためGoogle Analyticsを使用し、ページビュー、おおよその地域情報、デバイス・ブラウザの種類などの匿名データを収集しています。',
         },
         google: {
           title: '4. Google APIの利用',
@@ -242,11 +242,11 @@ export const ja: Translations = {
         },
         storage: {
           title: '5. データの保存',
-          body: 'すべてのデータはブラウザのlocalStorageにのみ保存されます。データが外部サーバーに送信または保存されることはありません。ブラウザのローカルストレージをクリアするか、本サービスからサインアウトすることで、いつでも保存されたすべてのデータを削除できます。',
+          body: 'ユーザー設定等のデータはブラウザのlocalStorageにのみ保存されます。ブラウザのローカルストレージをクリアするか、本サービスからサインアウトすることで、いつでも保存されたデータを削除できます。なお、Google Analyticsはアクセス解析のためにCookieを使用します。Cookieはブラウザの設定から削除・無効化できます。',
         },
         thirdParty: {
           title: '6. サードパーティサービス',
-          body: '本サービスはファイルアクセスのためにGoogle Drive APIと連携しています。Googleでサインインすると、認証はGoogleのIdentity Servicesによって直接処理されます。Googleがお客様のデータをどのように取り扱うかについては、Googleのプライバシーポリシーをご確認ください。',
+          body: '本サービスはファイルアクセスのためにGoogle Drive APIと連携しています。Googleでサインインすると、認証はGoogleのIdentity Servicesによって直接処理されます。また、サービス改善のためGoogle Analyticsを使用しており、匿名のアクセスデータがGoogleに送信されます。Google Analyticsのオプトアウトをご希望の場合は、Google Analytics オプトアウトアドオンをご利用ください。Googleがお客様のデータをどのように取り扱うかについては、Googleのプライバシーポリシーをご確認ください。',
         },
         children: {
           title: '7. お子様のプライバシー',

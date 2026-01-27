@@ -232,7 +232,7 @@ export const en = {
         },
         notCollect: {
           title: '3. Information We Do Not Collect',
-          body: 'We do not collect, store, or transmit:\n\n• Contents of your Markdown files\n• Personal information or profile data\n• Analytics or usage tracking data\n• Cookies for tracking purposes\n• Any data to external servers',
+          body: 'We do not collect, store, or transmit:\n\n• Contents of your Markdown files\n• Personal information or profile data\n• Google Drive file names or file IDs\n\nHowever, we use Google Analytics to collect anonymous usage data such as page views, approximate geographic location, and device/browser type for service improvement.',
         },
         google: {
           title: '4. Google API Usage',
@@ -240,11 +240,11 @@ export const en = {
         },
         storage: {
           title: '5. Data Storage',
-          body: 'All data is stored exclusively in your browser\'s localStorage. No data is transmitted to or stored on external servers. You can clear all stored data at any time by clearing your browser\'s local storage or signing out of the Service.',
+          body: 'User preferences and settings are stored exclusively in your browser\'s localStorage. You can clear all stored data at any time by clearing your browser\'s local storage or signing out of the Service. Google Analytics uses cookies for usage analysis. You can delete or disable cookies through your browser settings.',
         },
         thirdParty: {
           title: '6. Third-Party Services',
-          body: 'The Service integrates with Google Drive API for file access. When you sign in with Google, your authentication is handled directly by Google\'s Identity Services. We recommend reviewing Google\'s Privacy Policy for information about how Google handles your data.',
+          body: 'The Service integrates with Google Drive API for file access. When you sign in with Google, your authentication is handled directly by Google\'s Identity Services. We also use Google Analytics to collect anonymous usage data for service improvement. To opt out of Google Analytics, you can use the Google Analytics Opt-out Browser Add-on. We recommend reviewing Google\'s Privacy Policy for information about how Google handles your data.',
         },
         children: {
           title: '7. Children\'s Privacy',
