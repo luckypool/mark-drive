@@ -115,7 +115,7 @@ export const en = {
     },
     privacy: 'Privacy & Security',
     privacyDesc:
-      'MD Viewer only requests read-only access to your Google Drive files. Your documents are never stored on our servers - they are fetched directly from Google Drive and rendered in your browser. Your authentication tokens are stored securely in your browser\'s local storage.',
+      'MD Viewer only requests read-only access to your Google Drive files. Your documents are never stored on our servers - they are fetched directly from Google Drive and rendered in your browser. We use Google Analytics to collect anonymous usage data for service improvement.',
     license: 'License',
     licenseDesc: 'MD Viewer is open source software released under the MIT License.',
     viewLicense: 'View License',

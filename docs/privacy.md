@@ -36,9 +36,9 @@ MD Viewer は**完全にクライアントサイドで動作**します。
 
 ### サーバーに送信されるデータ
 
-**なし**
+MD Viewer のホスティングサーバー（Vercel）にはアプリケーションコードのみが配置されており、ユーザーデータは送信されません。
 
-MD Viewer のホスティングサーバー（Vercel）にはアプリケーションコードのみが配置されています。ユーザーデータは一切送信されません。
+ただし、アクセス解析のために Google Analytics へ匿名の利用データ（ページビュー、デバイス情報等）が送信されます。詳細は「サードパーティサービス > アクセス解析」を参照してください。
 
 ### Google に送信されるデータ
 
@@ -142,6 +142,25 @@ MD Viewer は Google の以下のサービスを使用します:
 |---------|------|---------------------|
 | Google Identity Services | OAuth 認証 | [Google プライバシーポリシー](https://policies.google.com/privacy) |
 | Google Drive API | ファイル検索・取得 | [Google Drive 利用規約](https://www.google.com/drive/terms-of-service/) |
+
+### アクセス解析
+
+| サービス | 用途 | プライバシーポリシー |
+|---------|------|---------------------|
+| Google Analytics | アクセス解析（ページビュー等） | [Google プライバシーポリシー](https://policies.google.com/privacy) |
+
+MD Viewer はサービス改善のために Google Analytics を使用し、以下の匿名データを収集します:
+
+- ページビュー
+- おおよその地域情報
+- デバイス・ブラウザの種類
+
+**収集しないデータ:**
+- ファイル内容
+- Google Drive のファイル名・ファイル ID
+- 個人を特定できる情報
+
+> Google Analytics はブラウザの Cookie を使用します。Cookie の使用を望まない場合は、ブラウザの設定で無効にするか、[Google Analytics オプトアウトアドオン](https://tools.google.com/dlpage/gaoptout)をご利用ください。
 
 ### ホスティング
 
