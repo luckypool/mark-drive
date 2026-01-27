@@ -173,4 +173,12 @@ export const ja: Translations = {
     local: 'ローカルファイル',
     exportPdf: 'PDF出力',
   },
+
+  // Add to Home Screen
+  addToHomeScreen: {
+    title: 'ホーム画面に追加',
+    description: 'MD Viewerをホーム画面に追加してすばやくアクセス',
+    instruction: '{shareIcon} をタップして「ホーム画面に追加」を選択',
+    dismiss: '今はしない',
+  },
 };

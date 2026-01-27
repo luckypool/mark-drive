@@ -171,6 +171,14 @@ export const en = {
     local: 'Local File',
     exportPdf: 'Export PDF',
   },
+
+  // Add to Home Screen
+  addToHomeScreen: {
+    title: 'Add to Home Screen',
+    description: 'Install MD Viewer for quick access',
+    instruction: 'Tap {shareIcon} then "Add to Home Screen"',
+    dismiss: 'Not now',
+  },
 };
 
 export type Translations = {
@@ -295,5 +303,11 @@ export type Translations = {
     googleDrive: string;
     local: string;
     exportPdf: string;
+  };
+  addToHomeScreen: {
+    title: string;
+    description: string;
+    instruction: string;
+    dismiss: string;
   };
 };

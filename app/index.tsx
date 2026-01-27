@@ -20,6 +20,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight, shadows } from '../src/theme';
 import { Button, LoadingSpinner, FAB } from '../src/components/ui';
+import { AddToHomeScreenBanner } from '../src/components/ui/AddToHomeScreenBanner';
 import { useGoogleAuth, useTheme, useLanguage } from '../src/hooks';
 import { useFilePicker } from '../src/hooks';
 import { useFontSettings, FontSize, FontFamily } from '../src/contexts/FontSettingsContext';
@@ -592,6 +593,9 @@ export default function HomeScreen() {
           icon={<Ionicons name="search" size={24} color="#ffffff" />}
         />
       )}
+
+      {/* Add to Home Screen banner for iOS Safari */}
+      <AddToHomeScreenBanner />
     </SafeAreaView>
   );
 }
