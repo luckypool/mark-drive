@@ -9,6 +9,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -51,14 +52,26 @@ export default function PrivacyScreen() {
             {t.legal.privacy.lastUpdated}
           </Text>
 
-          {Object.values(sections).map((section, index) => (
-            <View key={index} style={styles.section}>
+          {Object.entries(sections).map(([key, section]) => (
+            <View key={key} style={styles.section}>
               <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
                 {section.title}
               </Text>
               <Text style={[styles.sectionBody, { color: colors.textSecondary }]}>
                 {section.body}
               </Text>
+              {'url' in section && section.url && (
+                <TouchableOpacity
+                  style={styles.contactLink}
+                  onPress={() => Linking.openURL(section.url)}
+                >
+                  <Ionicons name="logo-github" size={16} color={colors.accent} />
+                  <Text style={[styles.contactLinkText, { color: colors.accent }]}>
+                    GitHub Issues
+                  </Text>
+                  <Ionicons name="open-outline" size={14} color={colors.accent} />
+                </TouchableOpacity>
+              )}
             </View>
           ))}
         </View>
@@ -124,5 +137,15 @@ const styles = StyleSheet.create({
   sectionBody: {
     fontSize: fontSize.sm,
     lineHeight: fontSize.sm * 1.8,
+  },
+  contactLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.sm,
+  },
+  contactLinkText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.medium,
   },
 });

@@ -215,6 +215,7 @@ export const en = {
         contact: {
           title: '7. Contact',
           body: 'For questions about these Terms of Service, please visit the project\'s GitHub repository.',
+          url: 'https://github.com/luckypool/md-viewer/issues',
         },
       },
     },
@@ -257,6 +258,7 @@ export const en = {
         contact: {
           title: '9. Contact',
           body: 'For questions about this Privacy Policy, please visit the project\'s GitHub repository.',
+          url: 'https://github.com/luckypool/md-viewer/issues',
         },
       },
     },
@@ -405,7 +407,7 @@ export type Translations = {
         intellectual: { title: string; body: string };
         disclaimer: { title: string; body: string };
         changes: { title: string; body: string };
-        contact: { title: string; body: string };
+        contact: { title: string; body: string; url: string };
       };
     };
     privacy: {
@@ -420,7 +422,7 @@ export type Translations = {
         thirdParty: { title: string; body: string };
         children: { title: string; body: string };
         changes: { title: string; body: string };
-        contact: { title: string; body: string };
+        contact: { title: string; body: string; url: string };
       };
     };
   };
