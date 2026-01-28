@@ -217,6 +217,7 @@ export const ja: Translations = {
         contact: {
           title: '7. お問い合わせ',
           body: 'この利用規約に関するご質問は、プロジェクトのGitHubリポジトリをご覧ください。',
+          url: 'https://github.com/luckypool/md-viewer/issues',
         },
       },
     },
@@ -259,6 +260,7 @@ export const ja: Translations = {
         contact: {
           title: '9. お問い合わせ',
           body: 'このプライバシーポリシーに関するご質問は、プロジェクトのGitHubリポジトリをご覧ください。',
+          url: 'https://github.com/luckypool/md-viewer/issues',
         },
       },
     },
