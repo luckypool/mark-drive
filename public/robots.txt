@@ -1,0 +1,14 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /privacy
+Allow: /terms
+Allow: /license
+Allow: /third-party-licenses
+
+# Disallow pages that require authentication
+Disallow: /viewer
+Disallow: /search
+
+Sitemap: https://my-md-viewer.vercel.app/sitemap.xml
