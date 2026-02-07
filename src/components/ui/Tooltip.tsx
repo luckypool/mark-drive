@@ -33,7 +33,7 @@ export function Tooltip({ label, children }: TooltipProps) {
             #${wrapperId}::after {
               content: attr(data-tooltip);
               position: absolute;
-              bottom: calc(100% + 6px);
+              top: calc(100% + 6px);
               left: 50%;
               transform: translateX(-50%);
               padding: 4px 10px;
