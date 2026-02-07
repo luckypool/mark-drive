@@ -1,19 +1,19 @@
 /**
- * Dark Emerald Theme - Color definitions
+ * Dark Indigo Theme - Color definitions
  * CSS変数を JS オブジェクトに変換
  */
 
 export const colors = {
   // Background colors
-  bgPrimary: '#0a0f0d',
-  bgSecondary: '#111915',
-  bgTertiary: '#1a2420',
-  bgCard: '#0d1411',
+  bgPrimary: '#0a0b14',
+  bgSecondary: '#111320',
+  bgTertiary: '#1a1d2e',
+  bgCard: '#0d0e18',
 
   // Accent colors
-  accent: '#10b981',
-  accentHover: '#34d399',
-  accentMuted: 'rgba(16, 185, 129, 0.15)',
+  accent: '#6366f1',
+  accentHover: '#818cf8',
+  accentMuted: 'rgba(99, 102, 241, 0.15)',
 
   // Text colors
   textPrimary: '#e2e8f0',
@@ -21,8 +21,8 @@ export const colors = {
   textMuted: '#64748b',
 
   // Border colors
-  border: '#1e2e28',
-  borderLight: 'rgba(16, 185, 129, 0.2)',
+  border: '#1e2038',
+  borderLight: 'rgba(99, 102, 241, 0.2)',
 
   // Status colors
   error: '#f87171',

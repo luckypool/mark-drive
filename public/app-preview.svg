@@ -33,13 +33,13 @@
   <text x="40" y="250" font-family="system-ui, sans-serif" font-size="18" font-weight="600" fill="#e2e8f0">## Features</text>
 
   <!-- List items -->
-  <circle cx="50" cy="285" r="3" fill="#10b981"/>
+  <circle cx="50" cy="285" r="3" fill="#6366f1"/>
   <text x="65" y="290" font-family="system-ui, sans-serif" font-size="14" fill="#94a3b8">Google Drive integration</text>
 
-  <circle cx="50" cy="315" r="3" fill="#10b981"/>
+  <circle cx="50" cy="315" r="3" fill="#6366f1"/>
   <text x="65" y="320" font-family="system-ui, sans-serif" font-size="14" fill="#94a3b8">Beautiful syntax highlighting</text>
 
-  <circle cx="50" cy="345" r="3" fill="#10b981"/>
+  <circle cx="50" cy="345" r="3" fill="#6366f1"/>
   <text x="65" y="350" font-family="system-ui, sans-serif" font-size="14" fill="#94a3b8">Mermaid diagram support</text>
 
   <!-- Code Block -->

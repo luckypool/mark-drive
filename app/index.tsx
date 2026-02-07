@@ -220,63 +220,74 @@ export default function HomeScreen() {
         {/* Landing Page for Non-authenticated Users */}
         {!isAuthenticated ? (
           <View style={styles.landingContainer}>
-            {/* Section 1: Hero */}
-            <View style={styles.heroSection}>
-              <Image
-                source={require('../assets/images/icon.png')}
-                style={styles.heroIcon}
-                resizeMode="contain"
-              />
-              <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>{t.home.welcome}</Text>
-              <Text style={[styles.heroSubtitle, { color: colors.textSecondary }]}>
-                {t.home.subtitle}
-              </Text>
-              <Text style={[styles.heroTagline, { color: colors.textMuted }]}>
-                {t.home.tagline}
-              </Text>
+            {/* Section 1: Hero + Preview (2-column on desktop) */}
+            <View style={[styles.heroRow, windowWidth >= 768 ? styles.heroRowDesktop : styles.heroRowMobile]}>
+              {/* Left: Text content */}
+              <View style={[styles.heroLeft, windowWidth >= 768 ? styles.heroLeftDesktop : styles.heroLeftMobile]}>
+                {/* Logo row */}
+                <View style={styles.heroLogoRow}>
+                  <Image
+                    source={require('../assets/images/icon.png')}
+                    style={styles.heroLogoIcon}
+                    resizeMode="contain"
+                  />
+                  <Text style={[styles.heroLogoText, { color: colors.textPrimary }]}>MarkDrive</Text>
+                </View>
 
-              <Button
-                onPress={authenticate}
-                disabled={!isApiLoaded}
-                loading={isLoading}
-                size="lg"
-                style={styles.heroCta}
-                icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
-              >
-                {t.home.signIn}
-              </Button>
+                <Text style={[styles.heroTitle, { color: colors.textPrimary }, windowWidth >= 768 && styles.heroTitleDesktop]}>{t.home.welcome}</Text>
+                <Text style={[styles.heroSubtitle, { color: colors.textSecondary }, windowWidth >= 768 && styles.heroSubtitleDesktop]}>
+                  {t.home.subtitle}
+                </Text>
+                <Text style={[styles.heroTagline, { color: colors.textMuted }, windowWidth >= 768 && styles.heroTaglineDesktop]}>
+                  {t.home.tagline}
+                </Text>
 
-              {/* Privacy Notice */}
-              <View style={[styles.privacyNotice, { backgroundColor: colors.accentMuted, borderColor: colors.accent }]}>
-                <Ionicons name="shield-checkmark-outline" size={20} color={colors.accent} />
-                <View style={styles.privacyContent}>
-                  <Text style={[styles.privacyTitle, { color: colors.accent }]}>
-                    {t.search.privacyTitle}
-                  </Text>
-                  <Text style={[styles.privacyDesc, { color: colors.textSecondary }]}>
-                    {t.search.privacyDesc}
-                  </Text>
+                {/* Tech Chips (moved from techSection) */}
+                <View style={[styles.techChips, windowWidth >= 768 ? styles.techChipsDesktop : null]}>
+                  {['Expo', 'React Native', 'TypeScript', 'Mermaid', 'Google Drive API'].map((chip) => (
+                    <View key={chip} style={[styles.techChip, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}>
+                      <Text style={[styles.techChipText, { color: colors.textSecondary }]}>{chip}</Text>
+                    </View>
+                  ))}
+                </View>
+
+                <Button
+                  onPress={authenticate}
+                  disabled={!isApiLoaded}
+                  loading={isLoading}
+                  size="lg"
+                  style={windowWidth >= 768 ? { ...styles.heroCta, ...styles.heroCtaDesktop } : styles.heroCta}
+                  icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
+                >
+                  {t.home.signIn}
+                </Button>
+
+                {/* Privacy Notice */}
+                <View style={[styles.privacyNotice, { backgroundColor: colors.accentMuted, borderColor: colors.accent }]}>
+                  <Ionicons name="shield-checkmark-outline" size={20} color={colors.accent} />
+                  <View style={styles.privacyContent}>
+                    <Text style={[styles.privacyTitle, { color: colors.accent }]}>
+                      {t.search.privacyTitle}
+                    </Text>
+                    <Text style={[styles.privacyDesc, { color: colors.textSecondary }]}>
+                      {t.search.privacyDesc}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
 
-            {/* Section 2: App Preview */}
-            <View style={styles.previewSection}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-                {t.home.previewTitle}
-              </Text>
-              <View style={[styles.previewContainer, { borderColor: colors.borderLight, ...shadows.md }]}>
-                {Platform.OS === 'web' && (
-                  <img
-                    src={resolvedMode === 'dark' ? '/app-preview.svg' : '/app-preview-light.svg'}
-                    alt="MarkDrive Preview"
-                    style={{ width: '100%', height: 'auto', borderRadius: 8 }}
-                  />
-                )}
+              {/* Right: Preview image */}
+              <View style={styles.heroRight}>
+                <View style={[styles.previewContainer, { borderColor: colors.borderLight, ...shadows.md }]}>
+                  {Platform.OS === 'web' && (
+                    <img
+                      src={resolvedMode === 'dark' ? '/app-preview.svg' : '/app-preview-light.svg'}
+                      alt="MarkDrive Preview"
+                      style={{ width: '100%', height: 'auto', borderRadius: 8 }}
+                    />
+                  )}
+                </View>
               </View>
-              <Text style={[styles.previewCaption, { color: colors.textMuted }]}>
-                {t.home.previewCaption}
-              </Text>
             </View>
 
             {/* Section 3: How it Works */}
@@ -349,18 +360,11 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            {/* Section 5: Stats / Tech */}
+            {/* Section 5: Stats */}
             <View style={styles.techSection}>
               <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
                 {t.home.techTitle}
               </Text>
-              <View style={styles.techChips}>
-                {['Expo', 'React Native', 'TypeScript', 'Mermaid', 'Google Drive API'].map((chip) => (
-                  <View key={chip} style={[styles.techChip, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}>
-                    <Text style={[styles.techChipText, { color: colors.textSecondary }]}>{chip}</Text>
-                  </View>
-                ))}
-              </View>
               <View style={styles.statsRow}>
                 {([
                   t.home.stats.clientSide,
@@ -834,35 +838,75 @@ const styles = StyleSheet.create({
   // Landing Page
   landingContainer: {
     flex: 1,
-    maxWidth: 720,
+    maxWidth: 1080,
     alignSelf: 'center',
     width: '100%',
   },
-  heroSection: {
-    alignItems: 'center',
+  heroRow: {
     paddingVertical: spacing.xl,
+    gap: spacing.xl,
   },
-  heroIcon: {
-    width: 120,
-    height: 120,
-    borderRadius: borderRadius.xl,
+  heroRowDesktop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  heroRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  heroLeft: {
+    gap: spacing.xs,
+  },
+  heroLeftDesktop: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  heroLeftMobile: {
+    alignItems: 'center',
+  },
+  heroRight: {
+    flex: 1,
+    width: '100%',
+  },
+  heroLogoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginBottom: spacing.md,
+  },
+  heroLogoIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: borderRadius.lg,
+  },
+  heroLogoText: {
+    fontSize: fontSize['2xl'],
+    fontWeight: fontWeight.bold,
   },
   heroTitle: {
     fontSize: fontSize['3xl'],
     fontWeight: fontWeight.bold,
-    marginTop: spacing.lg,
     marginBottom: spacing.sm,
     textAlign: 'center',
+  },
+  heroTitleDesktop: {
+    textAlign: 'left',
   },
   heroSubtitle: {
     fontSize: fontSize.lg,
     textAlign: 'center',
     lineHeight: fontSize.lg * 1.5,
   },
+  heroSubtitleDesktop: {
+    textAlign: 'left',
+  },
   heroTagline: {
     fontSize: fontSize.sm,
     textAlign: 'center',
     marginTop: spacing.sm,
+  },
+  heroTaglineDesktop: {
+    textAlign: 'left',
   },
 
   // Section Title (shared)
@@ -874,10 +918,6 @@ const styles = StyleSheet.create({
   },
 
   // App Preview
-  previewSection: {
-    marginTop: spacing['2xl'],
-    alignItems: 'center',
-  },
   previewContainer: {
     width: '100%',
     borderRadius: borderRadius.xl,
@@ -885,12 +925,6 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     overflow: 'hidden',
   },
-  previewCaption: {
-    fontSize: fontSize.sm,
-    textAlign: 'center',
-    marginTop: spacing.sm,
-  },
-
   // How it Works
   howItWorksSection: {
     marginTop: spacing['2xl'],
@@ -998,7 +1032,10 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     gap: spacing.sm,
-    marginBottom: spacing.lg,
+    marginTop: spacing.md,
+  },
+  techChipsDesktop: {
+    justifyContent: 'flex-start',
   },
   techChip: {
     paddingHorizontal: spacing.md,
@@ -1064,6 +1101,9 @@ const styles = StyleSheet.create({
   // Hero CTA
   heroCta: {
     marginTop: spacing.xl,
+  },
+  heroCtaDesktop: {
+    alignSelf: 'flex-start',
   },
 
   // Divider (shared)

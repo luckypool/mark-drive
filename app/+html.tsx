@@ -17,7 +17,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="title" content="MarkDrive - Beautiful Markdown Viewer for Google Drive" />
         <meta name="description" content="A privacy-first Markdown viewer for Google Drive. Syntax highlighting, Mermaid diagrams, PDF export — all rendered in your browser with zero server storage. Free and open source." />
         <meta name="author" content="luckypool" />
-        <meta name="theme-color" content="#10b981" />
+        <meta name="theme-color" content="#6366f1" />
         <link rel="canonical" href="https://mark-drive.com/" />
 
         {/* Open Graph / Facebook */}
@@ -69,6 +69,6 @@ body {
 }
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: #000;
+    background-color: #0a0b14;
   }
 }`;

@@ -26,20 +26,20 @@ const initializeMermaid = (mode: ThemeMode) => {
     theme: isDark ? 'dark' : 'default',
     themeVariables: isDark
       ? {
-          primaryColor: '#10b981',
+          primaryColor: '#6366f1',
           primaryTextColor: '#e2e8f0',
-          primaryBorderColor: '#1e2e28',
+          primaryBorderColor: '#1e2038',
           lineColor: '#64748b',
-          secondaryColor: '#1a2420',
-          tertiaryColor: '#111915',
+          secondaryColor: '#1a1d2e',
+          tertiaryColor: '#111320',
         }
       : {
-          primaryColor: '#10b981',
-          primaryTextColor: '#1a2e25',
+          primaryColor: '#6366f1',
+          primaryTextColor: '#1a1b2e',
           primaryBorderColor: '#e5e7eb',
           lineColor: '#6b7280',
-          secondaryColor: '#f0f4f3',
-          tertiaryColor: '#f8faf9',
+          secondaryColor: '#f0f0f8',
+          tertiaryColor: '#f8f8fd',
         },
   });
 };

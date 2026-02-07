@@ -6,23 +6,23 @@
 export const lightColors = {
   // Background colors
   bgPrimary: '#ffffff',
-  bgSecondary: '#f8faf9',
-  bgTertiary: '#f0f4f3',
+  bgSecondary: '#f8f8fd',
+  bgTertiary: '#f0f0f8',
   bgCard: '#ffffff',
 
   // Accent colors (same as dark theme for brand consistency)
-  accent: '#10b981',
-  accentHover: '#059669',
-  accentMuted: 'rgba(16, 185, 129, 0.12)',
+  accent: '#6366f1',
+  accentHover: '#4f46e5',
+  accentMuted: 'rgba(99, 102, 241, 0.12)',
 
   // Text colors
-  textPrimary: '#1a2e25',
+  textPrimary: '#1a1b2e',
   textSecondary: '#4b5563',
   textMuted: '#6b7280',
 
   // Border colors
   border: '#e5e7eb',
-  borderLight: 'rgba(16, 185, 129, 0.25)',
+  borderLight: 'rgba(99, 102, 241, 0.25)',
 
   // Status colors
   error: '#dc2626',
