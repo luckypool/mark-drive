@@ -50,6 +50,9 @@ export const en = {
     unsavedChanges: 'You have unsaved changes. Discard them?',
     save: 'Save',
     reauthRequired: 'Please sign out and sign in again to enable editing',
+    linesCount: '{lines} lines',
+    charsCount: '{chars} chars',
+    unsavedLabel: 'Unsaved changes',
   },
 
   // Search Screen
@@ -309,6 +312,9 @@ export type Translations = {
     unsavedChanges: string;
     save: string;
     reauthRequired: string;
+    linesCount: string;
+    charsCount: string;
+    unsavedLabel: string;
   };
   search: {
     placeholder: string;
