@@ -1,6 +1,6 @@
 # セットアップガイド
 
-MD Viewer の開発環境セットアップと Google Cloud Console の設定方法について説明します。
+MarkDrive の開発環境セットアップと Google Cloud Console の設定方法について説明します。
 
 ## 前提条件
 
@@ -13,8 +13,8 @@ MD Viewer の開発環境セットアップと Google Cloud Console の設定方
 ### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/luckypool/md-viewer.git
-cd md-viewer
+git clone https://github.com/luckypool/mark-drive.git
+cd mark-drive
 ```
 
 ### 2. 依存パッケージのインストール
@@ -45,7 +45,7 @@ Google Drive からファイルを読み込むには、Google Cloud Console で�
 
 1. [Google Cloud Console](https://console.cloud.google.com/) にアクセス
 2. 「プロジェクトを選択」→「新しいプロジェクト」をクリック
-3. プロジェクト名を入力（例: `md-viewer`）
+3. プロジェクト名を入力（例: `mark-drive`）
 4. 「作成」をクリック
 
 ### 2. Google Drive API の有効化
@@ -62,7 +62,7 @@ Google Drive からファイルを読み込むには、Google Cloud Console で�
    - **Internal**: Google Workspace 組織内のみの場合
 3. 「作成」をクリック
 4. アプリ情報を入力:
-   - アプリ名: `MD Viewer`
+   - アプリ名: `MarkDrive`
    - ユーザーサポートメール: あなたのメールアドレス
    - デベロッパーの連絡先情報: あなたのメールアドレス
 5. 「保存して次へ」をクリック
@@ -78,7 +78,7 @@ Google Drive からファイルを読み込むには、Google Cloud Console で�
 1. 「APIとサービス」→「認証情報」に移動
 2. 「認証情報を作成」→「OAuth クライアント ID」を選択
 3. **アプリケーションの種類**: 「ウェブ アプリケーション」を選択
-4. **名前**: `MD Viewer Web Client`
+4. **名前**: `MarkDrive Web Client`
 5. **承認済みの JavaScript 生成元** を追加:
    - `http://localhost:8081`（開発用）
    - `https://your-domain.vercel.app`（本番用）

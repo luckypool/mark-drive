@@ -1,5 +1,5 @@
 {
-  "name": "md-viewer",
+  "name": "markdrive",
   "main": "expo-router/entry",
   "version": "2.0.0",
   "scripts": {

@@ -1,5 +1,5 @@
 /**
- * MD Viewer - Privacy Policy Screen
+ * MarkDrive - Privacy Policy Screen
  */
 
 import React from 'react';

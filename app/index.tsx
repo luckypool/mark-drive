@@ -1,5 +1,5 @@
 /**
- * MD Viewer - Home Screen
+ * MarkDrive - Home Screen
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -250,7 +250,7 @@ export default function HomeScreen() {
                 {Platform.OS === 'web' && (
                   <img
                     src={themeMode === 'dark' ? '/app-preview.svg' : '/app-preview-light.svg'}
-                    alt="MD Viewer Preview"
+                    alt="MarkDrive Preview"
                     style={{ width: '100%', height: 'auto', borderRadius: 8 }}
                   />
                 )}

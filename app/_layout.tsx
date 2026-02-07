@@ -1,5 +1,5 @@
 /**
- * MD Viewer - Root Layout
+ * MarkDrive - Root Layout
  */
 
 import { Stack } from 'expo-router';

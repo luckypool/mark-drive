@@ -1,5 +1,5 @@
 /**
- * MD Viewer - Search Screen
+ * MarkDrive - Search Screen
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';

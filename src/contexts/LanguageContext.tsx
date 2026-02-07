@@ -14,7 +14,7 @@ export interface LanguageContextValue {
   setLanguage: (lang: Language) => void;
 }
 
-const STORAGE_KEY = 'md-viewer-language-preference';
+const STORAGE_KEY = 'markdrive-language-preference';
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 

@@ -38,7 +38,7 @@ export interface ThemeContextValue {
   setTheme: (mode: ThemeMode) => void;
 }
 
-const STORAGE_KEY = 'md-viewer-theme-preference';
+const STORAGE_KEY = 'markdrive-theme-preference';
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 

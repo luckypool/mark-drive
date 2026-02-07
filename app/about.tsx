@@ -1,5 +1,5 @@
 /**
- * MD Viewer - About Screen
+ * MarkDrive - About Screen
  */
 
 import React from 'react';

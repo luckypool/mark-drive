@@ -8,7 +8,7 @@ import { storage } from './storage';
 
 const DEFAULT_CONFIG: FileHistoryConfig = {
   maxItems: 10,
-  storageKey: 'md-viewer-file-history',
+  storageKey: 'markdrive-file-history',
 };
 
 /**

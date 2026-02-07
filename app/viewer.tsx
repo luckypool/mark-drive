@@ -1,5 +1,5 @@
 /**
- * MD Viewer - Viewer Screen
+ * MarkDrive - Viewer Screen
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';

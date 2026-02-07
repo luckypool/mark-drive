@@ -36,7 +36,7 @@ interface FontSettingsContextType {
   getFontStack: () => string;
 }
 
-const STORAGE_KEY = 'md-viewer-font-settings';
+const STORAGE_KEY = 'markdrive-font-settings';
 
 const defaultSettings: FontSettings = {
   fontSize: 'medium',

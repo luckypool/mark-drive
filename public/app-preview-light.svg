@@ -25,7 +25,7 @@
 
   <!-- Markdown Content -->
   <!-- H1 -->
-  <text x="40" y="160" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#111827"># Welcome to MD Viewer</text>
+  <text x="40" y="160" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#111827"># Welcome to MarkDrive</text>
 
   <!-- Paragraph -->
   <text x="40" y="200" font-family="system-ui, sans-serif" font-size="14" fill="#4b5563">A beautiful Markdown viewer for Google Drive files.</text>

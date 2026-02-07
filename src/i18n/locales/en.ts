@@ -5,7 +5,7 @@
 export const en = {
   // Home Screen
   home: {
-    welcome: 'Welcome to MD Viewer',
+    welcome: 'Welcome to MarkDrive',
     subtitle: 'A beautiful Markdown viewer for\nGoogle Drive',
     feature: {
       drive: {
@@ -24,11 +24,11 @@ export const en = {
     signIn: 'Sign in with Google',
     or: 'or',
     openLocal: 'Open Local File',
-    learnMore: 'Learn more about MD Viewer',
+    learnMore: 'Learn more about MarkDrive',
     searchPlaceholder: 'Search Google Drive...',
     recentFiles: 'Recent Files',
     clear: 'Clear',
-    about: 'About MD Viewer',
+    about: 'About MarkDrive',
     signOut: 'Sign Out',
   },
 
@@ -73,12 +73,12 @@ export const en = {
 
   // About Screen
   about: {
-    title: 'About MD Viewer',
-    appName: 'MD Viewer',
+    title: 'About MarkDrive',
+    appName: 'MarkDrive',
     version: 'Version {version}',
-    whatIs: 'What is MD Viewer?',
+    whatIs: 'What is MarkDrive?',
     description:
-      'MD Viewer is a web application that beautifully renders Markdown files stored in your Google Drive. It provides a seamless reading experience with syntax highlighting, diagram support, and PDF export capabilities.',
+      'MarkDrive is a web application that beautifully renders Markdown files stored in your Google Drive. It provides a seamless reading experience with syntax highlighting, diagram support, and PDF export capabilities.',
     features: 'Features',
     feature: {
       drive: {
@@ -123,9 +123,9 @@ export const en = {
     },
     privacy: 'Privacy & Security',
     privacyDesc:
-      'MD Viewer only requests read-only access to your Google Drive files. Your documents are never stored on our servers - they are fetched directly from Google Drive and rendered in your browser. We use Google Analytics to collect anonymous usage data for service improvement.',
+      'MarkDrive only requests read-only access to your Google Drive files. Your documents are never stored on our servers - they are fetched directly from Google Drive and rendered in your browser. We use Google Analytics to collect anonymous usage data for service improvement.',
     license: 'License',
-    licenseDesc: 'MD Viewer is open source software released under the MIT License.',
+    licenseDesc: 'MarkDrive is open source software released under the MIT License.',
     viewLicense: 'View License',
     thirdPartyLicenses: 'Third-Party Licenses',
     thirdPartyDesc: 'This application uses the following open source libraries.',
@@ -185,7 +185,7 @@ export const en = {
   // Add to Home Screen
   addToHomeScreen: {
     title: 'Add to Home Screen',
-    description: 'Install MD Viewer for quick access',
+    description: 'Install MarkDrive for quick access',
     instruction: 'Tap {shareIcon} then "Add to Home Screen"',
     dismiss: 'Not now',
   },
@@ -198,11 +198,11 @@ export const en = {
       sections: {
         acceptance: {
           title: '1. Acceptance of Terms',
-          body: 'By accessing or using MD Viewer ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.',
+          body: 'By accessing or using MarkDrive ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.',
         },
         description: {
           title: '2. Description of Service',
-          body: 'MD Viewer is a web-based Markdown file viewer that renders Markdown files stored in Google Drive or on your local device. The Service operates entirely within your browser and does not store any of your files or data on external servers.',
+          body: 'MarkDrive is a web-based Markdown file viewer that renders Markdown files stored in Google Drive or on your local device. The Service operates entirely within your browser and does not store any of your files or data on external servers.',
         },
         googleApi: {
           title: '3. Google API Usage',
@@ -210,7 +210,7 @@ export const en = {
         },
         intellectual: {
           title: '4. Intellectual Property',
-          body: 'MD Viewer is open source software released under the MIT License. Your files and content remain your own property. The Service does not claim any ownership over content you view through it.',
+          body: 'MarkDrive is open source software released under the MIT License. Your files and content remain your own property. The Service does not claim any ownership over content you view through it.',
         },
         disclaimer: {
           title: '5. Disclaimer of Warranties',
@@ -223,7 +223,7 @@ export const en = {
         contact: {
           title: '7. Contact',
           body: 'For questions about these Terms of Service, please visit the project\'s GitHub repository.',
-          url: 'https://github.com/luckypool/md-viewer/issues',
+          url: 'https://github.com/luckypool/mark-drive/issues',
         },
       },
     },
@@ -233,7 +233,7 @@ export const en = {
       sections: {
         intro: {
           title: '1. Introduction',
-          body: 'This Privacy Policy explains how MD Viewer ("the Service") handles your information. We are committed to protecting your privacy and being transparent about our data practices.',
+          body: 'This Privacy Policy explains how MarkDrive ("the Service") handles your information. We are committed to protecting your privacy and being transparent about our data practices.',
         },
         collect: {
           title: '2. Information We Store',
@@ -266,7 +266,7 @@ export const en = {
         contact: {
           title: '9. Contact',
           body: 'For questions about this Privacy Policy, please visit the project\'s GitHub repository.',
-          url: 'https://github.com/luckypool/md-viewer/issues',
+          url: 'https://github.com/luckypool/mark-drive/issues',
         },
       },
     },

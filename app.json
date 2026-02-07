@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "MD Viewer",
-    "slug": "md-viewer-expo",
+    "name": "MarkDrive",
+    "slug": "markdrive-expo",
     "version": "1.0.0",
     "icon": "./assets/images/icon.png",
-    "scheme": "mdviewer",
+    "scheme": "markdrive",
     "userInterfaceStyle": "dark",
     "web": {
       "bundler": "metro",

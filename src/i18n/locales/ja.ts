@@ -7,7 +7,7 @@ import type { Translations } from './en';
 export const ja: Translations = {
   // Home Screen
   home: {
-    welcome: 'MD Viewerへようこそ',
+    welcome: 'MarkDriveへようこそ',
     subtitle: 'Google Drive用\nMarkdownビューア',
     feature: {
       drive: {
@@ -26,11 +26,11 @@ export const ja: Translations = {
     signIn: 'Googleでサインイン',
     or: 'または',
     openLocal: 'ローカルファイルを開く',
-    learnMore: 'MD Viewerについて詳しく',
+    learnMore: 'MarkDriveについて詳しく',
     searchPlaceholder: 'Google Driveを検索...',
     recentFiles: '最近のファイル',
     clear: 'クリア',
-    about: 'MD Viewerについて',
+    about: 'MarkDriveについて',
     signOut: 'サインアウト',
   },
 
@@ -75,12 +75,12 @@ export const ja: Translations = {
 
   // About Screen
   about: {
-    title: 'MD Viewerについて',
-    appName: 'MD Viewer',
+    title: 'MarkDriveについて',
+    appName: 'MarkDrive',
     version: 'バージョン {version}',
-    whatIs: 'MD Viewerとは？',
+    whatIs: 'MarkDriveとは？',
     description:
-      'MD ViewerはGoogle Driveに保存されたMarkdownファイルを美しく表示するWebアプリケーションです。シンタックスハイライト、図表サポート、PDF出力機能により、快適な閲覧体験を提供します。',
+      'MarkDriveはGoogle Driveに保存されたMarkdownファイルを美しく表示するWebアプリケーションです。シンタックスハイライト、図表サポート、PDF出力機能により、快適な閲覧体験を提供します。',
     features: '機能',
     feature: {
       drive: {
@@ -125,9 +125,9 @@ export const ja: Translations = {
     },
     privacy: 'プライバシーとセキュリティ',
     privacyDesc:
-      'MD ViewerはGoogle Driveファイルへの読み取り専用アクセスのみを要求します。ドキュメントは当社のサーバーに保存されることはなく、Google Driveから直接取得してブラウザでレンダリングされます。サービス改善のためGoogle Analyticsによる匿名のアクセス解析を行っています。',
+      'MarkDriveはGoogle Driveファイルへの読み取り専用アクセスのみを要求します。ドキュメントは当社のサーバーに保存されることはなく、Google Driveから直接取得してブラウザでレンダリングされます。サービス改善のためGoogle Analyticsによる匿名のアクセス解析を行っています。',
     license: 'ライセンス',
-    licenseDesc: 'MD ViewerはMITライセンスの下で公開されているオープンソースソフトウェアです。',
+    licenseDesc: 'MarkDriveはMITライセンスの下で公開されているオープンソースソフトウェアです。',
     viewLicense: 'ライセンスを見る',
     thirdPartyLicenses: 'サードパーティライセンス',
     thirdPartyDesc: 'このアプリケーションは以下のオープンソースライブラリを使用しています。',
@@ -187,7 +187,7 @@ export const ja: Translations = {
   // Add to Home Screen
   addToHomeScreen: {
     title: 'ホーム画面に追加',
-    description: 'MD Viewerをホーム画面に追加してすばやくアクセス',
+    description: 'MarkDriveをホーム画面に追加してすばやくアクセス',
     instruction: '{shareIcon} をタップして「ホーム画面に追加」を選択',
     dismiss: '今はしない',
   },
@@ -200,11 +200,11 @@ export const ja: Translations = {
       sections: {
         acceptance: {
           title: '1. 利用規約への同意',
-          body: 'MD Viewer（以下「本サービス」）にアクセスまたは使用することにより、お客様はこの利用規約に同意したものとみなされます。これらの条件に同意されない場合は、本サービスの使用をお控えください。',
+          body: 'MarkDrive（以下「本サービス」）にアクセスまたは使用することにより、お客様はこの利用規約に同意したものとみなされます。これらの条件に同意されない場合は、本サービスの使用をお控えください。',
         },
         description: {
           title: '2. サービスの説明',
-          body: 'MD Viewerは、Google Driveまたはローカルデバイスに保存されたMarkdownファイルを表示するWebベースのMarkdownビューアです。本サービスはブラウザ内で完全に動作し、お客様のファイルやデータを外部サーバーに保存することはありません。',
+          body: 'MarkDriveは、Google Driveまたはローカルデバイスに保存されたMarkdownファイルを表示するWebベースのMarkdownビューアです。本サービスはブラウザ内で完全に動作し、お客様のファイルやデータを外部サーバーに保存することはありません。',
         },
         googleApi: {
           title: '3. Google APIの利用',
@@ -212,7 +212,7 @@ export const ja: Translations = {
         },
         intellectual: {
           title: '4. 知的財産権',
-          body: 'MD ViewerはMITライセンスの下で公開されているオープンソースソフトウェアです。お客様のファイルおよびコンテンツはお客様の所有物です。本サービスは、お客様が閲覧するコンテンツに対していかなる所有権も主張しません。',
+          body: 'MarkDriveはMITライセンスの下で公開されているオープンソースソフトウェアです。お客様のファイルおよびコンテンツはお客様の所有物です。本サービスは、お客様が閲覧するコンテンツに対していかなる所有権も主張しません。',
         },
         disclaimer: {
           title: '5. 免責事項',
@@ -225,7 +225,7 @@ export const ja: Translations = {
         contact: {
           title: '7. お問い合わせ',
           body: 'この利用規約に関するご質問は、プロジェクトのGitHubリポジトリをご覧ください。',
-          url: 'https://github.com/luckypool/md-viewer/issues',
+          url: 'https://github.com/luckypool/mark-drive/issues',
         },
       },
     },
@@ -235,7 +235,7 @@ export const ja: Translations = {
       sections: {
         intro: {
           title: '1. はじめに',
-          body: 'このプライバシーポリシーは、MD Viewer（以下「本サービス」）がお客様の情報をどのように取り扱うかを説明するものです。私たちはお客様のプライバシーを保護し、データの取り扱いについて透明性を確保することに努めています。',
+          body: 'このプライバシーポリシーは、MarkDrive（以下「本サービス」）がお客様の情報をどのように取り扱うかを説明するものです。私たちはお客様のプライバシーを保護し、データの取り扱いについて透明性を確保することに努めています。',
         },
         collect: {
           title: '2. 保存する情報',
@@ -268,7 +268,7 @@ export const ja: Translations = {
         contact: {
           title: '9. お問い合わせ',
           body: 'このプライバシーポリシーに関するご質問は、プロジェクトのGitHubリポジトリをご覧ください。',
-          url: 'https://github.com/luckypool/md-viewer/issues',
+          url: 'https://github.com/luckypool/mark-drive/issues',
         },
       },
     },

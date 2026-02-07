@@ -1,5 +1,5 @@
 /**
- * MD Viewer - Terms of Service Screen
+ * MarkDrive - Terms of Service Screen
  */
 
 import React from 'react';

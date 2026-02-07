@@ -1,12 +1,12 @@
 # プライバシーとセキュリティ
 
-MD Viewer はプライバシーを最優先に設計されています。このドキュメントでは、データの取り扱いとセキュリティについて説明します。
+MarkDrive はプライバシーを最優先に設計されています。このドキュメントでは、データの取り扱いとセキュリティについて説明します。
 
 ## 基本原則
 
 ### サーバーレス設計
 
-MD Viewer は**完全にクライアントサイドで動作**します。
+MarkDrive は**完全にクライアントサイドで動作**します。
 
 - ファイル内容をサーバーに送信しません
 - ファイル内容をサーバーに保存しません
@@ -17,7 +17,7 @@ MD Viewer は**完全にクライアントサイドで動作**します。
 ```
 ┌─────────────┐     OAuth認証      ┌─────────────┐
 │   ブラウザ   │ ◄──────────────► │   Google    │
-│  (MD Viewer) │                   │   OAuth     │
+│  (MarkDrive) │                   │   OAuth     │
 └──────┬──────┘                   └─────────────┘
        │
        │ ファイル取得（直接）
@@ -36,7 +36,7 @@ MD Viewer は**完全にクライアントサイドで動作**します。
 
 ### サーバーに送信されるデータ
 
-MD Viewer のホスティングサーバー（Vercel）にはアプリケーションコードのみが配置されており、ユーザーデータは送信されません。
+MarkDrive のホスティングサーバー（Vercel）にはアプリケーションコードのみが配置されており、ユーザーデータは送信されません。
 
 ただし、アクセス解析のために Google Analytics へ匿名の利用データ（ページビュー、デバイス情報等）が送信されます。詳細は「サードパーティサービス > アクセス解析」を参照してください。
 
@@ -72,7 +72,7 @@ MD Viewer のホスティングサーバー（Vercel）にはアプリケーシ�
 
 ### Google OAuth 2.0
 
-MD Viewer は Google Identity Services (GIS) を使用した安全な認証を提供します。
+MarkDrive は Google Identity Services (GIS) を使用した安全な認証を提供します。
 
 **認証フロー:**
 1. ユーザーが「Google でサインイン」をクリック
@@ -82,7 +82,7 @@ MD Viewer は Google Identity Services (GIS) を使用した安全な認証を�
 
 ### スコープ（権限）
 
-MD Viewer が要求する権限は**最小限**です。
+MarkDrive が要求する権限は**最小限**です。
 
 | スコープ | 説明 |
 |---------|------|
@@ -136,7 +136,7 @@ MD Viewer が要求する権限は**最小限**です。
 
 ### Google
 
-MD Viewer は Google の以下のサービスを使用します:
+MarkDrive は Google の以下のサービスを使用します:
 
 | サービス | 用途 | プライバシーポリシー |
 |---------|------|---------------------|
@@ -149,7 +149,7 @@ MD Viewer は Google の以下のサービスを使用します:
 |---------|------|---------------------|
 | Google Analytics | アクセス解析（ページビュー等） | [Google プライバシーポリシー](https://policies.google.com/privacy) |
 
-MD Viewer はサービス改善のために Google Analytics を使用し、以下の匿名データを収集します:
+MarkDrive はサービス改善のために Google Analytics を使用し、以下の匿名データを収集します:
 
 - ページビュー
 - おおよその地域情報
@@ -204,7 +204,7 @@ Vercel のデフォルト設定に従います。
 ### Google 連携の解除
 
 1. [Google アカウントのセキュリティ設定](https://myaccount.google.com/permissions)にアクセス
-2. 「MD Viewer」を選択
+2. 「MarkDrive」を選択
 3. 「アクセス権を削除」をクリック
 
 ---
@@ -213,4 +213,4 @@ Vercel のデフォルト設定に従います。
 
 プライバシーに関するご質問は、GitHub Issue でお問い合わせください。
 
-https://github.com/luckypool/md-viewer/issues
+https://github.com/luckypool/mark-drive/issues

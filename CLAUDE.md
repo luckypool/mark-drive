@@ -1,4 +1,4 @@
-# CLAUDE.md - MD Viewer v2 プロジェクト設定
+# CLAUDE.md - MarkDrive v2 プロジェクト設定
 
 このファイルは Claude Code がプロジェクトを理解するためのガイドです。
 
@@ -38,7 +38,7 @@ npx tsc --noEmit
 ## プロジェクト構造
 
 ```
-md-viewer/
+mark-drive/
 ├── app/                      # Expo Router
 │   ├── _layout.tsx           # ルートレイアウト
 │   ├── index.tsx             # ホーム画面

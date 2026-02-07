@@ -1,5 +1,5 @@
 /**
- * MD Viewer - License Screen
+ * MarkDrive - License Screen
  */
 
 import React from 'react';

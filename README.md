@@ -1,6 +1,6 @@
 <div align="center">
 
-# MD Viewer
+# MarkDrive
 
 **プライバシーを守る、美しい Markdown ビューア**
 
@@ -68,7 +68,7 @@ npm start
 
 詳細なドキュメントは [docs/](./docs/) を参照してください。
 
-- [なぜ MD Viewer か](./docs/why.md) - 解決する課題と提供する価値
+- [なぜ MarkDrive か](./docs/why.md) - 解決する課題と提供する価値
 - [セットアップガイド](./docs/setup.md) - Google Cloud Console の設定方法
 - [アーキテクチャ](./docs/architecture.md) - システム構成と技術スタック
 - [機能仕様](./docs/features.md) - 各機能の詳細仕様
