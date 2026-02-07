@@ -7,3 +7,4 @@ export { ThemeToggle } from './ThemeToggle';
 export { LanguageToggle } from './LanguageToggle';
 export { FontSettingsPanel } from './FontSettingsPanel';
 export { Tooltip } from './Tooltip';
+export { GoogleLogo } from './GoogleLogo';

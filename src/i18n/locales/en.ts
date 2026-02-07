@@ -5,8 +5,10 @@
 export const en = {
   // Home Screen
   home: {
-    welcome: 'Welcome to MarkDrive',
-    subtitle: 'A beautiful Markdown viewer for\nGoogle Drive',
+    welcomeLine1: 'Beautiful Markdown',
+    welcomeLine2: 'for ',
+    welcomeHighlight: 'Google Drive',
+    subtitle: 'Preview your .md files with syntax highlighting, diagrams, and PDF export — all in your browser.',
     feature: {
       drive: {
         title: 'Google Drive Integration',
@@ -339,7 +341,9 @@ export const en = {
 
 export type Translations = {
   home: {
-    welcome: string;
+    welcomeLine1: string;
+    welcomeLine2: string;
+    welcomeHighlight: string;
     subtitle: string;
     feature: {
       drive: { title: string; desc: string };

@@ -21,7 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight, shadows } from '../src/theme';
-import { Button, LoadingSpinner, FAB, ThemeToggle, LanguageToggle } from '../src/components/ui';
+import { Button, LoadingSpinner, FAB, ThemeToggle, LanguageToggle, GoogleLogo } from '../src/components/ui';
 import { AddToHomeScreenBanner } from '../src/components/ui/AddToHomeScreenBanner';
 import { useGoogleAuth, useTheme, useLanguage } from '../src/hooks';
 import { useFilePicker } from '../src/hooks';
@@ -234,7 +234,11 @@ export default function HomeScreen() {
                   <Text style={[styles.heroLogoText, { color: colors.textPrimary }]}>MarkDrive</Text>
                 </View>
 
-                <Text style={[styles.heroTitle, { color: colors.textPrimary }, windowWidth >= 768 && styles.heroTitleDesktop]}>{t.home.welcome}</Text>
+                <Text style={[styles.heroTitle, { color: colors.textPrimary }, windowWidth >= 768 && styles.heroTitleDesktop]}>
+                  {t.home.welcomeLine1}{'\n'}
+                  {t.home.welcomeLine2}
+                  <Text style={{ color: colors.accent }}>{t.home.welcomeHighlight}</Text>
+                </Text>
                 <Text style={[styles.heroSubtitle, { color: colors.textSecondary }, windowWidth >= 768 && styles.heroSubtitleDesktop]}>
                   {t.home.subtitle}
                 </Text>
@@ -242,11 +246,16 @@ export default function HomeScreen() {
                   {t.home.tagline}
                 </Text>
 
-                {/* Tech Chips (moved from techSection) */}
+                {/* Feature Badges (matching OGP image) */}
                 <View style={[styles.techChips, windowWidth >= 768 ? styles.techChipsDesktop : null]}>
-                  {['Expo', 'React Native', 'TypeScript', 'Mermaid', 'Google Drive API'].map((chip) => (
-                    <View key={chip} style={[styles.techChip, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}>
-                      <Text style={[styles.techChipText, { color: colors.textSecondary }]}>{chip}</Text>
+                  {[
+                    { label: t.home.benefit.privacy.title, icon: 'shield-checkmark-outline' as const },
+                    { label: t.home.feature.syntax.title, icon: 'code-slash-outline' as const },
+                    { label: 'Mermaid', icon: 'git-network-outline' as const },
+                  ].map((chip) => (
+                    <View key={chip.label} style={[styles.techChip, { backgroundColor: colors.accentMuted, borderColor: colors.accent }]}>
+                      <Ionicons name={chip.icon} size={12} color={colors.accent} />
+                      <Text style={[styles.techChipText, { color: colors.accent }]}>{chip.label}</Text>
                     </View>
                   ))}
                 </View>
@@ -256,24 +265,13 @@ export default function HomeScreen() {
                   disabled={!isApiLoaded}
                   loading={isLoading}
                   size="lg"
-                  style={windowWidth >= 768 ? { ...styles.heroCta, ...styles.heroCtaDesktop } : styles.heroCta}
-                  icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
+                  variant="secondary"
+                  style={windowWidth >= 768 ? { ...styles.heroCta, ...styles.heroCtaDesktop, ...styles.googleBtn } : { ...styles.heroCta, ...styles.googleBtn }}
+                  textStyle={styles.googleBtnText}
+                  icon={<GoogleLogo size={20} />}
                 >
                   {t.home.signIn}
                 </Button>
-
-                {/* Privacy Notice */}
-                <View style={[styles.privacyNotice, { backgroundColor: colors.accentMuted, borderColor: colors.accent }]}>
-                  <Ionicons name="shield-checkmark-outline" size={20} color={colors.accent} />
-                  <View style={styles.privacyContent}>
-                    <Text style={[styles.privacyTitle, { color: colors.accent }]}>
-                      {t.search.privacyTitle}
-                    </Text>
-                    <Text style={[styles.privacyDesc, { color: colors.textSecondary }]}>
-                      {t.search.privacyDesc}
-                    </Text>
-                  </View>
-                </View>
               </View>
 
               {/* Right: Preview image */}
@@ -295,35 +293,37 @@ export default function HomeScreen() {
               <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
                 {t.home.howItWorks.title}
               </Text>
-              {([
-                { step: t.home.howItWorks.step1, icon: 'log-in-outline' as const, num: '1' },
-                { step: t.home.howItWorks.step2, icon: 'search-outline' as const, num: '2' },
-                { step: t.home.howItWorks.step3, icon: 'eye-outline' as const, num: '3' },
-              ]).map((item, index) => (
-                <React.Fragment key={item.num}>
-                  {index > 0 && (
-                    <View style={styles.stepChevron}>
-                      <Ionicons name="chevron-down" size={20} color={colors.textMuted} />
-                    </View>
-                  )}
-                  <View style={[styles.stepCard, { backgroundColor: colors.bgCard, borderColor: colors.border }]}>
-                    <View style={[styles.stepNumber, { backgroundColor: colors.accent }]}>
-                      <Text style={styles.stepNumberText}>{item.num}</Text>
-                    </View>
-                    <View style={styles.stepContent}>
-                      <View style={styles.stepHeader}>
-                        <Ionicons name={item.icon} size={20} color={colors.accent} />
-                        <Text style={[styles.stepTitle, { color: colors.textPrimary }]}>
-                          {item.step.title}
-                        </Text>
+              <View style={[styles.stepsRow, windowWidth >= 768 && styles.stepsRowDesktop]}>
+                {([
+                  { step: t.home.howItWorks.step1, icon: 'log-in-outline' as const, num: '1' },
+                  { step: t.home.howItWorks.step2, icon: 'search-outline' as const, num: '2' },
+                  { step: t.home.howItWorks.step3, icon: 'eye-outline' as const, num: '3' },
+                ]).map((item, index) => (
+                  <React.Fragment key={item.num}>
+                    {index > 0 && windowWidth >= 768 && (
+                      <View style={styles.stepArrow}>
+                        <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
                       </View>
+                    )}
+                    {index > 0 && windowWidth < 768 && (
+                      <View style={styles.stepChevron}>
+                        <Ionicons name="chevron-down" size={20} color={colors.textMuted} />
+                      </View>
+                    )}
+                    <View style={[styles.stepCard, { backgroundColor: colors.bgCard, borderColor: colors.border }, windowWidth >= 768 && styles.stepCardDesktop]}>
+                      <View style={[styles.stepIconWrap, { backgroundColor: colors.accentMuted }]}>
+                        <Ionicons name={item.icon} size={28} color={colors.accent} />
+                      </View>
+                      <Text style={[styles.stepTitle, { color: colors.textPrimary }]}>
+                        {item.step.title}
+                      </Text>
                       <Text style={[styles.stepDesc, { color: colors.textSecondary }]}>
                         {item.step.desc}
                       </Text>
                     </View>
-                  </View>
-                </React.Fragment>
-              ))}
+                  </React.Fragment>
+                ))}
+              </View>
             </View>
 
             {/* Section 4: Features (6 items, 2-column grid) */}
@@ -416,8 +416,10 @@ export default function HomeScreen() {
                 disabled={!isApiLoaded}
                 loading={isLoading}
                 size="lg"
-                style={styles.closingCtaButton}
-                icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
+                variant="secondary"
+                style={{ ...styles.closingCtaButton, ...styles.googleBtn }}
+                textStyle={styles.googleBtnText}
+                icon={<GoogleLogo size={20} />}
               >
                 {t.home.signIn}
               </Button>
@@ -880,28 +882,29 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
   },
   heroLogoText: {
-    fontSize: fontSize['2xl'],
+    fontSize: fontSize['3xl'],
     fontWeight: fontWeight.bold,
   },
   heroTitle: {
-    fontSize: fontSize['3xl'],
+    fontSize: fontSize['4xl'],
     fontWeight: fontWeight.bold,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
     textAlign: 'center',
+    lineHeight: fontSize['4xl'] * 1.15,
   },
   heroTitleDesktop: {
     textAlign: 'left',
   },
   heroSubtitle: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.xs,
     textAlign: 'center',
-    lineHeight: fontSize.lg * 1.5,
+    lineHeight: fontSize.xs * 1.6,
   },
   heroSubtitleDesktop: {
     textAlign: 'left',
   },
   heroTagline: {
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
     textAlign: 'center',
     marginTop: spacing.sm,
   },
@@ -911,10 +914,10 @@ const styles = StyleSheet.create({
 
   // Section Title (shared)
   sectionTitle: {
-    fontSize: fontSize.xl,
+    fontSize: fontSize['4xl'],
     fontWeight: fontWeight.bold,
     textAlign: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: spacing['2xl'],
   },
 
   // App Preview
@@ -930,47 +933,50 @@ const styles = StyleSheet.create({
     marginTop: spacing['2xl'],
     alignItems: 'center',
   },
-  stepCard: {
+  stepsRow: {
+    width: '100%',
+    gap: spacing.sm,
+  },
+  stepsRowDesktop: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'stretch',
+  },
+  stepCard: {
+    alignItems: 'flex-start',
     borderWidth: 1,
     borderRadius: borderRadius.lg,
-    padding: spacing.lg,
-    gap: spacing.md,
+    padding: spacing.xl,
+    gap: spacing.sm,
     width: '100%',
   },
-  stepNumber: {
-    width: 36,
-    height: 36,
-    borderRadius: borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepNumberText: {
-    color: '#ffffff',
-    fontSize: fontSize.base,
-    fontWeight: fontWeight.bold,
-  },
-  stepContent: {
+  stepCardDesktop: {
     flex: 1,
   },
-  stepHeader: {
-    flexDirection: 'row',
+  stepIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.md,
     alignItems: 'center',
-    gap: spacing.sm,
+    justifyContent: 'center',
     marginBottom: spacing.xs,
   },
   stepTitle: {
-    fontSize: fontSize.base,
+    fontSize: fontSize['2xl'],
     fontWeight: fontWeight.semibold,
+    textAlign: 'left',
   },
   stepDesc: {
-    fontSize: fontSize.sm,
-    lineHeight: fontSize.sm * 1.5,
+    fontSize: fontSize.lg,
+    lineHeight: fontSize.lg * 1.6,
+    textAlign: 'left',
   },
   stepChevron: {
     alignItems: 'center',
     paddingVertical: spacing.xs,
+  },
+  stepArrow: {
+    justifyContent: 'center',
+    paddingHorizontal: spacing.xs,
   },
 
   // Features
@@ -1013,13 +1019,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   featureTitle: {
-    fontSize: fontSize.base,
+    fontSize: fontSize['2xl'],
     fontWeight: fontWeight.semibold,
     marginBottom: spacing.xs,
   },
   featureDescription: {
-    fontSize: fontSize.sm,
-    lineHeight: fontSize.sm * 1.5,
+    fontSize: fontSize.xl,
+    lineHeight: fontSize.xl * 1.6,
   },
 
   // Stats / Tech
@@ -1038,13 +1044,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   techChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
     borderRadius: borderRadius.full,
     borderWidth: 1,
   },
   techChipText: {
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.medium,
   },
   statsRow: {
     flexDirection: 'row',
@@ -1055,11 +1065,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
-    fontSize: fontSize['2xl'],
+    fontSize: fontSize['4xl'],
     fontWeight: fontWeight.bold,
   },
   statLabel: {
-    fontSize: fontSize.sm,
+    fontSize: fontSize.lg,
     marginTop: spacing.xs,
   },
 
@@ -1076,16 +1086,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   closingCtaTitle: {
-    fontSize: fontSize.xl,
+    fontSize: fontSize['4xl'],
     fontWeight: fontWeight.bold,
     textAlign: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
   },
   closingCtaSubtitle: {
-    fontSize: fontSize.base,
+    fontSize: fontSize['2xl'],
     textAlign: 'center',
-    lineHeight: fontSize.base * 1.5,
-    marginBottom: spacing.lg,
+    lineHeight: fontSize['2xl'] * 1.5,
+    marginBottom: spacing.xl,
   },
   closingCtaButton: {
     marginBottom: spacing.md,
@@ -1104,6 +1114,19 @@ const styles = StyleSheet.create({
   },
   heroCtaDesktop: {
     alignSelf: 'flex-start',
+  },
+
+  // Google Sign-in Button (Brand Guidelines)
+  googleBtn: {
+    backgroundColor: '#ffffff',
+    borderColor: '#dadce0',
+    borderWidth: 1,
+  },
+  googleBtnText: {
+    color: '#3c4043',
+    fontFamily: Platform.OS === 'web' ? "'Roboto', sans-serif" : undefined,
+    fontWeight: '500',
+    fontSize: 14,
   },
 
   // Divider (shared)
@@ -1176,13 +1199,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   privacyTitle: {
-    fontSize: fontSize.sm,
+    fontSize: fontSize.base,
     fontWeight: fontWeight.semibold,
     marginBottom: spacing.xs,
   },
   privacyDesc: {
-    fontSize: fontSize.xs,
-    lineHeight: fontSize.xs * 1.5,
+    fontSize: fontSize.sm,
+    lineHeight: fontSize.sm * 1.5,
   },
 
   // Authenticated Content

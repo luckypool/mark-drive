@@ -19,6 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
+import { GoogleLogo } from '../src/components/ui';
 import { useGoogleAuth, useTheme, useLanguage } from '../src/hooks';
 import type { DriveFile } from '../src/types';
 
@@ -188,9 +189,9 @@ export default function SearchScreen() {
               <Text style={[styles.authText, { color: colors.textSecondary }]}>
                 {t.search.signInPrompt}
               </Text>
-              <TouchableOpacity style={[styles.authButton, { backgroundColor: colors.accent }]} onPress={authenticate}>
-                <Ionicons name="logo-google" size={20} color={colors.bgPrimary} />
-                <Text style={[styles.authButtonText, { color: colors.bgPrimary }]}>{t.search.signIn}</Text>
+              <TouchableOpacity style={[styles.authButton, { backgroundColor: '#ffffff', borderColor: '#dadce0', borderWidth: 1 }]} onPress={authenticate}>
+                <GoogleLogo size={20} />
+                <Text style={[styles.authButtonText, { color: '#3c4043', fontFamily: Platform.OS === 'web' ? "'Roboto', sans-serif" : undefined, fontWeight: '500' }]}>{t.search.signIn}</Text>
               </TouchableOpacity>
             </View>
           ) : query.length === 0 ? (

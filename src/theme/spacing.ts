@@ -25,14 +25,14 @@ export const borderRadius = {
 export type BorderRadiusKey = keyof typeof borderRadius;
 
 export const fontSize = {
-  xs: 11,
-  sm: 13,
-  base: 15,
-  lg: 17,
-  xl: 19,
-  '2xl': 22,
-  '3xl': 28,
-  '4xl': 34,
+  xs: 12,
+  sm: 14,
+  base: 16,
+  lg: 18,
+  xl: 22,
+  '2xl': 26,
+  '3xl': 36,
+  '4xl': 48,
 } as const;
 
 export type FontSizeKey = keyof typeof fontSize;

@@ -7,8 +7,10 @@ import type { Translations } from './en';
 export const ja: Translations = {
   // Home Screen
   home: {
-    welcome: 'MarkDriveへようこそ',
-    subtitle: 'Google Drive用\nMarkdownビューア',
+    welcomeLine1: 'Beautiful Markdown',
+    welcomeLine2: 'for ',
+    welcomeHighlight: 'Google Drive',
+    subtitle: 'シンタックスハイライト、図表、PDF出力に対応した .md ファイルプレビュー — すべてブラウザ上で。',
     feature: {
       drive: {
         title: 'Google Drive連携',
