@@ -34,7 +34,7 @@ type ViewerParams = {
 };
 
 export default function ViewerScreen() {
-  const { colors, mode: themeMode, setTheme } = useTheme();
+  const { colors, mode: themeMode, resolvedMode, setTheme } = useTheme();
   const { t, language, setLanguage } = useLanguage();
   const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
   const params = useLocalSearchParams<ViewerParams>();
@@ -510,7 +510,7 @@ export default function ViewerScreen() {
               showsVerticalScrollIndicator={!isFullscreen}
             >
               <View style={isFullscreen ? [styles.contentContainer, styles.fullscreenCard] : styles.contentContainer}>
-                <MarkdownRenderer content={content!} onLinkPress={handleLinkPress} themeMode={themeMode} />
+                <MarkdownRenderer content={content!} onLinkPress={handleLinkPress} themeMode={resolvedMode} />
               </View>
             </ScrollView>
           </Pressable>
@@ -659,6 +659,19 @@ export default function ViewerScreen() {
                   <Ionicons name="moon-outline" size={18} color={themeMode === 'dark' ? colors.accent : colors.textSecondary} />
                   <Text style={[styles.dialogOptionText, { color: themeMode === 'dark' ? colors.accent : colors.textSecondary }]}>
                     {t.settings.dark}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.dialogOption,
+                    styles.dialogOptionWide,
+                    { backgroundColor: themeMode === 'system' ? colors.accentMuted : colors.bgTertiary }
+                  ]}
+                  onPress={() => setTheme('system')}
+                >
+                  <Ionicons name="phone-portrait-outline" size={18} color={themeMode === 'system' ? colors.accent : colors.textSecondary} />
+                  <Text style={[styles.dialogOptionText, { color: themeMode === 'system' ? colors.accent : colors.textSecondary }]}>
+                    {t.settings.system}
                   </Text>
                 </TouchableOpacity>
               </View>

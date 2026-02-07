@@ -153,6 +153,7 @@ export const ja: Translations = {
     theme: 'テーマ',
     light: 'ライト',
     dark: 'ダーク',
+    system: 'システム',
     language: '言語',
   },
 

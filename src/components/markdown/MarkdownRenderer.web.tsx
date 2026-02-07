@@ -382,9 +382,9 @@ interface ExtendedMarkdownRendererProps extends MarkdownRendererProps {
 }
 
 export function MarkdownRenderer({ content, onLinkPress, themeMode: propThemeMode }: ExtendedMarkdownRendererProps) {
-  const { colors, mode: contextMode } = useTheme();
+  const { colors, resolvedMode: contextResolvedMode } = useTheme();
   const { settings: fontSettings } = useFontSettings();
-  const themeMode = propThemeMode ?? contextMode;
+  const themeMode = propThemeMode ?? contextResolvedMode;
   const isDark = themeMode === 'dark';
 
   const webStyles = useMemo(() => generateWebStyles(colors, isDark, fontSettings), [colors, isDark, fontSettings]);

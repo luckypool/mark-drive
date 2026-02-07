@@ -31,7 +31,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const MENU_WIDTH = Math.min(320, SCREEN_WIDTH * 0.85);
 
 export default function HomeScreen() {
-  const { colors, mode: themeMode, setTheme } = useTheme();
+  const { colors, mode: themeMode, resolvedMode, setTheme } = useTheme();
   const { t, language, setLanguage } = useLanguage();
   const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
   const {
@@ -249,7 +249,7 @@ export default function HomeScreen() {
               <View style={[styles.previewContainer, { backgroundColor: colors.bgTertiary }]}>
                 {Platform.OS === 'web' && (
                   <img
-                    src={themeMode === 'dark' ? '/app-preview.svg' : '/app-preview-light.svg'}
+                    src={resolvedMode === 'dark' ? '/app-preview.svg' : '/app-preview-light.svg'}
                     alt="MarkDrive Preview"
                     style={{ width: '100%', height: 'auto', borderRadius: 8 }}
                   />
@@ -533,6 +533,19 @@ export default function HomeScreen() {
                   <Ionicons name="moon-outline" size={18} color={themeMode === 'dark' ? colors.accent : colors.textSecondary} />
                   <Text style={[styles.menuOptionText, { color: themeMode === 'dark' ? colors.accent : colors.textSecondary }]}>
                     {t.settings.dark}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.menuOption,
+                    styles.menuOptionWide,
+                    { backgroundColor: themeMode === 'system' ? colors.accentMuted : colors.bgTertiary }
+                  ]}
+                  onPress={() => setTheme('system')}
+                >
+                  <Ionicons name="phone-portrait-outline" size={18} color={themeMode === 'system' ? colors.accent : colors.textSecondary} />
+                  <Text style={[styles.menuOptionText, { color: themeMode === 'system' ? colors.accent : colors.textSecondary }]}>
+                    {t.settings.system}
                   </Text>
                 </TouchableOpacity>
               </View>
