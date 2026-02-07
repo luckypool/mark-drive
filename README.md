@@ -1,5 +1,3 @@
-<div align="center">
-
 # MarkDrive
 
 <a href="https://mark-drive.com/">
@@ -9,15 +7,9 @@
   </picture>
 </a>
 
-<br />
-
 **Google Drive の Markdown をブラウザで美しくプレビュー・編集。サーバーにデータは一切保存しません。**
 
 [mark-drive.com](https://mark-drive.com/)
-
-</div>
-
-<br />
 
 ## クイックスタート
 
