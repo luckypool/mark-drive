@@ -310,16 +310,16 @@ export default function ViewerScreen() {
       edges={isFullscreen ? [] : ['top']}
     >
       {/* Header */}
-      {(!isFullscreen || showHeader) && (
+      {(!isFullscreen || showHeader || editor.mode === 'edit') && (
         <Animated.View
           style={[
             styles.header,
             {
               borderBottomColor: colors.border,
               backgroundColor: colors.bgSecondary,
-              opacity: isFullscreen ? headerOpacity : 1,
+              opacity: isFullscreen && editor.mode !== 'edit' ? headerOpacity : 1,
             },
-            isFullscreen && styles.fullscreenHeader,
+            isFullscreen && editor.mode !== 'edit' && styles.fullscreenHeader,
           ]}
         >
           <TouchableOpacity style={styles.backButton} onPress={isFullscreen ? exitFullscreen : handleBack}>
@@ -823,10 +823,12 @@ const styles = StyleSheet.create({
   editorFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    gap: spacing.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderTopWidth: 1,
+    flexWrap: 'wrap',
   },
   editorFooterText: {
     fontSize: fontSize.xs,
