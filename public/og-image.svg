@@ -1,110 +1,162 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="1200" height="630" fill="#0a0f0d"/>
-
-  <!-- Subtle grid pattern -->
   <defs>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e2e28" stroke-width="0.5" opacity="0.5"/>
-    </pattern>
+    <!-- Brand gradient for logo and highlighted text -->
+    <linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <!-- Top accent bar gradient -->
+    <linearGradient id="accentBar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <!-- Background shape gradient -->
+    <radialGradient id="bgShape" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.03"/>
+    </radialGradient>
+    <!-- Fade overlay for preview window bottom -->
+    <linearGradient id="previewFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.95"/>
+    </linearGradient>
   </defs>
-  <rect width="1200" height="630" fill="url(#grid)"/>
 
-  <!-- Left side: App icon + text -->
-  <!-- Icon background -->
-  <rect x="80" y="140" width="140" height="140" rx="32" fill="#111915" stroke="#1e2e28" stroke-width="2"/>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#fafbfc"/>
 
-  <!-- Document shape in icon -->
-  <path d="M112 168C112 159.163 119.163 152 128 152H172L204 184V296C204 304.837 196.837 312 188 312H128C119.163 312 112 304.837 112 296V168Z" fill="#1a2420" stroke="#1e2e28" stroke-width="1.5"/>
-  <path d="M172 152V176C172 184.837 179.163 192 188 192H204" fill="#1a2420" stroke="#1e2e28" stroke-width="1.5"/>
-  <path d="M172 152L204 184H188C179.163 184 172 176.837 172 168V152Z" fill="#1a2420"/>
-  <text x="150" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="700" fill="#10b981" text-anchor="middle">MD</text>
+  <!-- Top accent bar -->
+  <rect width="1200" height="5" fill="url(#accentBar)"/>
 
-  <!-- App name -->
-  <text x="80" y="350" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="700" fill="#e2e8f0">MarkDrive</text>
+  <!-- ========== LEFT PANEL ========== -->
 
-  <!-- Tagline -->
-  <text x="80" y="410" font-family="system-ui, -apple-system, sans-serif" font-size="26" fill="#94a3b8">Beautiful Markdown Viewer</text>
-  <text x="80" y="445" font-family="system-ui, -apple-system, sans-serif" font-size="26" fill="#94a3b8">for Google Drive</text>
+  <!-- Logo row -->
+  <rect x="80" y="120" width="44" height="44" rx="10" fill="url(#brandGrad)"/>
+  <text x="102" y="150" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">M</text>
+  <text x="140" y="152" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="700" fill="#1e1e2e" letter-spacing="-0.02em">MarkDrive</text>
+
+  <!-- Headline: "Beautiful Markdown" -->
+  <text x="80" y="230" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" fill="#1e1e2e" letter-spacing="-0.03em">Beautiful Markdown</text>
+  <!-- Headline: "for Google Drive" (Google Drive highlighted) -->
+  <text x="80" y="282" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" letter-spacing="-0.03em">
+    <tspan fill="#1e1e2e">for </tspan>
+    <tspan fill="url(#brandGrad)">Google Drive</tspan>
+  </text>
+
+  <!-- Subtitle -->
+  <text x="80" y="326" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#6b7280" letter-spacing="-0.01em">
+    <tspan x="80" dy="0">Preview your .md files with syntax</tspan>
+    <tspan x="80" dy="28">highlighting, diagrams, and PDF export</tspan>
+    <tspan x="80" dy="28">— all in your browser.</tspan>
+  </text>
 
   <!-- Feature pills -->
-  <rect x="80" y="480" width="140" height="32" rx="16" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1"/>
-  <text x="150" y="501" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#10b981" text-anchor="middle">Privacy First</text>
+  <!-- Privacy First -->
+  <rect x="80" y="430" width="120" height="30" rx="15" fill="#f0f0ff"/>
+  <text x="140" y="450" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#6366f1" text-anchor="middle">Privacy First</text>
 
-  <rect x="235" y="480" width="130" height="32" rx="16" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1"/>
-  <text x="300" y="501" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#10b981" text-anchor="middle">Open Source</text>
+  <!-- PDF Export -->
+  <rect x="212" y="430" width="110" height="30" rx="15" fill="#f0f0ff"/>
+  <text x="267" y="450" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#6366f1" text-anchor="middle">PDF Export</text>
 
-  <rect x="380" y="480" width="150" height="32" rx="16" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1"/>
-  <text x="455" y="501" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#10b981" text-anchor="middle">No Server Storage</text>
+  <!-- Mermaid -->
+  <rect x="334" y="430" width="100" height="30" rx="15" fill="#f0f0ff"/>
+  <text x="384" y="450" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#6366f1" text-anchor="middle">Mermaid</text>
 
-  <!-- Right side: App preview mockup -->
-  <g transform="translate(600, 60)">
-    <!-- Browser frame shadow -->
-    <rect x="4" y="4" width="540" height="510" rx="12" fill="rgba(0,0,0,0.3)"/>
+  <!-- Open Source -->
+  <rect x="446" y="430" width="120" height="30" rx="15" fill="#f0f0ff"/>
+  <text x="506" y="450" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="#6366f1" text-anchor="middle">Open Source</text>
 
-    <!-- Browser frame -->
-    <rect x="0" y="0" width="540" height="510" rx="12" fill="#1a1f2e"/>
+  <!-- URL -->
+  <text x="80" y="530" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="15" fill="#9ca3af" letter-spacing="0.02em">mark-drive.com</text>
 
-    <!-- Title bar -->
-    <rect x="0" y="0" width="540" height="36" rx="12" fill="#252b3b"/>
-    <rect x="0" y="24" width="540" height="12" fill="#252b3b"/>
+  <!-- ========== RIGHT PANEL ========== -->
 
-    <!-- Window controls -->
-    <circle cx="18" cy="18" r="5" fill="#ff5f57"/>
-    <circle cx="36" cy="18" r="5" fill="#febc2e"/>
-    <circle cx="54" cy="18" r="5" fill="#28c840"/>
+  <!-- Background circle shape -->
+  <circle cx="980" cy="315" r="300" fill="url(#bgShape)"/>
 
-    <!-- URL bar -->
-    <rect x="80" y="8" width="380" height="20" rx="4" fill="#1a1f2e"/>
-    <text x="96" y="22" font-family="system-ui, sans-serif" font-size="10" fill="#6b7280">mark-drive.com</text>
+  <!-- Preview window shadow -->
+  <rect x="664" y="78" width="380" height="478" rx="14" fill="rgba(0,0,0,0.04)"/>
 
-    <!-- App header -->
-    <rect x="16" y="48" width="508" height="40" rx="6" fill="#252b3b"/>
-    <text x="32" y="74" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#e2e8f0">README.md</text>
+  <!-- Preview window -->
+  <rect x="660" y="74" width="380" height="478" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
 
-    <!-- Content area -->
-    <rect x="16" y="100" width="508" height="396" rx="6" fill="#1e2433"/>
+  <!-- Window title bar -->
+  <rect x="660" y="74" width="380" height="40" rx="14" fill="#f9fafb"/>
+  <rect x="660" y="100" width="380" height="14" fill="#f9fafb"/>
+  <line x1="660" y1="114" x2="1040" y2="114" stroke="#e5e7eb" stroke-width="1"/>
 
-    <!-- H1 -->
-    <text x="32" y="134" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#f1f5f9"># Welcome to MarkDrive</text>
+  <!-- Window controls -->
+  <circle cx="680" cy="94" r="5" fill="#ef4444"/>
+  <circle cx="698" cy="94" r="5" fill="#eab308"/>
+  <circle cx="716" cy="94" r="5" fill="#22c55e"/>
 
-    <!-- Paragraph -->
-    <text x="32" y="166" font-family="system-ui, sans-serif" font-size="12" fill="#94a3b8">A beautiful Markdown viewer for Google Drive files.</text>
+  <!-- Window title -->
+  <text x="740" y="98" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="11" fill="#9ca3af">design-doc.md</text>
 
-    <!-- H2 -->
-    <text x="32" y="206" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#e2e8f0">## Features</text>
+  <!-- Window body -->
+  <!-- H1 -->
+  <text x="688" y="152" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#1e1e2e">Architecture</text>
+  <!-- H1 underline -->
+  <line x1="688" y1="164" x2="1012" y2="164" stroke="#e5e7eb" stroke-width="2"/>
 
-    <!-- List -->
-    <circle cx="42" cy="234" r="3" fill="#10b981"/>
-    <text x="54" y="238" font-family="system-ui, sans-serif" font-size="12" fill="#94a3b8">Google Drive integration</text>
+  <!-- Paragraph -->
+  <text x="688" y="192" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#6b7280">
+    <tspan x="688" dy="0">Client-side rendering with direct</tspan>
+    <tspan x="688" dy="20">Google Drive API integration.</tspan>
+  </text>
 
-    <circle cx="42" cy="258" r="3" fill="#10b981"/>
-    <text x="54" y="262" font-family="system-ui, sans-serif" font-size="12" fill="#94a3b8">Beautiful syntax highlighting</text>
+  <!-- Code block -->
+  <rect x="688" y="228" width="324" height="66" rx="8" fill="#f8f9fc" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="704" y="252" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="12">
+    <tspan fill="#8b5cf6">function</tspan>
+    <tspan fill="#0891b2"> render</tspan>
+    <tspan fill="#374151">(md) {</tspan>
+  </text>
+  <text x="704" y="272" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="12">
+    <tspan fill="#374151">  </tspan>
+    <tspan fill="#8b5cf6">return</tspan>
+    <tspan fill="#0891b2"> parse</tspan>
+    <tspan fill="#374151">(</tspan>
+    <tspan fill="#16a34a">`${md}`</tspan>
+    <tspan fill="#374151">)</tspan>
+  </text>
+  <text x="704" y="286" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="12" fill="#374151">}</text>
 
-    <circle cx="42" cy="282" r="3" fill="#10b981"/>
-    <text x="54" y="286" font-family="system-ui, sans-serif" font-size="12" fill="#94a3b8">Mermaid diagram support</text>
+  <!-- Table -->
+  <!-- Table header row -->
+  <rect x="688" y="310" width="324" height="28" rx="0" fill="#f3f4f6"/>
+  <rect x="688" y="310" width="324" height="28" rx="0" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="850" y1="310" x2="850" y2="338" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="704" y="330" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#374151">Feature</text>
+  <text x="866" y="330" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#374151">Status</text>
 
-    <!-- Code block -->
-    <rect x="32" y="306" width="476" height="70" rx="6" fill="#161b22"/>
-    <text x="44" y="328" font-family="monospace" font-size="11" fill="#7ee787">```javascript</text>
-    <text x="44" y="346" font-family="monospace" font-size="11" fill="#e6edf3">const viewer = new MDViewer();</text>
-    <text x="44" y="364" font-family="monospace" font-size="11" fill="#e6edf3">viewer.render(markdown);</text>
+  <!-- Table row 1 -->
+  <rect x="688" y="338" width="324" height="26" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="850" y1="338" x2="850" y2="364" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="704" y="356" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#6b7280">GFM</text>
+  <text x="866" y="356" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#6b7280">Ready</text>
 
-    <!-- Mermaid diagram hint -->
-    <rect x="32" y="390" width="476" height="60" rx="6" fill="#161b22"/>
-    <text x="44" y="412" font-family="monospace" font-size="11" fill="#7ee787">```mermaid</text>
-    <text x="44" y="430" font-family="monospace" font-size="11" fill="#e6edf3">graph LR; A-->B; B-->C;</text>
+  <!-- Table row 2 -->
+  <rect x="688" y="364" width="324" height="26" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="850" y1="364" x2="850" y2="390" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="704" y="382" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#6b7280">Mermaid</text>
+  <text x="866" y="382" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#6b7280">Ready</text>
 
-    <!-- Fade overlay -->
-    <defs>
-      <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0.8" stop-color="#1a1f2e" stop-opacity="0"/>
-        <stop offset="1" stop-color="#1a1f2e" stop-opacity="0.9"/>
-      </linearGradient>
-    </defs>
-    <rect x="0" y="420" width="540" height="90" fill="url(#fade)"/>
-  </g>
+  <!-- Table row 3 -->
+  <rect x="688" y="390" width="324" height="26" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="850" y1="390" x2="850" y2="416" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="704" y="408" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#6b7280">KaTeX</text>
+  <text x="866" y="408" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#6b7280">Ready</text>
 
-  <!-- URL at bottom -->
-  <text x="80" y="570" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#64748b">mark-drive.com</text>
+  <!-- Status checkmarks -->
+  <text x="960" y="356" font-family="system-ui, sans-serif" font-size="12" fill="#22c55e">✓</text>
+  <text x="960" y="382" font-family="system-ui, sans-serif" font-size="12" fill="#22c55e">✓</text>
+  <text x="960" y="408" font-family="system-ui, sans-serif" font-size="12" fill="#22c55e">✓</text>
+
+  <!-- Fade overlay at bottom of preview window -->
+  <rect x="661" y="470" width="378" height="82" rx="0" fill="url(#previewFade)"/>
+  <!-- Bottom border cover -->
+  <rect x="660" y="538" width="380" height="14" rx="14" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
 </svg>
