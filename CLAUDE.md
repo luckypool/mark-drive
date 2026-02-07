@@ -4,7 +4,7 @@
 
 ## プロジェクト概要
 
-Google Drive に保存された Markdown ファイルをプレビューするアプリケーション。
+Google Drive に保存された Markdown ファイルをプレビュー・編集するアプリケーション。
 Expo + React Native Web で Web に対応。
 
 ### 技術スタック
@@ -15,6 +15,7 @@ Expo + React Native Web で Web に対応。
 - **主要ライブラリ**:
   - react-markdown - Markdown レンダリング
   - react-syntax-highlighter - コードハイライト
+  - CodeMirror 6 - Markdown エディタ
   - html2pdf.js - PDF 出力
   - mermaid - ダイアグラム表示
 
@@ -42,22 +43,27 @@ mark-drive/
 ├── app/                      # Expo Router
 │   ├── _layout.tsx           # ルートレイアウト
 │   ├── index.tsx             # ホーム画面
-│   ├── viewer.tsx            # Markdown 表示
+│   ├── viewer.tsx            # Markdown 表示・編集
 │   └── search.tsx            # Google Drive 検索
 ├── src/
 │   ├── components/
 │   │   ├── ui/               # 共通 UI コンポーネント
+│   │   ├── editor/           # CodeMirror エディタ
 │   │   └── markdown/         # Markdown レンダラー
+│   ├── contexts/             # React Context（テーマ, 言語, フォント）
 │   ├── hooks/                # カスタムフック
 │   │   ├── useGoogleAuth     # Google OAuth (GIS)
 │   │   ├── useFilePicker     # ファイル選択
+│   │   ├── useMarkdownEditor # 編集モード状態管理
 │   │   └── useShare          # PDF 出力・共有
 │   ├── services/             # サービス層
 │   │   ├── storage.ts        # localStorage ラッパー
 │   │   ├── fileHistory.ts    # ファイル履歴
 │   │   └── googleDrive.ts    # Drive API
+│   ├── i18n/                 # 国際化（EN/JA）
 │   ├── theme/                # テーマ定義
-│   └── types/                # 型定義
+│   ├── types/                # 型定義
+│   └── utils/                # ユーティリティ
 ├── app.json                  # Expo 設定
 └── package.json
 ```
