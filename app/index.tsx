@@ -14,6 +14,8 @@ import {
   Image,
   Animated,
   Dimensions,
+  useWindowDimensions,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, Link } from 'expo-router';
@@ -33,6 +35,7 @@ const MENU_WIDTH = Math.min(320, SCREEN_WIDTH * 0.85);
 export default function HomeScreen() {
   const { colors, mode: themeMode, resolvedMode, setTheme } = useTheme();
   const { t, language, setLanguage } = useLanguage();
+  const { width: windowWidth } = useWindowDimensions();
   const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
   const {
     isLoading,
@@ -207,7 +210,7 @@ export default function HomeScreen() {
         {/* Landing Page for Non-authenticated Users */}
         {!isAuthenticated ? (
           <View style={styles.landingContainer}>
-            {/* Hero Section with CTA */}
+            {/* Section 1: Hero */}
             <View style={styles.heroSection}>
               <Image
                 source={require('../assets/images/icon.png')}
@@ -218,12 +221,15 @@ export default function HomeScreen() {
               <Text style={[styles.heroSubtitle, { color: colors.textSecondary }]}>
                 {t.home.subtitle}
               </Text>
+              <Text style={[styles.heroTagline, { color: colors.textMuted }]}>
+                {t.home.tagline}
+              </Text>
 
-              {/* Primary CTA */}
               <Button
                 onPress={authenticate}
                 disabled={!isApiLoaded}
                 loading={isLoading}
+                size="lg"
                 style={styles.heroCta}
                 icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
               >
@@ -244,9 +250,12 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            {/* App Preview */}
+            {/* Section 2: App Preview */}
             <View style={styles.previewSection}>
-              <View style={[styles.previewContainer, { backgroundColor: colors.bgTertiary }]}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                {t.home.previewTitle}
+              </Text>
+              <View style={[styles.previewContainer, { borderColor: colors.borderLight, ...shadows.md }]}>
                 {Platform.OS === 'web' && (
                   <img
                     src={resolvedMode === 'dark' ? '/app-preview.svg' : '/app-preview-light.svg'}
@@ -255,55 +264,154 @@ export default function HomeScreen() {
                   />
                 )}
               </View>
+              <Text style={[styles.previewCaption, { color: colors.textMuted }]}>
+                {t.home.previewCaption}
+              </Text>
             </View>
 
-            {/* Features Section */}
+            {/* Section 3: How it Works */}
+            <View style={styles.howItWorksSection}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                {t.home.howItWorks.title}
+              </Text>
+              {([
+                { step: t.home.howItWorks.step1, icon: 'log-in-outline' as const, num: '1' },
+                { step: t.home.howItWorks.step2, icon: 'search-outline' as const, num: '2' },
+                { step: t.home.howItWorks.step3, icon: 'eye-outline' as const, num: '3' },
+              ]).map((item, index) => (
+                <React.Fragment key={item.num}>
+                  {index > 0 && (
+                    <View style={styles.stepChevron}>
+                      <Ionicons name="chevron-down" size={20} color={colors.textMuted} />
+                    </View>
+                  )}
+                  <View style={[styles.stepCard, { backgroundColor: colors.bgCard, borderColor: colors.border }]}>
+                    <View style={[styles.stepNumber, { backgroundColor: colors.accent }]}>
+                      <Text style={styles.stepNumberText}>{item.num}</Text>
+                    </View>
+                    <View style={styles.stepContent}>
+                      <View style={styles.stepHeader}>
+                        <Ionicons name={item.icon} size={20} color={colors.accent} />
+                        <Text style={[styles.stepTitle, { color: colors.textPrimary }]}>
+                          {item.step.title}
+                        </Text>
+                      </View>
+                      <Text style={[styles.stepDesc, { color: colors.textSecondary }]}>
+                        {item.step.desc}
+                      </Text>
+                    </View>
+                  </View>
+                </React.Fragment>
+              ))}
+            </View>
+
+            {/* Section 4: Features (6 items, 2-column grid) */}
             <View style={styles.featuresSection}>
-              <View style={[styles.featureCard, { backgroundColor: colors.bgCard, borderColor: colors.border }]}>
-                <View style={[styles.featureIconContainer, { backgroundColor: colors.accentMuted }]}>
-                  <Ionicons name="logo-google" size={24} color={colors.accent} />
-                </View>
-                <View style={styles.featureContent}>
-                  <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.home.feature.drive.title}</Text>
-                  <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                    {t.home.feature.drive.desc}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={[styles.featureCard, { backgroundColor: colors.bgCard, borderColor: colors.border }]}>
-                <View style={[styles.featureIconContainer, { backgroundColor: colors.accentMuted }]}>
-                  <Ionicons name="color-palette-outline" size={24} color={colors.accent} />
-                </View>
-                <View style={styles.featureContent}>
-                  <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.home.feature.rendering.title}</Text>
-                  <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                    {t.home.feature.rendering.desc}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={[styles.featureCard, { backgroundColor: colors.bgCard, borderColor: colors.border }]}>
-                <View style={[styles.featureIconContainer, { backgroundColor: colors.accentMuted }]}>
-                  <Ionicons name="share-outline" size={24} color={colors.accent} />
-                </View>
-                <View style={styles.featureContent}>
-                  <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{t.home.feature.pdf.title}</Text>
-                  <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
-                    {t.home.feature.pdf.desc}
-                  </Text>
-                </View>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                {t.home.featuresTitle}
+              </Text>
+              <View style={styles.featuresGrid}>
+                {([
+                  { title: t.home.feature.drive.title, desc: t.home.feature.drive.desc, icon: 'logo-google' as const },
+                  { title: t.home.feature.rendering.title, desc: t.home.feature.rendering.desc, icon: 'color-palette-outline' as const },
+                  { title: t.home.feature.pdf.title, desc: t.home.feature.pdf.desc, icon: 'share-outline' as const },
+                  { title: t.home.feature.syntax.title, desc: t.home.feature.syntax.desc, icon: 'code-slash-outline' as const },
+                  { title: t.home.feature.mermaid.title, desc: t.home.feature.mermaid.desc, icon: 'git-network-outline' as const },
+                  { title: t.home.feature.local.title, desc: t.home.feature.local.desc, icon: 'folder-outline' as const },
+                ]).map((feature) => (
+                  <View
+                    key={feature.title}
+                    style={[
+                      styles.featureCardVertical,
+                      { backgroundColor: colors.bgCard, borderColor: colors.border },
+                      windowWidth >= 500 ? styles.featureCardHalf : styles.featureCardFull,
+                    ]}
+                  >
+                    <View style={[styles.featureIconContainer, { backgroundColor: colors.accentMuted }]}>
+                      <Ionicons name={feature.icon} size={24} color={colors.accent} />
+                    </View>
+                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{feature.title}</Text>
+                    <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
+                      {feature.desc}
+                    </Text>
+                  </View>
+                ))}
               </View>
             </View>
 
-            {/* Secondary CTA */}
-            <View style={styles.secondaryCta}>
-              <View style={styles.divider}>
+            {/* Section 5: Stats / Tech */}
+            <View style={styles.techSection}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                {t.home.techTitle}
+              </Text>
+              <View style={styles.techChips}>
+                {['Expo', 'React Native', 'TypeScript', 'Mermaid', 'Google Drive API'].map((chip) => (
+                  <View key={chip} style={[styles.techChip, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}>
+                    <Text style={[styles.techChipText, { color: colors.textSecondary }]}>{chip}</Text>
+                  </View>
+                ))}
+              </View>
+              <View style={styles.statsRow}>
+                {([
+                  t.home.stats.clientSide,
+                  t.home.stats.serverStorage,
+                  t.home.stats.license,
+                ]).map((stat) => (
+                  <View key={stat.label} style={styles.statItem}>
+                    <Text style={[styles.statValue, { color: colors.accent }]}>{stat.value}</Text>
+                    <Text style={[styles.statLabel, { color: colors.textMuted }]}>{stat.label}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* Section 6: Benefits */}
+            <View style={styles.benefitsSection}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                {t.home.benefitsTitle}
+              </Text>
+              {([
+                { benefit: t.home.benefit.privacy, icon: 'shield-checkmark-outline' as const },
+                { benefit: t.home.benefit.instant, icon: 'flash-outline' as const },
+                { benefit: t.home.benefit.beautiful, icon: 'document-text-outline' as const },
+              ]).map((item) => (
+                <View key={item.benefit.title} style={[styles.featureCard, { backgroundColor: colors.bgCard, borderColor: colors.border }]}>
+                  <View style={[styles.featureIconContainer, { backgroundColor: colors.accentMuted }]}>
+                    <Ionicons name={item.icon} size={24} color={colors.accent} />
+                  </View>
+                  <View style={styles.featureContent}>
+                    <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{item.benefit.title}</Text>
+                    <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>
+                      {item.benefit.desc}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+
+            {/* Section 7: Closing CTA */}
+            <View style={[styles.closingCtaSection, { backgroundColor: colors.accentMuted, borderRadius: borderRadius.xl }]}>
+              <Text style={[styles.closingCtaTitle, { color: colors.textPrimary }]}>
+                {t.home.closingCta.title}
+              </Text>
+              <Text style={[styles.closingCtaSubtitle, { color: colors.textSecondary }]}>
+                {t.home.closingCta.subtitle}
+              </Text>
+              <Button
+                onPress={authenticate}
+                disabled={!isApiLoaded}
+                loading={isLoading}
+                size="lg"
+                style={styles.closingCtaButton}
+                icon={<Ionicons name="logo-google" size={20} color={colors.bgPrimary} />}
+              >
+                {t.home.signIn}
+              </Button>
+              <View style={styles.closingCtaDivider}>
                 <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
                 <Text style={[styles.dividerText, { color: colors.textMuted }]}>{t.home.or}</Text>
                 <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
               </View>
-
               <Button
                 variant="outline"
                 onPress={handleLocalFile}
@@ -313,21 +421,38 @@ export default function HomeScreen() {
               </Button>
             </View>
 
-            {/* Learn More Link */}
-            <TouchableOpacity style={styles.learnMoreLink} onPress={handleOpenAbout}>
-              <Text style={[styles.learnMoreText, { color: colors.accent }]}>{t.home.learnMore}</Text>
-              <Ionicons name="arrow-forward" size={16} color={colors.accent} />
-            </TouchableOpacity>
-
-            {/* Footer Legal Links */}
-            <View style={styles.footerLegal}>
-              <Link href="/privacy" style={[styles.footerLegalText, { color: colors.textMuted }]}>
-                {t.about.viewPrivacy}
-              </Link>
-              <Text style={[styles.footerLegalSeparator, { color: colors.textMuted }]}>|</Text>
-              <Link href="/terms" style={[styles.footerLegalText, { color: colors.textMuted }]}>
-                {t.about.viewTerms}
-              </Link>
+            {/* Section 8: Footer */}
+            <View style={[styles.landingFooter, { borderTopColor: colors.border }]}>
+              <View style={styles.footerBrand}>
+                <Image
+                  source={require('../assets/images/icon.png')}
+                  style={styles.footerIcon}
+                  resizeMode="contain"
+                />
+                <Text style={[styles.footerAppName, { color: colors.textPrimary }]}>MarkDrive</Text>
+              </View>
+              <View style={styles.footerLinks}>
+                <Link href="/privacy" style={[styles.footerLegalText, { color: colors.textMuted }]}>
+                  {t.about.viewPrivacy}
+                </Link>
+                <Text style={[styles.footerLegalSeparator, { color: colors.textMuted }]}>|</Text>
+                <Link href="/terms" style={[styles.footerLegalText, { color: colors.textMuted }]}>
+                  {t.about.viewTerms}
+                </Link>
+                <Text style={[styles.footerLegalSeparator, { color: colors.textMuted }]}>|</Text>
+                <TouchableOpacity
+                  style={styles.footerGithubLink}
+                  onPress={() => Linking.openURL('https://github.com/luckypool/mark-drive')}
+                >
+                  <Ionicons name="logo-github" size={16} color={colors.textMuted} />
+                  <Text style={[styles.footerLegalText, { color: colors.textMuted }]}>
+                    {t.home.footer.viewOnGithub}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={[styles.footerBuiltWith, { color: colors.textMuted }]}>
+                {t.home.footer.builtWith}
+              </Text>
             </View>
           </View>
         ) : (
@@ -686,7 +811,7 @@ const styles = StyleSheet.create({
   // Landing Page
   landingContainer: {
     flex: 1,
-    maxWidth: 600,
+    maxWidth: 720,
     alignSelf: 'center',
     width: '100%',
   },
@@ -695,12 +820,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
   },
   heroIcon: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     borderRadius: borderRadius.xl,
   },
   heroTitle: {
-    fontSize: fontSize['2xl'],
+    fontSize: fontSize['3xl'],
     fontWeight: fontWeight.bold,
     marginTop: spacing.lg,
     marginBottom: spacing.sm,
@@ -711,6 +836,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: fontSize.lg * 1.5,
   },
+  heroTagline: {
+    fontSize: fontSize.sm,
+    textAlign: 'center',
+    marginTop: spacing.sm,
+  },
+
+  // Section Title (shared)
+  sectionTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.bold,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
+  },
 
   // App Preview
   previewSection: {
@@ -719,21 +857,86 @@ const styles = StyleSheet.create({
   },
   previewContainer: {
     width: '100%',
-    maxWidth: 600,
     borderRadius: borderRadius.xl,
+    borderWidth: 1,
     padding: spacing.md,
     overflow: 'hidden',
   },
-  previewImage: {
+  previewCaption: {
+    fontSize: fontSize.sm,
+    textAlign: 'center',
+    marginTop: spacing.sm,
+  },
+
+  // How it Works
+  howItWorksSection: {
+    marginTop: spacing['2xl'],
+    alignItems: 'center',
+  },
+  stepCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    gap: spacing.md,
     width: '100%',
-    height: undefined,
-    aspectRatio: 800 / 500,
+  },
+  stepNumber: {
+    width: 36,
+    height: 36,
+    borderRadius: borderRadius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepNumberText: {
+    color: '#ffffff',
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.bold,
+  },
+  stepContent: {
+    flex: 1,
+  },
+  stepHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.xs,
+  },
+  stepTitle: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+  },
+  stepDesc: {
+    fontSize: fontSize.sm,
+    lineHeight: fontSize.sm * 1.5,
+  },
+  stepChevron: {
+    alignItems: 'center',
+    paddingVertical: spacing.xs,
   },
 
   // Features
   featuresSection: {
     marginTop: spacing['2xl'],
+  },
+  featuresGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.md,
+  },
+  featureCardVertical: {
+    borderWidth: 1,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    gap: spacing.sm,
+  },
+  featureCardHalf: {
+    flexBasis: '47%',
+    flexGrow: 1,
+  },
+  featureCardFull: {
+    flexBasis: '100%',
   },
   featureCard: {
     flexDirection: 'row',
@@ -762,23 +965,85 @@ const styles = StyleSheet.create({
     lineHeight: fontSize.sm * 1.5,
   },
 
-  // Hero CTA
-  heroCta: {
-    marginTop: spacing.xl,
-  },
-
-  // Secondary CTA
-  secondaryCta: {
-    marginTop: spacing.xl,
+  // Stats / Tech
+  techSection: {
+    marginTop: spacing['2xl'],
     alignItems: 'center',
   },
-  divider: {
+  techChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
+  },
+  techChip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    borderWidth: 1,
+  },
+  techChipText: {
+    fontSize: fontSize.sm,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.xl,
+  },
+  statItem: {
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: fontSize['2xl'],
+    fontWeight: fontWeight.bold,
+  },
+  statLabel: {
+    fontSize: fontSize.sm,
+    marginTop: spacing.xs,
+  },
+
+  // Benefits
+  benefitsSection: {
+    marginTop: spacing['2xl'],
+    gap: spacing.md,
+  },
+
+  // Closing CTA
+  closingCtaSection: {
+    marginTop: spacing['2xl'],
+    padding: spacing.xl,
+    alignItems: 'center',
+  },
+  closingCtaTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.bold,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+  },
+  closingCtaSubtitle: {
+    fontSize: fontSize.base,
+    textAlign: 'center',
+    lineHeight: fontSize.base * 1.5,
+    marginBottom: spacing.lg,
+  },
+  closingCtaButton: {
+    marginBottom: spacing.md,
+  },
+  closingCtaDivider: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
     maxWidth: 280,
     marginBottom: spacing.md,
   },
+
+  // Hero CTA
+  heroCta: {
+    marginTop: spacing.xl,
+  },
+
+  // Divider (shared)
   dividerLine: {
     flex: 1,
     height: 1,
@@ -788,29 +1053,49 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
   },
 
-  // Learn More
-  learnMoreLink: {
+  // Footer
+  landingFooter: {
+    marginTop: spacing['2xl'],
+    paddingTop: spacing.lg,
+    borderTopWidth: 1,
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  footerBrand: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: spacing.xl,
-    gap: spacing.xs,
-  },
-  learnMoreText: {
-    fontSize: fontSize.sm,
-  },
-  footerLegal: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: spacing.xl,
     gap: spacing.sm,
+  },
+  footerIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: borderRadius.sm,
+  },
+  footerAppName: {
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.semibold,
+  },
+  footerLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  footerGithubLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
   footerLegalText: {
     fontSize: fontSize.xs,
   },
   footerLegalSeparator: {
     fontSize: fontSize.xs,
+  },
+  footerBuiltWith: {
+    fontSize: fontSize.xs,
+    textAlign: 'center',
   },
 
   // Privacy Notice

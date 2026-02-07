@@ -22,6 +22,66 @@ export const ja: Translations = {
         title: 'PDF出力',
         desc: 'ドキュメントを美しいPDFとして共有',
       },
+      syntax: {
+        title: 'シンタックスハイライト',
+        desc: '主要なプログラミング言語のコードブロックをハイライト表示',
+      },
+      mermaid: {
+        title: 'Mermaid図表',
+        desc: 'フローチャートやシーケンス図などを自動レンダリング',
+      },
+      local: {
+        title: 'ローカルファイル対応',
+        desc: 'サインインなしでデバイスのMarkdownファイルを開けます',
+      },
+    },
+    tagline: '無料。オープンソース。サーバー保存なし。',
+    previewTitle: '実際の画面',
+    previewCaption: 'ダーク・ライトテーマ対応',
+    howItWorks: {
+      title: '使い方',
+      step1: {
+        title: '接続',
+        desc: 'Googleアカウントでワンクリックサインイン',
+      },
+      step2: {
+        title: '検索',
+        desc: 'Drive内のMarkdownファイルを検索・選択',
+      },
+      step3: {
+        title: '表示',
+        desc: '美しくレンダリングされたドキュメントを即座に閲覧',
+      },
+    },
+    featuresTitle: '必要なものがすべて揃っています',
+    techTitle: 'モダンな技術で構築',
+    stats: {
+      clientSide: { value: '100%', label: 'クライアントサイド' },
+      serverStorage: { value: '0', label: 'サーバー保存' },
+      license: { value: 'MIT', label: 'ライセンス' },
+    },
+    benefitsTitle: 'なぜMarkDrive？',
+    benefit: {
+      privacy: {
+        title: 'プライバシー重視',
+        desc: 'ファイルはブラウザから出ません。サーバー保存なし、ドキュメントの追跡なし。',
+      },
+      instant: {
+        title: '即時アクセス',
+        desc: 'ダウンロードやインストール不要。Google DriveのMarkdownファイルを直接開けます。',
+      },
+      beautiful: {
+        title: '美しい出力',
+        desc: 'シンタックスハイライト、図表、PDF出力によるプロフェッショナルなレンダリング。',
+      },
+    },
+    closingCta: {
+      title: '始めましょう',
+      subtitle: 'Google DriveのMarkdownファイルを美しく表示 — 無料でプライベート。',
+    },
+    footer: {
+      builtWith: 'Expo と React Native Web で構築',
+      viewOnGithub: 'GitHubで見る',
     },
     signIn: 'Googleでサインイン',
     or: 'または',

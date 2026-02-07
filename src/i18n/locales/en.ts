@@ -20,6 +20,66 @@ export const en = {
         title: 'Export to PDF',
         desc: 'Share your documents as beautifully formatted PDFs',
       },
+      syntax: {
+        title: 'Syntax Highlighting',
+        desc: 'Code blocks with highlighting for all major programming languages',
+      },
+      mermaid: {
+        title: 'Mermaid Diagrams',
+        desc: 'Flowcharts, sequence diagrams, and more rendered automatically',
+      },
+      local: {
+        title: 'Local File Support',
+        desc: 'Open Markdown files from your device without signing in',
+      },
+    },
+    tagline: 'Free. Open source. No server storage.',
+    previewTitle: 'See it in action',
+    previewCaption: 'Dark and light themes supported',
+    howItWorks: {
+      title: 'How it Works',
+      step1: {
+        title: 'Connect',
+        desc: 'Sign in with your Google account in one click',
+      },
+      step2: {
+        title: 'Browse',
+        desc: 'Search and find Markdown files in your Drive',
+      },
+      step3: {
+        title: 'View',
+        desc: 'Enjoy beautifully rendered documents instantly',
+      },
+    },
+    featuresTitle: 'Everything you need',
+    techTitle: 'Built with modern technology',
+    stats: {
+      clientSide: { value: '100%', label: 'Client-side' },
+      serverStorage: { value: '0', label: 'Server storage' },
+      license: { value: 'MIT', label: 'License' },
+    },
+    benefitsTitle: 'Why MarkDrive?',
+    benefit: {
+      privacy: {
+        title: 'Privacy First',
+        desc: 'Your files never leave your browser. No server storage, no tracking of your documents.',
+      },
+      instant: {
+        title: 'Instant Access',
+        desc: 'No downloads or installs needed. Open any Markdown file directly from Google Drive.',
+      },
+      beautiful: {
+        title: 'Beautiful Output',
+        desc: 'Professional rendering with syntax highlighting, diagrams, and PDF export.',
+      },
+    },
+    closingCta: {
+      title: 'Ready to get started?',
+      subtitle: 'View your Google Drive Markdown files beautifully — free and private.',
+    },
+    footer: {
+      builtWith: 'Built with Expo and React Native Web',
+      viewOnGithub: 'View on GitHub',
     },
     signIn: 'Sign in with Google',
     or: 'or',
@@ -285,6 +345,39 @@ export type Translations = {
       drive: { title: string; desc: string };
       rendering: { title: string; desc: string };
       pdf: { title: string; desc: string };
+      syntax: { title: string; desc: string };
+      mermaid: { title: string; desc: string };
+      local: { title: string; desc: string };
+    };
+    tagline: string;
+    previewTitle: string;
+    previewCaption: string;
+    howItWorks: {
+      title: string;
+      step1: { title: string; desc: string };
+      step2: { title: string; desc: string };
+      step3: { title: string; desc: string };
+    };
+    featuresTitle: string;
+    techTitle: string;
+    stats: {
+      clientSide: { value: string; label: string };
+      serverStorage: { value: string; label: string };
+      license: { value: string; label: string };
+    };
+    benefitsTitle: string;
+    benefit: {
+      privacy: { title: string; desc: string };
+      instant: { title: string; desc: string };
+      beautiful: { title: string; desc: string };
+    };
+    closingCta: {
+      title: string;
+      subtitle: string;
+    };
+    footer: {
+      builtWith: string;
+      viewOnGithub: string;
     };
     signIn: string;
     or: string;
