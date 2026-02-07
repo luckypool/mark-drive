@@ -10,10 +10,14 @@ import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { searchKeymap } from '@codemirror/search';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { syntaxHighlighting, HighlightStyle } from '@codemirror/language';
-import { tags } from '@lezer/highlight';
+import { tags, Tag, styleTags } from '@lezer/highlight';
 import { useTheme } from '../../hooks/useTheme';
 import { useFontSettings, fontSizeMultipliers } from '../../contexts/FontSettingsContext';
 import { spacing, borderRadius, fontSize as themeFontSize } from '../../theme';
+
+// Custom tags for markdown markers (allows separate styling for #, **, - etc.)
+const headerMarkTag = Tag.define();
+const emphasisMarkTag = Tag.define();
 
 interface CodeMirrorEditorProps {
   value: string;
@@ -53,6 +57,8 @@ export function CodeMirrorEditor({ value, onChange, onSave, autoFocus }: CodeMir
       { tag: tags.url, color: colors.accent, textDecoration: 'underline' },
       { tag: tags.monospace, color: colors.warning, backgroundColor: colors.bgTertiary },
       { tag: tags.quote, color: colors.textMuted, fontStyle: 'italic' },
+      { tag: headerMarkTag, color: colors.accent },
+      { tag: emphasisMarkTag, color: colors.warning },
       { tag: tags.meta, color: colors.textMuted },
       { tag: tags.processingInstruction, color: colors.textMuted },
     ]);
@@ -112,7 +118,17 @@ export function CodeMirrorEditor({ value, onChange, onSave, autoFocus }: CodeMir
 
     const extensions = [
       customTheme,
-      markdown({ base: markdownLanguage }),
+      markdown({
+        base: markdownLanguage,
+        extensions: [{
+          props: [
+            styleTags({
+              HeaderMark: headerMarkTag,
+              EmphasisMark: emphasisMarkTag,
+            }),
+          ],
+        }],
+      }),
       syntaxHighlighting(highlightStyle),
       history(),
       keymap.of([
