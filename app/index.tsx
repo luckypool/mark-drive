@@ -35,7 +35,9 @@ const MENU_WIDTH = Math.min(320, SCREEN_WIDTH * 0.85);
 export default function HomeScreen() {
   const { colors, mode: themeMode, resolvedMode, setTheme } = useTheme();
   const { t, language, setLanguage } = useLanguage();
-  const { width: windowWidth } = useWindowDimensions();
+  const { width: _windowWidth } = useWindowDimensions();
+  const windowWidth = _windowWidth || (Platform.OS === 'web' && typeof window !== 'undefined' ? window.innerWidth : 0);
+  const isDesktop = windowWidth >= 768;
   const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
   const {
     isLoading,
@@ -221,9 +223,9 @@ export default function HomeScreen() {
         {!isAuthenticated ? (
           <View style={styles.landingContainer}>
             {/* Section 1: Hero + Preview (2-column on desktop) */}
-            <View style={[styles.heroRow, windowWidth >= 768 ? styles.heroRowDesktop : styles.heroRowMobile]}>
+            <View style={[styles.heroRow, !isDesktop && styles.heroRowMobile]}>
               {/* Left: Text content */}
-              <View style={[styles.heroLeft, windowWidth >= 768 ? styles.heroLeftDesktop : styles.heroLeftMobile]}>
+              <View style={[styles.heroLeft, !isDesktop && styles.heroLeftMobile]}>
                 {/* Logo row */}
                 <View style={styles.heroLogoRow}>
                   <Image
@@ -234,20 +236,20 @@ export default function HomeScreen() {
                   <Text style={[styles.heroLogoText, { color: colors.textPrimary }]}>MarkDrive</Text>
                 </View>
 
-                <Text style={[styles.heroTitle, { color: colors.textPrimary }, windowWidth >= 768 && styles.heroTitleDesktop]}>
+                <Text style={[styles.heroTitle, { color: colors.textPrimary }, isDesktop && styles.heroTitleDesktop]}>
                   {t.home.welcomeLine1}{'\n'}
                   {t.home.welcomeLine2}
                   <Text style={{ color: colors.accent }}>{t.home.welcomeHighlight}</Text>
                 </Text>
-                <Text style={[styles.heroSubtitle, { color: colors.textSecondary }, windowWidth >= 768 && styles.heroSubtitleDesktop]}>
+                <Text style={[styles.heroSubtitle, { color: colors.textSecondary }, isDesktop && styles.heroSubtitleDesktop]}>
                   {t.home.subtitle}
                 </Text>
-                <Text style={[styles.heroTagline, { color: colors.textMuted }, windowWidth >= 768 && styles.heroTaglineDesktop]}>
+                <Text style={[styles.heroTagline, { color: colors.textMuted }, isDesktop && styles.heroTaglineDesktop]}>
                   {t.home.tagline}
                 </Text>
 
                 {/* Feature Badges (matching OGP image) */}
-                <View style={[styles.techChips, windowWidth >= 768 ? styles.techChipsDesktop : null]}>
+                <View style={[styles.techChips, isDesktop ? styles.techChipsDesktop : null]}>
                   {[
                     { label: t.home.benefit.privacy.title, icon: 'shield-checkmark-outline' as const },
                     { label: t.home.feature.syntax.title, icon: 'code-slash-outline' as const },
@@ -266,7 +268,7 @@ export default function HomeScreen() {
                   loading={isLoading}
                   size="lg"
                   variant="secondary"
-                  style={windowWidth >= 768 ? { ...styles.heroCta, ...styles.heroCtaDesktop, ...styles.googleBtn } : { ...styles.heroCta, ...styles.googleBtn }}
+                  style={isDesktop ? { ...styles.heroCta, ...styles.heroCtaDesktop, ...styles.googleBtn } : { ...styles.heroCta, ...styles.googleBtn }}
                   textStyle={styles.googleBtnText}
                   icon={<GoogleLogo size={20} />}
                 >
@@ -290,17 +292,17 @@ export default function HomeScreen() {
 
             {/* Section 3: How it Works */}
             <View style={styles.howItWorksSection}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, windowWidth >= 768 ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, isDesktop ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
                 {t.home.howItWorks.title}
               </Text>
-              <View style={[styles.stepsRow, windowWidth >= 768 && styles.stepsRowDesktop]}>
+              <View style={[styles.stepsRow, isDesktop && styles.stepsRowDesktop]}>
                 {([
                   { step: t.home.howItWorks.step1, icon: 'log-in-outline' as const, num: '1' },
                   { step: t.home.howItWorks.step2, icon: 'search-outline' as const, num: '2' },
                   { step: t.home.howItWorks.step3, icon: 'eye-outline' as const, num: '3' },
                 ]).map((item, index) => (
                   <React.Fragment key={item.num}>
-                    {index > 0 && windowWidth >= 768 && (
+                    {index > 0 && isDesktop && (
                       <View style={styles.stepArrow}>
                         <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
                       </View>
@@ -310,7 +312,7 @@ export default function HomeScreen() {
                         <Ionicons name="chevron-down" size={20} color={colors.textMuted} />
                       </View>
                     )}
-                    <View style={[styles.stepCard, { backgroundColor: colors.bgCard, borderColor: colors.border }, windowWidth >= 768 && styles.stepCardDesktop]}>
+                    <View style={[styles.stepCard, { backgroundColor: colors.bgCard, borderColor: colors.border }, isDesktop && styles.stepCardDesktop]}>
                       <View style={[styles.stepIconWrap, { backgroundColor: colors.accentMuted }]}>
                         <Ionicons name={item.icon} size={28} color={colors.accent} />
                       </View>
@@ -328,7 +330,7 @@ export default function HomeScreen() {
 
             {/* Section 4: Features (6 items, 2-column grid) */}
             <View style={styles.featuresSection}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, windowWidth >= 768 ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, isDesktop ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
                 {t.home.featuresTitle}
               </Text>
               <View style={styles.featuresGrid}>
@@ -361,18 +363,18 @@ export default function HomeScreen() {
             </View>
 
             {/* Section 5: Stats */}
-            <View style={[styles.techSection, windowWidth >= 768 && styles.techSectionDesktop]}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, windowWidth >= 768 ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
+            <View style={[styles.techSection, isDesktop && styles.techSectionDesktop]}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, isDesktop ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
                 {t.home.techTitle}
               </Text>
-              <View style={[styles.statsRow, windowWidth >= 768 && styles.statsRowDesktop]}>
+              <View style={[styles.statsRow, isDesktop && styles.statsRowDesktop]}>
                 {([
                   t.home.stats.clientSide,
                   t.home.stats.serverStorage,
                   t.home.stats.license,
                 ]).map((stat) => (
                   <View key={stat.label} style={styles.statItem}>
-                    <Text style={[styles.statValue, { color: colors.accent }, windowWidth >= 768 && styles.statValueDesktop]}>{stat.value}</Text>
+                    <Text style={[styles.statValue, { color: colors.accent }, isDesktop && styles.statValueDesktop]}>{stat.value}</Text>
                     <Text style={[styles.statLabel, { color: colors.textMuted }]}>{stat.label}</Text>
                   </View>
                 ))}
@@ -381,7 +383,7 @@ export default function HomeScreen() {
 
             {/* Section 6: Benefits */}
             <View style={styles.benefitsSection}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, windowWidth >= 768 ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, isDesktop ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
                 {t.home.benefitsTitle}
               </Text>
               {([
@@ -404,11 +406,11 @@ export default function HomeScreen() {
             </View>
 
             {/* Section 7: Closing CTA */}
-            <View style={[styles.closingCtaSection, { backgroundColor: colors.accentMuted, borderRadius: borderRadius.xl }, windowWidth >= 768 && styles.closingCtaSectionDesktop]}>
-              <Text style={[styles.closingCtaTitle, { color: colors.textPrimary }, windowWidth >= 768 && styles.closingCtaTitleDesktop]}>
+            <View style={[styles.closingCtaSection, { backgroundColor: colors.accentMuted, borderRadius: borderRadius.xl }, isDesktop && styles.closingCtaSectionDesktop]}>
+              <Text style={[styles.closingCtaTitle, { color: colors.textPrimary }, isDesktop && styles.closingCtaTitleDesktop]}>
                 {t.home.closingCta.title}
               </Text>
-              <Text style={[styles.closingCtaSubtitle, { color: colors.textSecondary }, windowWidth >= 768 && styles.closingCtaSubtitleDesktop]}>
+              <Text style={[styles.closingCtaSubtitle, { color: colors.textSecondary }, isDesktop && styles.closingCtaSubtitleDesktop]}>
                 {t.home.closingCta.subtitle}
               </Text>
               <Button
@@ -853,24 +855,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: spacing.xl,
     gap: spacing.xl,
-  },
-  heroRowDesktop: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   heroRowMobile: {
     flexDirection: 'column',
-    alignItems: 'center',
   },
   heroLeft: {
     gap: spacing.xs,
-  },
-  heroLeftDesktop: {
     flex: 1,
     alignItems: 'flex-start',
   },
   heroLeftMobile: {
-    alignItems: 'flex-start',
+    flex: undefined,
   },
   heroRight: {
     flex: 1,
