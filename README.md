@@ -11,6 +11,8 @@
 
 [mark-drive.com](https://mark-drive.com/)
 
+<br />
+
 ## クイックスタート
 
 ```bash
@@ -22,6 +24,8 @@ http://localhost:8081 を開いて使えます。
 
 > Google Drive 連携には API キーの設定が必要です。 [セットアップガイド](./docs/setup.md)
 
+<br />
+
 ## ドキュメント
 
 | | |
@@ -32,6 +36,8 @@ http://localhost:8081 を開いて使えます。
 | [機能仕様](./docs/features.md) | 各機能の詳細仕様 |
 | [開発ガイド](./docs/development.md) | 開発環境・テスト・デプロイ |
 | [プライバシー](./docs/privacy.md) | プライバシーとセキュリティ |
+
+<br />
 
 ## コントリビュート
 
