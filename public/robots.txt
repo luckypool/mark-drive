@@ -11,4 +11,4 @@ Allow: /third-party-licenses
 Disallow: /viewer
 Disallow: /search
 
-Sitemap: https://my-md-viewer.vercel.app/sitemap.xml
+Sitemap: https://mark-drive.com/sitemap.xml

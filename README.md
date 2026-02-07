@@ -12,7 +12,7 @@ Google Drive やローカルに保存された Markdown ファイルを安全に
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[Demo](https://my-md-viewer.vercel.app/) · [Documentation](./docs/)
+[Demo](https://mark-drive.com/) · [Documentation](./docs/)
 
 </div>
 
