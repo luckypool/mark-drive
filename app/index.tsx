@@ -177,7 +177,7 @@ export default function HomeScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.bgPrimary }]}>
       {/* Landing Header - Settings bar for non-authenticated users */}
       {!isAuthenticated && (
-        <View style={[styles.landingHeader, { borderBottomColor: colors.border, backgroundColor: colors.bgSecondary }]}>
+        <View style={[styles.landingHeader]}>
           <View style={styles.headerActions}>
             <LanguageToggle />
             <ThemeToggle />
@@ -786,12 +786,16 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   landingHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
   },
   headerActions: {
     flexDirection: 'row',
@@ -845,6 +849,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   heroRow: {
+    minHeight: 800,
+    justifyContent: 'center',
     paddingVertical: spacing.xl,
     gap: spacing.xl,
   },
@@ -930,7 +936,8 @@ const styles = StyleSheet.create({
   },
   // How it Works
   howItWorksSection: {
-    marginTop: spacing['2xl'],
+    minHeight: 800,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   stepsRow: {
@@ -981,7 +988,8 @@ const styles = StyleSheet.create({
 
   // Features
   featuresSection: {
-    marginTop: spacing['2xl'],
+    minHeight: 800,
+    justifyContent: 'center',
   },
   featuresGrid: {
     flexDirection: 'row',
@@ -1030,7 +1038,8 @@ const styles = StyleSheet.create({
 
   // Stats / Tech
   techSection: {
-    marginTop: spacing['2xl'],
+    minHeight: 800,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   techChips: {
@@ -1075,13 +1084,15 @@ const styles = StyleSheet.create({
 
   // Benefits
   benefitsSection: {
-    marginTop: spacing['2xl'],
+    minHeight: 800,
+    justifyContent: 'center',
     gap: spacing.md,
   },
 
   // Closing CTA
   closingCtaSection: {
-    marginTop: spacing['2xl'],
+    minHeight: 800,
+    justifyContent: 'center',
     padding: spacing.xl,
     alignItems: 'center',
   },
