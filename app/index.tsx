@@ -36,7 +36,8 @@ export default function HomeScreen() {
   const { colors, mode: themeMode, resolvedMode, setTheme } = useTheme();
   const { t, language, setLanguage } = useLanguage();
   const { width: _windowWidth } = useWindowDimensions();
-  const windowWidth = _windowWidth || (Platform.OS === 'web' && typeof window !== 'undefined' ? window.innerWidth : 0);
+  const SSR_DEFAULT_WIDTH = 1024;
+  const windowWidth = _windowWidth || (Platform.OS === 'web' && typeof window !== 'undefined' ? window.innerWidth : SSR_DEFAULT_WIDTH);
   const isDesktop = windowWidth >= 768;
   const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
   const {
