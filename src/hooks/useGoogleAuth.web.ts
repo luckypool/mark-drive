@@ -18,8 +18,8 @@ import { storage } from '../services/storage';
 const API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY || '';
 const CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '';
 
-// Google API のスコープ
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+// Google API のスコープ（読み取り + アプリ作成ファイルの書き込み）
+const SCOPES = 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file';
 
 // ストレージのキー
 const TOKEN_KEY = 'googleDriveAccessToken';
