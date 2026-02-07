@@ -42,6 +42,14 @@ export const en = {
     errorOccurred: 'An error occurred',
     fullscreen: 'Fullscreen',
     exitFullscreen: 'Exit Fullscreen',
+    edit: 'Edit',
+    preview: 'Preview',
+    saving: 'Saving...',
+    saved: 'Saved',
+    saveFailed: 'Failed to save',
+    unsavedChanges: 'You have unsaved changes. Discard them?',
+    save: 'Save',
+    reauthRequired: 'Please sign out and sign in again to enable editing',
   },
 
   // Search Screen
@@ -293,6 +301,14 @@ export type Translations = {
     errorOccurred: string;
     fullscreen: string;
     exitFullscreen: string;
+    edit: string;
+    preview: string;
+    saving: string;
+    saved: string;
+    saveFailed: string;
+    unsavedChanges: string;
+    save: string;
+    reauthRequired: string;
   };
   search: {
     placeholder: string;

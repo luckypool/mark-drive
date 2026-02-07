@@ -6,6 +6,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
+  TextInput,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -21,8 +22,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
 import { Button } from '../src/components/ui';
 import { MarkdownRenderer } from '../src/components/markdown';
-import { useGoogleAuth, useShare, useTheme, useLanguage } from '../src/hooks';
-import { useFontSettings, FontSize, FontFamily } from '../src/contexts/FontSettingsContext';
+import { useGoogleAuth, useShare, useTheme, useLanguage, useMarkdownEditor } from '../src/hooks';
+import { useFontSettings, fontSizeMultipliers, fontFamilyStacks, FontSize, FontFamily } from '../src/contexts/FontSettingsContext';
 import { addFileToHistory } from '../src/services';
 
 type ViewerParams = {
@@ -41,6 +42,14 @@ export default function ViewerScreen() {
   const { shareContent, isProcessing } = useShare();
 
   const [content, setContent] = useState<string | null>(params.content || null);
+
+  const editor = useMarkdownEditor({
+    initialContent: content,
+    fileId: params.id,
+    source: params.source as 'google-drive' | 'local',
+    accessToken,
+    onContentSaved: (newContent) => setContent(newContent),
+  });
   const [isLoading, setIsLoading] = useState(!params.content);
   const [error, setError] = useState<string | null>(null);
   const [showFileInfo, setShowFileInfo] = useState(false);
@@ -185,19 +194,41 @@ export default function ViewerScreen() {
     if (Platform.OS !== 'web') return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'f' || e.key === 'F') {
-        // Don't trigger if user is typing in an input
-        if ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA') {
-          return;
+      const tag = (e.target as HTMLElement).tagName;
+      const isTyping = tag === 'INPUT' || tag === 'TEXTAREA';
+
+      // Ctrl+S / Cmd+S: 編集モード時に保存
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        if (editor.mode === 'edit' && editor.canSave) {
+          e.preventDefault();
+          editor.save();
+        } else if (editor.mode === 'edit') {
+          e.preventDefault();
         }
+        return;
+      }
+
+      if (isTyping) return;
+
+      if (e.key === 'f' || e.key === 'F') {
         e.preventDefault();
         toggleFullscreen();
+      }
+
+      // E: 編集モードをトグル
+      if ((e.key === 'e' || e.key === 'E') && editor.canEdit) {
+        e.preventDefault();
+        if (editor.hasUnsavedChanges) {
+          const confirmed = window.confirm(t.viewer.unsavedChanges);
+          if (!confirmed) return;
+        }
+        editor.toggleMode();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleFullscreen]);
+  }, [toggleFullscreen, editor, t.viewer.unsavedChanges]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -208,6 +239,20 @@ export default function ViewerScreen() {
     };
   }, []);
 
+  // beforeunload で未保存変更を警告
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (editor.hasUnsavedChanges) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [editor.hasUnsavedChanges]);
+
   const handleDownloadPdf = async () => {
     if (content && params.name) {
       setShowFileInfo(false);
@@ -216,6 +261,10 @@ export default function ViewerScreen() {
   };
 
   const handleBack = () => {
+    if (editor.hasUnsavedChanges) {
+      const confirmed = window.confirm(t.viewer.unsavedChanges);
+      if (!confirmed) return;
+    }
     router.back();
   };
 
@@ -281,16 +330,54 @@ export default function ViewerScreen() {
             <Text style={[styles.fileName, { color: colors.textPrimary }]} numberOfLines={1}>
               {params.name}
             </Text>
+            {editor.hasUnsavedChanges && (
+              <View style={[styles.unsavedDot, { backgroundColor: '#f59e0b' }]} />
+            )}
             <Ionicons name="chevron-down" size={16} color={colors.textMuted} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.fullscreenButton} onPress={toggleFullscreen}>
-            <Ionicons
-              name={isFullscreen ? "contract-outline" : "expand-outline"}
-              size={24}
-              color={colors.textPrimary}
-            />
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            {editor.canEdit && (
+              <TouchableOpacity
+                style={styles.headerActionButton}
+                onPress={() => {
+                  if (editor.mode === 'edit' && editor.hasUnsavedChanges) {
+                    const confirmed = window.confirm(t.viewer.unsavedChanges);
+                    if (!confirmed) return;
+                  }
+                  editor.toggleMode();
+                }}
+              >
+                <Ionicons
+                  name={editor.mode === 'preview' ? 'create-outline' : 'eye-outline'}
+                  size={24}
+                  color={colors.textPrimary}
+                />
+              </TouchableOpacity>
+            )}
+            {editor.mode === 'edit' && (
+              <TouchableOpacity
+                style={[styles.headerActionButton, { opacity: editor.canSave ? 1 : 0.4 }]}
+                onPress={() => editor.save()}
+                disabled={!editor.canSave}
+              >
+                <Ionicons
+                  name="save-outline"
+                  size={24}
+                  color={editor.canSave ? colors.accent : colors.textMuted}
+                />
+              </TouchableOpacity>
+            )}
+            {editor.mode === 'preview' && (
+              <TouchableOpacity style={styles.headerActionButton} onPress={toggleFullscreen}>
+                <Ionicons
+                  name={isFullscreen ? "contract-outline" : "expand-outline"}
+                  size={24}
+                  color={colors.textPrimary}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         </Animated.View>
       )}
 
@@ -311,24 +398,83 @@ export default function ViewerScreen() {
             <Text style={[styles.retryText, { color: colors.textPrimary }]}>{t.viewer.retry}</Text>
           </TouchableOpacity>
         </View>
-      ) : content ? (
-        <Pressable
-          style={styles.contentPressable}
-          onPress={handleContentTap}
-        >
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={[
-              styles.scrollContent,
-              isFullscreen && styles.fullscreenContent,
-            ]}
-            showsVerticalScrollIndicator={!isFullscreen}
+      ) : content || editor.mode === 'edit' ? (
+        editor.mode === 'edit' ? (
+          <View style={styles.editorContainer}>
+            {/* Editor Status Bar */}
+            {(editor.saveSuccess || editor.saveError || editor.needsReauth || editor.isSaving) && (
+              <View
+                style={[
+                  styles.editorStatusBar,
+                  {
+                    backgroundColor: editor.saveError || editor.needsReauth
+                      ? colors.error + '18'
+                      : editor.saveSuccess
+                      ? colors.accent + '18'
+                      : colors.bgTertiary,
+                  },
+                ]}
+              >
+                <Text
+                  style={{
+                    color: editor.saveError || editor.needsReauth
+                      ? colors.error
+                      : editor.saveSuccess
+                      ? colors.accent
+                      : colors.textMuted,
+                    fontSize: fontSize.sm,
+                  }}
+                >
+                  {editor.isSaving
+                    ? t.viewer.saving
+                    : editor.needsReauth
+                    ? t.viewer.reauthRequired
+                    : editor.saveError
+                    ? `${t.viewer.saveFailed}: ${editor.saveError}`
+                    : editor.saveSuccess
+                    ? t.viewer.saved
+                    : ''}
+                </Text>
+              </View>
+            )}
+            <TextInput
+              style={[
+                styles.editorTextarea,
+                {
+                  color: colors.textPrimary,
+                  backgroundColor: colors.bgPrimary,
+                  fontSize: fontSize.base * fontSizeMultipliers[fontSettings.fontSize],
+                  fontFamily: fontFamilyStacks[fontSettings.fontFamily],
+                },
+              ]}
+              value={editor.editContent}
+              onChangeText={editor.setEditContent}
+              multiline
+              autoFocus
+              textAlignVertical="top"
+              spellCheck={false}
+              autoCorrect={false}
+            />
+          </View>
+        ) : (
+          <Pressable
+            style={styles.contentPressable}
+            onPress={handleContentTap}
           >
-            <View style={isFullscreen ? [styles.contentContainer, styles.fullscreenCard] : styles.contentContainer}>
-              <MarkdownRenderer content={content} onLinkPress={handleLinkPress} themeMode={themeMode} />
-            </View>
-          </ScrollView>
-        </Pressable>
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={[
+                styles.scrollContent,
+                isFullscreen && styles.fullscreenContent,
+              ]}
+              showsVerticalScrollIndicator={!isFullscreen}
+            >
+              <View style={isFullscreen ? [styles.contentContainer, styles.fullscreenCard] : styles.contentContainer}>
+                <MarkdownRenderer content={content!} onLinkPress={handleLinkPress} themeMode={themeMode} />
+              </View>
+            </ScrollView>
+          </Pressable>
+        )
       ) : (
         <View style={styles.emptyContainer}>
           <Ionicons name="document-outline" size={48} color={colors.textMuted} />
@@ -527,11 +673,20 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.medium,
     maxWidth: '80%',
   },
-  fullscreenButton: {
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerActionButton: {
     width: 44,
     height: 44,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  unsavedDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   fullscreenHeader: {
     position: 'absolute',
@@ -606,6 +761,21 @@ const styles = StyleSheet.create({
     maxWidth: 900,
     alignSelf: 'center',
     width: '100%',
+  },
+
+  // Editor
+  editorContainer: {
+    flex: 1,
+  },
+  editorStatusBar: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  editorTextarea: {
+    flex: 1,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    textAlignVertical: 'top',
   },
 
   // Dialog

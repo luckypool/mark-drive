@@ -17,3 +17,6 @@ export { useLanguage } from './useLanguage';
 
 export { useFontSettings } from '../contexts/FontSettingsContext';
 export type { FontSize, FontFamily, FontSettings } from '../contexts/FontSettingsContext';
+
+export { useMarkdownEditor } from './useMarkdownEditor';
+export type { UseMarkdownEditorReturn } from './useMarkdownEditor';

@@ -19,7 +19,7 @@ const API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY || '';
 const CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '';
 
 // Google API のスコープ
-const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
 // ストレージのキー
 const TOKEN_KEY = 'googleDriveAccessToken';
@@ -179,14 +179,19 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         await loadScript('https://accounts.google.com/gsi/client');
 
         window.gapi.load('client:picker', async () => {
-          await window.gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: [
-              'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
-            ],
-          });
-          pickerInited.current = true;
-          checkApisLoaded();
+          try {
+            await window.gapi.client.init({
+              apiKey: API_KEY,
+              discoveryDocs: [
+                'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
+              ],
+            });
+            pickerInited.current = true;
+            checkApisLoaded();
+          } catch (initErr) {
+            console.error('gapi.client.init failed:', initErr);
+            setError('Failed to initialize Google API. Check API key referrer settings.');
+          }
         });
 
         tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({

@@ -44,6 +44,14 @@ export const ja: Translations = {
     errorOccurred: 'エラーが発生しました',
     fullscreen: '全画面',
     exitFullscreen: '全画面を終了',
+    edit: '編集',
+    preview: 'プレビュー',
+    saving: '保存中...',
+    saved: '保存しました',
+    saveFailed: '保存に失敗しました',
+    unsavedChanges: '未保存の変更があります。破棄しますか？',
+    save: '保存',
+    reauthRequired: '編集を有効にするには、サインアウトして再度サインインしてください',
   },
 
   // Search Screen

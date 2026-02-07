@@ -188,6 +188,35 @@ export async function listRecentMarkdownFiles(
   );
 }
 
+const DRIVE_UPLOAD_API_BASE = 'https://www.googleapis.com/upload/drive/v3';
+
+/**
+ * ファイル内容を更新（書き戻し）
+ */
+export async function updateFileContent(
+  accessToken: string,
+  fileId: string,
+  content: string,
+): Promise<void> {
+  const response = await fetch(
+    `${DRIVE_UPLOAD_API_BASE}/files/${fileId}?uploadType=media`,
+    {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'text/markdown',
+      },
+      body: content,
+    }
+  );
+  if (!response.ok) {
+    if (response.status === 403) {
+      throw new Error('INSUFFICIENT_SCOPE');
+    }
+    throw new Error(`Failed to save: ${response.statusText}`);
+  }
+}
+
 /**
  * Markdown ファイルかどうかを判定
  */
