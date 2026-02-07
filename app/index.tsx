@@ -290,7 +290,7 @@ export default function HomeScreen() {
 
             {/* Section 3: How it Works */}
             <View style={styles.howItWorksSection}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, windowWidth >= 768 ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
                 {t.home.howItWorks.title}
               </Text>
               <View style={[styles.stepsRow, windowWidth >= 768 && styles.stepsRowDesktop]}>
@@ -328,7 +328,7 @@ export default function HomeScreen() {
 
             {/* Section 4: Features (6 items, 2-column grid) */}
             <View style={styles.featuresSection}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, windowWidth >= 768 ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
                 {t.home.featuresTitle}
               </Text>
               <View style={styles.featuresGrid}>
@@ -361,18 +361,18 @@ export default function HomeScreen() {
             </View>
 
             {/* Section 5: Stats */}
-            <View style={styles.techSection}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            <View style={[styles.techSection, windowWidth >= 768 && styles.techSectionDesktop]}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, windowWidth >= 768 ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
                 {t.home.techTitle}
               </Text>
-              <View style={styles.statsRow}>
+              <View style={[styles.statsRow, windowWidth >= 768 && styles.statsRowDesktop]}>
                 {([
                   t.home.stats.clientSide,
                   t.home.stats.serverStorage,
                   t.home.stats.license,
                 ]).map((stat) => (
                   <View key={stat.label} style={styles.statItem}>
-                    <Text style={[styles.statValue, { color: colors.accent }]}>{stat.value}</Text>
+                    <Text style={[styles.statValue, { color: colors.accent }, windowWidth >= 768 && styles.statValueDesktop]}>{stat.value}</Text>
                     <Text style={[styles.statLabel, { color: colors.textMuted }]}>{stat.label}</Text>
                   </View>
                 ))}
@@ -381,7 +381,7 @@ export default function HomeScreen() {
 
             {/* Section 6: Benefits */}
             <View style={styles.benefitsSection}>
-              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }, windowWidth >= 768 ? styles.sectionTitleDesktop : styles.sectionTitleMobile]}>
                 {t.home.benefitsTitle}
               </Text>
               {([
@@ -404,11 +404,11 @@ export default function HomeScreen() {
             </View>
 
             {/* Section 7: Closing CTA */}
-            <View style={[styles.closingCtaSection, { backgroundColor: colors.accentMuted, borderRadius: borderRadius.xl }]}>
-              <Text style={[styles.closingCtaTitle, { color: colors.textPrimary }]}>
+            <View style={[styles.closingCtaSection, { backgroundColor: colors.accentMuted, borderRadius: borderRadius.xl }, windowWidth >= 768 && styles.closingCtaSectionDesktop]}>
+              <Text style={[styles.closingCtaTitle, { color: colors.textPrimary }, windowWidth >= 768 && styles.closingCtaTitleDesktop]}>
                 {t.home.closingCta.title}
               </Text>
-              <Text style={[styles.closingCtaSubtitle, { color: colors.textSecondary }]}>
+              <Text style={[styles.closingCtaSubtitle, { color: colors.textSecondary }, windowWidth >= 768 && styles.closingCtaSubtitleDesktop]}>
                 {t.home.closingCta.subtitle}
               </Text>
               <Button
@@ -870,7 +870,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   heroLeftMobile: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   heroRight: {
     flex: 1,
@@ -892,18 +892,19 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.bold,
   },
   heroTitle: {
-    fontSize: fontSize['4xl'],
+    fontSize: fontSize['3xl'],
     fontWeight: fontWeight.bold,
     marginBottom: spacing.md,
-    textAlign: 'center',
-    lineHeight: fontSize['4xl'] * 1.15,
+    textAlign: 'left',
+    lineHeight: fontSize['3xl'] * 1.15,
   },
   heroTitleDesktop: {
-    textAlign: 'left',
+    fontSize: fontSize['4xl'],
+    lineHeight: fontSize['4xl'] * 1.15,
   },
   heroSubtitle: {
     fontSize: fontSize.xs,
-    textAlign: 'center',
+    textAlign: 'left',
     lineHeight: fontSize.xs * 1.6,
   },
   heroSubtitleDesktop: {
@@ -911,7 +912,7 @@ const styles = StyleSheet.create({
   },
   heroTagline: {
     fontSize: fontSize.xs,
-    textAlign: 'center',
+    textAlign: 'left',
     marginTop: spacing.sm,
   },
   heroTaglineDesktop: {
@@ -922,8 +923,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: fontSize['4xl'],
     fontWeight: fontWeight.bold,
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: spacing['2xl'],
+  },
+  sectionTitleDesktop: {
+    textAlign: 'center',
+  },
+  sectionTitleMobile: {
+    fontSize: fontSize['3xl'],
   },
 
   // App Preview
@@ -938,7 +945,6 @@ const styles = StyleSheet.create({
   howItWorksSection: {
     minHeight: 800,
     justifyContent: 'center',
-    alignItems: 'center',
   },
   stepsRow: {
     width: '100%',
@@ -990,6 +996,7 @@ const styles = StyleSheet.create({
   featuresSection: {
     minHeight: 800,
     justifyContent: 'center',
+    paddingVertical: 80,
   },
   featuresGrid: {
     flexDirection: 'row',
@@ -1040,17 +1047,19 @@ const styles = StyleSheet.create({
   techSection: {
     minHeight: 800,
     justifyContent: 'center',
+    paddingVertical: 80,
+  },
+  techSectionDesktop: {
     alignItems: 'center',
   },
   techChips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     gap: spacing.sm,
     marginTop: spacing.md,
   },
   techChipsDesktop: {
-    justifyContent: 'flex-start',
   },
   techChip: {
     flexDirection: 'row',
@@ -1067,6 +1076,11 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: spacing.md,
+    flexWrap: 'wrap',
+  },
+  statsRowDesktop: {
     justifyContent: 'center',
     gap: spacing.xl,
   },
@@ -1074,8 +1088,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
-    fontSize: fontSize['4xl'],
+    fontSize: fontSize['3xl'],
     fontWeight: fontWeight.bold,
+  },
+  statValueDesktop: {
+    fontSize: fontSize['4xl'],
   },
   statLabel: {
     fontSize: fontSize.lg,
@@ -1086,6 +1103,7 @@ const styles = StyleSheet.create({
   benefitsSection: {
     minHeight: 800,
     justifyContent: 'center',
+    paddingVertical: 80,
     gap: spacing.md,
   },
 
@@ -1093,20 +1111,30 @@ const styles = StyleSheet.create({
   closingCtaSection: {
     minHeight: 800,
     justifyContent: 'center',
-    padding: spacing.xl,
+    paddingVertical: 80,
+    paddingHorizontal: spacing.xl,
+  },
+  closingCtaSectionDesktop: {
     alignItems: 'center',
   },
   closingCtaTitle: {
-    fontSize: fontSize['4xl'],
+    fontSize: fontSize['3xl'],
     fontWeight: fontWeight.bold,
-    textAlign: 'center',
     marginBottom: spacing.md,
   },
+  closingCtaTitleDesktop: {
+    fontSize: fontSize['4xl'],
+    textAlign: 'center',
+  },
   closingCtaSubtitle: {
+    fontSize: fontSize.xl,
+    lineHeight: fontSize.xl * 1.5,
+    marginBottom: spacing.xl,
+  },
+  closingCtaSubtitleDesktop: {
     fontSize: fontSize['2xl'],
     textAlign: 'center',
     lineHeight: fontSize['2xl'] * 1.5,
-    marginBottom: spacing.xl,
   },
   closingCtaButton: {
     marginBottom: spacing.md,
