@@ -12,6 +12,34 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
+        {/* Primary Meta Tags */}
+        <title>MarkDrive - Beautiful Markdown Viewer for Google Drive</title>
+        <meta name="title" content="MarkDrive - Beautiful Markdown Viewer for Google Drive" />
+        <meta name="description" content="A privacy-first Markdown viewer for Google Drive. Syntax highlighting, Mermaid diagrams, PDF export — all rendered in your browser with zero server storage. Free and open source." />
+        <meta name="author" content="luckypool" />
+        <meta name="theme-color" content="#10b981" />
+        <link rel="canonical" href="https://mark-drive.com/" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://mark-drive.com/" />
+        <meta property="og:site_name" content="MarkDrive" />
+        <meta property="og:title" content="MarkDrive - Beautiful Markdown Viewer for Google Drive" />
+        <meta property="og:description" content="A privacy-first Markdown viewer for Google Drive. Syntax highlighting, Mermaid diagrams, PDF export — all rendered in your browser with zero server storage." />
+        <meta property="og:image" content="https://mark-drive.com/og-image.png" />
+        <meta property="og:image:alt" content="MarkDrive — Beautiful Markdown Viewer for Google Drive" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en_US" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://mark-drive.com/" />
+        <meta name="twitter:title" content="MarkDrive - Beautiful Markdown Viewer for Google Drive" />
+        <meta name="twitter:description" content="Privacy-first Markdown viewer for Google Drive. Syntax highlighting, Mermaid diagrams, PDF export — free and open source." />
+        <meta name="twitter:image" content="https://mark-drive.com/og-image.png" />
+
         {/* Apple PWA meta tags */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
