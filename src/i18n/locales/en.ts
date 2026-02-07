@@ -151,6 +151,7 @@ export const en = {
     theme: 'Theme',
     light: 'Light',
     dark: 'Dark',
+    system: 'System',
     language: 'Language',
   },
 
@@ -385,6 +386,7 @@ export type Translations = {
     theme: string;
     light: string;
     dark: string;
+    system: string;
     language: string;
   };
   fontSettings: {

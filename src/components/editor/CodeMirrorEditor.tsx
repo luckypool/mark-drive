@@ -23,7 +23,7 @@ interface CodeMirrorEditorProps {
 }
 
 export function CodeMirrorEditor({ value, onChange, onSave, autoFocus }: CodeMirrorEditorProps) {
-  const { colors, mode } = useTheme();
+  const { colors, resolvedMode } = useTheme();
   const { settings: fontSettings } = useFontSettings();
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
@@ -156,7 +156,7 @@ export function CodeMirrorEditor({ value, onChange, onSave, autoFocus }: CodeMir
       view.destroy();
       viewRef.current = null;
     };
-  }, [mode, fontSettings.fontSize, colors]);
+  }, [resolvedMode, fontSettings.fontSize, colors]);
 
   // Sync external value changes
   useEffect(() => {
