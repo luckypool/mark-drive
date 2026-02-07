@@ -3,13 +3,11 @@
  */
 
 import { useState, useCallback, useRef, useMemo } from 'react';
-import { updateFileContent } from '../services/googleDrive';
 
 interface UseMarkdownEditorOptions {
   initialContent: string | null;
-  fileId: string;
-  source: 'google-drive' | 'local';
-  accessToken: string | null;
+  fileName: string;
+  fileHandle: FileSystemFileHandle | null;
   onContentSaved: (newContent: string) => void;
 }
 
@@ -20,7 +18,6 @@ export interface UseMarkdownEditorReturn {
   isSaving: boolean;
   saveError: string | null;
   saveSuccess: boolean;
-  needsReauth: boolean;
   canEdit: boolean;
   canSave: boolean;
 
@@ -32,9 +29,8 @@ export interface UseMarkdownEditorReturn {
 
 export function useMarkdownEditor({
   initialContent,
-  fileId,
-  source,
-  accessToken,
+  fileName,
+  fileHandle,
   onContentSaved,
 }: UseMarkdownEditorOptions): UseMarkdownEditorReturn {
   const [mode, setMode] = useState<'preview' | 'edit'>('preview');
@@ -42,12 +38,11 @@ export function useMarkdownEditor({
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [needsReauth, setNeedsReauth] = useState(false);
 
   const baselineRef = useRef(initialContent || '');
   const saveSuccessTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const canEdit = source === 'google-drive';
+  const canEdit = true;
   const hasUnsavedChanges = mode === 'edit' && editContent !== baselineRef.current;
   const canSave = hasUnsavedChanges && !isSaving;
 
@@ -58,7 +53,6 @@ export function useMarkdownEditor({
         setEditContent(baselineRef.current);
         setSaveError(null);
         setSaveSuccess(false);
-        setNeedsReauth(false);
         return 'edit';
       }
       return 'preview';
@@ -66,14 +60,27 @@ export function useMarkdownEditor({
   }, []);
 
   const save = useCallback(async (): Promise<boolean> => {
-    if (!accessToken || !canEdit) return false;
-
     setIsSaving(true);
     setSaveError(null);
     setSaveSuccess(false);
 
     try {
-      await updateFileContent(accessToken, fileId, editContent);
+      if (fileHandle) {
+        // File System Access API: 上書き保存
+        const writable = await fileHandle.createWritable();
+        await writable.write(editContent);
+        await writable.close();
+      } else {
+        // フォールバック: ダウンロード
+        const blob = new Blob([editContent], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
       baselineRef.current = editContent;
       onContentSaved(editContent);
       setSaveSuccess(true);
@@ -88,21 +95,17 @@ export function useMarkdownEditor({
 
       return true;
     } catch (err) {
-      if (err instanceof Error && err.message === 'INSUFFICIENT_SCOPE') {
-        setNeedsReauth(true);
-      }
       setSaveError(err instanceof Error ? err.message : 'Failed to save');
       return false;
     } finally {
       setIsSaving(false);
     }
-  }, [accessToken, canEdit, editContent, fileId, onContentSaved]);
+  }, [editContent, fileHandle, fileName, onContentSaved]);
 
   const discardChanges = useCallback(() => {
     setEditContent(baselineRef.current);
     setSaveError(null);
     setSaveSuccess(false);
-    setNeedsReauth(false);
     setMode('preview');
   }, []);
 
@@ -121,7 +124,6 @@ export function useMarkdownEditor({
       isSaving,
       saveError,
       saveSuccess,
-      needsReauth,
       canEdit,
       canSave,
       toggleMode,
@@ -136,7 +138,6 @@ export function useMarkdownEditor({
       isSaving,
       saveError,
       saveSuccess,
-      needsReauth,
       canEdit,
       canSave,
       toggleMode,

@@ -21,7 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
 import { Button } from '../src/components/ui';
 import { MarkdownRenderer } from '../src/components/markdown';
-import { useGoogleAuth, useShare, useTheme, useLanguage, useMarkdownEditor } from '../src/hooks';
+import { useGoogleAuth, useShare, useTheme, useLanguage, useMarkdownEditor, getFileHandle } from '../src/hooks';
 import { useFontSettings, FontSize, FontFamily } from '../src/contexts/FontSettingsContext';
 import { CodeMirrorEditor } from '../src/components/editor/CodeMirrorEditor';
 import { addFileToHistory } from '../src/services';
@@ -43,11 +43,12 @@ export default function ViewerScreen() {
 
   const [content, setContent] = useState<string | null>(params.content || null);
 
+  const fileHandle = useMemo(() => getFileHandle(params.id), [params.id]);
+
   const editor = useMarkdownEditor({
     initialContent: content,
-    fileId: params.id,
-    source: params.source as 'google-drive' | 'local',
-    accessToken,
+    fileName: params.name,
+    fileHandle,
     onContentSaved: (newContent) => setContent(newContent),
   });
   const [isLoading, setIsLoading] = useState(!params.content);
@@ -475,17 +476,15 @@ export default function ViewerScreen() {
                     </Text>
                   </>
                 )}
-                {(editor.saveError || editor.needsReauth) && !editor.isSaving && (
+                {editor.saveError && !editor.isSaving && (
                   <>
                     <Ionicons name="alert-circle" size={14} color={colors.error} />
                     <Text style={[styles.editorFooterText, { color: colors.error }]} numberOfLines={1}>
-                      {editor.needsReauth
-                        ? t.viewer.reauthRequired
-                        : `${t.viewer.saveFailed}: ${editor.saveError}`}
+                      {`${t.viewer.saveFailed}: ${editor.saveError}`}
                     </Text>
                   </>
                 )}
-                {editor.hasUnsavedChanges && !editor.isSaving && !editor.saveSuccess && !editor.saveError && !editor.needsReauth && (
+                {editor.hasUnsavedChanges && !editor.isSaving && !editor.saveSuccess && !editor.saveError && (
                   <>
                     <View style={styles.unsavedDotSmall} />
                     <Text style={[styles.editorFooterText, { color: '#f59e0b' }]}>

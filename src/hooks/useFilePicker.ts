@@ -4,4 +4,4 @@
  */
 
 export type { LocalFile } from './useFilePicker.web';
-export { useFilePicker } from './useFilePicker.web';
+export { useFilePicker, getFileHandle } from './useFilePicker.web';
