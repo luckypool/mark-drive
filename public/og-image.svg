@@ -1,0 +1,110 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0a0f0d"/>
+
+  <!-- Subtle grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e2e28" stroke-width="0.5" opacity="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Left side: App icon + text -->
+  <!-- Icon background -->
+  <rect x="80" y="140" width="140" height="140" rx="32" fill="#111915" stroke="#1e2e28" stroke-width="2"/>
+
+  <!-- Document shape in icon -->
+  <path d="M112 168C112 159.163 119.163 152 128 152H172L204 184V296C204 304.837 196.837 312 188 312H128C119.163 312 112 304.837 112 296V168Z" fill="#1a2420" stroke="#1e2e28" stroke-width="1.5"/>
+  <path d="M172 152V176C172 184.837 179.163 192 188 192H204" fill="#1a2420" stroke="#1e2e28" stroke-width="1.5"/>
+  <path d="M172 152L204 184H188C179.163 184 172 176.837 172 168V152Z" fill="#1a2420"/>
+  <text x="150" y="262" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="700" fill="#10b981" text-anchor="middle">MD</text>
+
+  <!-- App name -->
+  <text x="80" y="350" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="700" fill="#e2e8f0">MarkDrive</text>
+
+  <!-- Tagline -->
+  <text x="80" y="410" font-family="system-ui, -apple-system, sans-serif" font-size="26" fill="#94a3b8">Beautiful Markdown Viewer</text>
+  <text x="80" y="445" font-family="system-ui, -apple-system, sans-serif" font-size="26" fill="#94a3b8">for Google Drive</text>
+
+  <!-- Feature pills -->
+  <rect x="80" y="480" width="140" height="32" rx="16" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1"/>
+  <text x="150" y="501" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#10b981" text-anchor="middle">Privacy First</text>
+
+  <rect x="235" y="480" width="130" height="32" rx="16" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1"/>
+  <text x="300" y="501" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#10b981" text-anchor="middle">Open Source</text>
+
+  <rect x="380" y="480" width="150" height="32" rx="16" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1"/>
+  <text x="455" y="501" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#10b981" text-anchor="middle">No Server Storage</text>
+
+  <!-- Right side: App preview mockup -->
+  <g transform="translate(600, 60)">
+    <!-- Browser frame shadow -->
+    <rect x="4" y="4" width="540" height="510" rx="12" fill="rgba(0,0,0,0.3)"/>
+
+    <!-- Browser frame -->
+    <rect x="0" y="0" width="540" height="510" rx="12" fill="#1a1f2e"/>
+
+    <!-- Title bar -->
+    <rect x="0" y="0" width="540" height="36" rx="12" fill="#252b3b"/>
+    <rect x="0" y="24" width="540" height="12" fill="#252b3b"/>
+
+    <!-- Window controls -->
+    <circle cx="18" cy="18" r="5" fill="#ff5f57"/>
+    <circle cx="36" cy="18" r="5" fill="#febc2e"/>
+    <circle cx="54" cy="18" r="5" fill="#28c840"/>
+
+    <!-- URL bar -->
+    <rect x="80" y="8" width="380" height="20" rx="4" fill="#1a1f2e"/>
+    <text x="96" y="22" font-family="system-ui, sans-serif" font-size="10" fill="#6b7280">mark-drive.com</text>
+
+    <!-- App header -->
+    <rect x="16" y="48" width="508" height="40" rx="6" fill="#252b3b"/>
+    <text x="32" y="74" font-family="system-ui, sans-serif" font-size="13" font-weight="600" fill="#e2e8f0">README.md</text>
+
+    <!-- Content area -->
+    <rect x="16" y="100" width="508" height="396" rx="6" fill="#1e2433"/>
+
+    <!-- H1 -->
+    <text x="32" y="134" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#f1f5f9"># Welcome to MarkDrive</text>
+
+    <!-- Paragraph -->
+    <text x="32" y="166" font-family="system-ui, sans-serif" font-size="12" fill="#94a3b8">A beautiful Markdown viewer for Google Drive files.</text>
+
+    <!-- H2 -->
+    <text x="32" y="206" font-family="system-ui, sans-serif" font-size="15" font-weight="600" fill="#e2e8f0">## Features</text>
+
+    <!-- List -->
+    <circle cx="42" cy="234" r="3" fill="#10b981"/>
+    <text x="54" y="238" font-family="system-ui, sans-serif" font-size="12" fill="#94a3b8">Google Drive integration</text>
+
+    <circle cx="42" cy="258" r="3" fill="#10b981"/>
+    <text x="54" y="262" font-family="system-ui, sans-serif" font-size="12" fill="#94a3b8">Beautiful syntax highlighting</text>
+
+    <circle cx="42" cy="282" r="3" fill="#10b981"/>
+    <text x="54" y="286" font-family="system-ui, sans-serif" font-size="12" fill="#94a3b8">Mermaid diagram support</text>
+
+    <!-- Code block -->
+    <rect x="32" y="306" width="476" height="70" rx="6" fill="#161b22"/>
+    <text x="44" y="328" font-family="monospace" font-size="11" fill="#7ee787">```javascript</text>
+    <text x="44" y="346" font-family="monospace" font-size="11" fill="#e6edf3">const viewer = new MDViewer();</text>
+    <text x="44" y="364" font-family="monospace" font-size="11" fill="#e6edf3">viewer.render(markdown);</text>
+
+    <!-- Mermaid diagram hint -->
+    <rect x="32" y="390" width="476" height="60" rx="6" fill="#161b22"/>
+    <text x="44" y="412" font-family="monospace" font-size="11" fill="#7ee787">```mermaid</text>
+    <text x="44" y="430" font-family="monospace" font-size="11" fill="#e6edf3">graph LR; A-->B; B-->C;</text>
+
+    <!-- Fade overlay -->
+    <defs>
+      <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0.8" stop-color="#1a1f2e" stop-opacity="0"/>
+        <stop offset="1" stop-color="#1a1f2e" stop-opacity="0.9"/>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="420" width="540" height="90" fill="url(#fade)"/>
+  </g>
+
+  <!-- URL at bottom -->
+  <text x="80" y="570" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#64748b">mark-drive.com</text>
+</svg>
