@@ -2,11 +2,10 @@
  * MarkDrive - Viewer Screen
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -23,7 +22,8 @@ import { spacing, borderRadius, fontSize, fontWeight } from '../src/theme';
 import { Button } from '../src/components/ui';
 import { MarkdownRenderer } from '../src/components/markdown';
 import { useGoogleAuth, useShare, useTheme, useLanguage, useMarkdownEditor } from '../src/hooks';
-import { useFontSettings, fontSizeMultipliers, fontFamilyStacks, FontSize, FontFamily } from '../src/contexts/FontSettingsContext';
+import { useFontSettings, FontSize, FontFamily } from '../src/contexts/FontSettingsContext';
+import { CodeMirrorEditor } from '../src/components/editor/CodeMirrorEditor';
 import { addFileToHistory } from '../src/services';
 
 type ViewerParams = {
@@ -194,8 +194,9 @@ export default function ViewerScreen() {
     if (Platform.OS !== 'web') return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement).tagName;
-      const isTyping = tag === 'INPUT' || tag === 'TEXTAREA';
+      const target = e.target as HTMLElement;
+      const tag = target.tagName;
+      const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable;
 
       // Ctrl+S / Cmd+S: 編集モード時に保存
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -272,6 +273,13 @@ export default function ViewerScreen() {
     window.open(url, '_blank');
   };
 
+  const editorStats = useMemo(() => {
+    const text = editor.editContent;
+    const lines = text ? text.split('\n').length : 0;
+    const chars = text ? text.length : 0;
+    return { lines, chars };
+  }, [editor.editContent]);
+
   const fontSizeOptions: { value: FontSize; labelKey: 'small' | 'medium' | 'large' }[] = [
     { value: 'small', labelKey: 'small' },
     { value: 'medium', labelKey: 'medium' },
@@ -338,22 +346,60 @@ export default function ViewerScreen() {
 
           <View style={styles.headerActions}>
             {editor.canEdit && (
-              <TouchableOpacity
-                style={styles.headerActionButton}
-                onPress={() => {
-                  if (editor.mode === 'edit' && editor.hasUnsavedChanges) {
-                    const confirmed = window.confirm(t.viewer.unsavedChanges);
-                    if (!confirmed) return;
-                  }
-                  editor.toggleMode();
-                }}
-              >
-                <Ionicons
-                  name={editor.mode === 'preview' ? 'create-outline' : 'eye-outline'}
-                  size={24}
-                  color={colors.textPrimary}
-                />
-              </TouchableOpacity>
+              <View style={[styles.segmentedControl, { backgroundColor: colors.bgTertiary }]}>
+                <TouchableOpacity
+                  style={[
+                    styles.segmentedTab,
+                    editor.mode === 'edit' && { backgroundColor: colors.accent },
+                  ]}
+                  onPress={() => {
+                    if (editor.mode !== 'edit') editor.toggleMode();
+                  }}
+                >
+                  <Ionicons
+                    name="create-outline"
+                    size={14}
+                    color={editor.mode === 'edit' ? '#fff' : colors.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      styles.segmentedLabel,
+                      { color: editor.mode === 'edit' ? '#fff' : colors.textSecondary },
+                    ]}
+                  >
+                    {t.viewer.edit}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.segmentedTab,
+                    editor.mode === 'preview' && { backgroundColor: colors.accent },
+                  ]}
+                  onPress={() => {
+                    if (editor.mode === 'edit') {
+                      if (editor.hasUnsavedChanges) {
+                        const confirmed = window.confirm(t.viewer.unsavedChanges);
+                        if (!confirmed) return;
+                      }
+                      editor.toggleMode();
+                    }
+                  }}
+                >
+                  <Ionicons
+                    name="eye-outline"
+                    size={14}
+                    color={editor.mode === 'preview' ? '#fff' : colors.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      styles.segmentedLabel,
+                      { color: editor.mode === 'preview' ? '#fff' : colors.textSecondary },
+                    ]}
+                  >
+                    {t.viewer.preview}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
             {editor.mode === 'edit' && (
               <TouchableOpacity
@@ -368,15 +414,13 @@ export default function ViewerScreen() {
                 />
               </TouchableOpacity>
             )}
-            {editor.mode === 'preview' && (
-              <TouchableOpacity style={styles.headerActionButton} onPress={toggleFullscreen}>
-                <Ionicons
-                  name={isFullscreen ? "contract-outline" : "expand-outline"}
-                  size={24}
-                  color={colors.textPrimary}
-                />
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity style={styles.headerActionButton} onPress={toggleFullscreen}>
+              <Ionicons
+                name={isFullscreen ? "contract-outline" : "expand-outline"}
+                size={24}
+                color={colors.textPrimary}
+              />
+            </TouchableOpacity>
           </View>
         </Animated.View>
       )}
@@ -401,60 +445,56 @@ export default function ViewerScreen() {
       ) : content || editor.mode === 'edit' ? (
         editor.mode === 'edit' ? (
           <View style={styles.editorContainer}>
-            {/* Editor Status Bar */}
-            {(editor.saveSuccess || editor.saveError || editor.needsReauth || editor.isSaving) && (
-              <View
-                style={[
-                  styles.editorStatusBar,
-                  {
-                    backgroundColor: editor.saveError || editor.needsReauth
-                      ? colors.error + '18'
-                      : editor.saveSuccess
-                      ? colors.accent + '18'
-                      : colors.bgTertiary,
-                  },
-                ]}
-              >
-                <Text
-                  style={{
-                    color: editor.saveError || editor.needsReauth
-                      ? colors.error
-                      : editor.saveSuccess
-                      ? colors.accent
-                      : colors.textMuted,
-                    fontSize: fontSize.sm,
-                  }}
-                >
-                  {editor.isSaving
-                    ? t.viewer.saving
-                    : editor.needsReauth
-                    ? t.viewer.reauthRequired
-                    : editor.saveError
-                    ? `${t.viewer.saveFailed}: ${editor.saveError}`
-                    : editor.saveSuccess
-                    ? t.viewer.saved
-                    : ''}
-                </Text>
-              </View>
-            )}
-            <TextInput
-              style={[
-                styles.editorTextarea,
-                {
-                  color: colors.textPrimary,
-                  backgroundColor: colors.bgPrimary,
-                  fontSize: fontSize.base * fontSizeMultipliers[fontSettings.fontSize],
-                  fontFamily: fontFamilyStacks[fontSettings.fontFamily],
-                },
-              ]}
+            <CodeMirrorEditor
               value={editor.editContent}
-              onChangeText={editor.setEditContent}
-              multiline
+              onChange={editor.setEditContent}
+              onSave={() => { if (editor.canSave) editor.save(); }}
               autoFocus
-              textAlignVertical="top"
-              spellCheck={false}
-              autoCorrect={false}
             />
+            {/* Footer Status Bar */}
+            <View style={[styles.editorFooter, { backgroundColor: colors.bgSecondary, borderTopColor: colors.border }]}>
+              <Text style={[styles.editorFooterText, { color: colors.textMuted }]}>
+                {t.viewer.linesCount.replace('{lines}', String(editorStats.lines))}
+                {' · '}
+                {t.viewer.charsCount.replace('{chars}', String(editorStats.chars))}
+              </Text>
+              <View style={styles.editorFooterRight}>
+                {editor.isSaving && (
+                  <>
+                    <ActivityIndicator size="small" color={colors.textMuted} />
+                    <Text style={[styles.editorFooterText, { color: colors.textMuted }]}>
+                      {t.viewer.saving}
+                    </Text>
+                  </>
+                )}
+                {editor.saveSuccess && !editor.isSaving && (
+                  <>
+                    <Ionicons name="checkmark-circle" size={14} color={colors.accent} />
+                    <Text style={[styles.editorFooterText, { color: colors.accent }]}>
+                      {t.viewer.saved}
+                    </Text>
+                  </>
+                )}
+                {(editor.saveError || editor.needsReauth) && !editor.isSaving && (
+                  <>
+                    <Ionicons name="alert-circle" size={14} color={colors.error} />
+                    <Text style={[styles.editorFooterText, { color: colors.error }]} numberOfLines={1}>
+                      {editor.needsReauth
+                        ? t.viewer.reauthRequired
+                        : `${t.viewer.saveFailed}: ${editor.saveError}`}
+                    </Text>
+                  </>
+                )}
+                {editor.hasUnsavedChanges && !editor.isSaving && !editor.saveSuccess && !editor.saveError && !editor.needsReauth && (
+                  <>
+                    <View style={styles.unsavedDotSmall} />
+                    <Text style={[styles.editorFooterText, { color: '#f59e0b' }]}>
+                      {t.viewer.unsavedLabel}
+                    </Text>
+                  </>
+                )}
+              </View>
+            </View>
           </View>
         ) : (
           <Pressable
@@ -767,15 +807,46 @@ const styles = StyleSheet.create({
   editorContainer: {
     flex: 1,
   },
-  editorStatusBar: {
+  editorFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+    borderTopWidth: 1,
   },
-  editorTextarea: {
-    flex: 1,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    textAlignVertical: 'top',
+  editorFooterText: {
+    fontSize: fontSize.xs,
+  },
+  editorFooterRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  unsavedDotSmall: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#f59e0b',
+  },
+
+  // Segmented Control
+  segmentedControl: {
+    flexDirection: 'row',
+    borderRadius: borderRadius.full,
+    padding: 2,
+  },
+  segmentedTab: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+  },
+  segmentedLabel: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.medium,
   },
 
   // Dialog

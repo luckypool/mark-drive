@@ -52,6 +52,9 @@ export const ja: Translations = {
     unsavedChanges: '未保存の変更があります。破棄しますか？',
     save: '保存',
     reauthRequired: '編集を有効にするには、サインアウトして再度サインインしてください',
+    linesCount: '{lines} 行',
+    charsCount: '{chars} 文字',
+    unsavedLabel: '未保存の変更',
   },
 
   // Search Screen
