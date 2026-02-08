@@ -44,7 +44,7 @@ export default defineConfig({
       'expo-router': path.resolve(__dirname, 'src/shims/expo-router.tsx'),
       'react-native-safe-area-context': path.resolve(__dirname, 'src/shims/react-native-safe-area-context.tsx'),
     },
-    extensions: ['.web.tsx', '.web.ts', '.web.js', '.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js'],
   },
   envPrefix: 'VITE_',
   test: {

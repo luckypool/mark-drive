@@ -1,6 +1,6 @@
 /**
  * Tests for PDF export settings validation
- * Verifies that useShare.web.ts PDF configuration values
+ * Verifies that useShare.ts PDF configuration values
  * remain safe for rendering (no text overlap, proper scaling, etc.)
  */
 
@@ -8,7 +8,7 @@ import { describe, it, expect } from 'vitest';
 import { fontSizeMultipliers, fontFamilyStacks } from '../contexts/FontSettingsContext';
 import type { FontSize, FontFamily } from '../contexts/FontSettingsContext';
 
-// Replicate the PDF settings from useShare.web.ts
+// Replicate the PDF settings from useShare.ts
 const PDF_BASE_FONT_SIZE = 11;
 
 function getPdfBaseFontSize(fontSize: FontSize): number {
@@ -30,7 +30,7 @@ function getPdfFontSizes(fontSize: FontSize) {
   };
 }
 
-// Mirror of the pdfOptions from useShare.web.ts
+// Mirror of the pdfOptions from useShare.ts
 const pdfOptions = {
   margin: [10, 10, 10, 10],
   image: { type: 'jpeg', quality: 0.98 },
