@@ -55,14 +55,14 @@ export const ja: Translations = {
         desc: '美しくレンダリングされたドキュメントを即座に閲覧',
       },
     },
-    featuresTitle: '必要なものがすべて揃っています',
+    featuresTitle: '充実の機能',
     techTitle: 'モダンな技術で構築',
     stats: {
       clientSide: { value: '100%', label: 'クライアントサイド' },
       serverStorage: { value: '0', label: 'サーバー保存' },
       license: { value: 'MIT', label: 'ライセンス' },
     },
-    benefitsTitle: 'なぜMarkDrive？',
+    benefitsTitle: 'MarkDriveの特長',
     benefit: {
       privacy: {
         title: 'プライバシー重視',
@@ -78,11 +78,11 @@ export const ja: Translations = {
       },
     },
     closingCta: {
-      title: '始めましょう',
-      subtitle: 'Google DriveのMarkdownファイルを美しく表示 — 無料でプライベート。',
+      title: 'さっそく使ってみる',
+      subtitle: 'Google DriveのMarkdownを、きれいに表示。無料で、データはあなたの手元に。',
     },
     footer: {
-      builtWith: 'Expo と React Native Web で構築',
+      builtWith: 'Vite + React で構築',
       viewOnGithub: 'GitHubで見る',
     },
     signIn: 'Googleでサインイン',
@@ -199,7 +199,7 @@ export const ja: Translations = {
     viewThirdPartyLicenses: 'サードパーティライセンスを見る',
     viewTerms: '利用規約',
     viewPrivacy: 'プライバシーポリシー',
-    footer: 'Expo と React Native Web で構築',
+    footer: 'Vite + React で構築',
   },
 
   // Common

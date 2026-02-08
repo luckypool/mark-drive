@@ -80,7 +80,7 @@ export const en = {
       subtitle: 'View your Google Drive Markdown files beautifully — free and private.',
     },
     footer: {
-      builtWith: 'Built with Expo and React Native Web',
+      builtWith: 'Built with Vite and React',
       viewOnGithub: 'View on GitHub',
     },
     signIn: 'Sign in with Google',
@@ -197,7 +197,7 @@ export const en = {
     viewThirdPartyLicenses: 'View Third-Party Licenses',
     viewTerms: 'Terms of Service',
     viewPrivacy: 'Privacy Policy',
-    footer: 'Built with Expo and React Native Web',
+    footer: 'Built with Vite and React',
   },
 
   // Common
