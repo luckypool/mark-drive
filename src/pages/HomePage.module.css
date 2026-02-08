@@ -349,7 +349,6 @@
 }
 
 .stepsRow {
-  width: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
@@ -368,10 +367,8 @@
   align-items: flex-start;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-md);
   gap: var(--spacing-sm);
-  width: 100%;
-  box-sizing: border-box;
   min-width: 0;
   background-color: var(--color-bg-card);
 }
@@ -379,6 +376,7 @@
 @media (min-width: 768px) {
   .stepCard {
     flex: 1;
+    padding: var(--spacing-xl);
   }
 }
 
