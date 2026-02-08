@@ -214,6 +214,10 @@ export default function HomePage() {
       {/* Landing Header - Settings bar for non-authenticated users */}
       {!isAuthenticated && (
         <div className={styles.landingHeader}>
+          <div className={styles.headerBrand}>
+            <img src={iconImage} alt="MarkDrive" className={styles.headerLogo} />
+            <span className={styles.headerAppName}>MarkDrive</span>
+          </div>
           <div className={styles.headerActions}>
             <LanguageToggle />
             <ThemeToggle />
@@ -259,16 +263,6 @@ export default function HomePage() {
               <div className={styles.heroRow}>
                 {/* Left: Text content */}
                 <div className={styles.heroLeft}>
-                  {/* Logo row */}
-                  <div className={styles.heroLogoRow}>
-                    <img
-                      src={iconImage}
-                      alt="MarkDrive"
-                      className={styles.heroLogoIcon}
-                    />
-                    <span className={styles.heroLogoText}>MarkDrive</span>
-                  </div>
-
                   <h1 className={styles.heroTitle}>
                     {t.home.welcomeLine1}
                     <br />
@@ -438,13 +432,14 @@ export default function HomePage() {
               {/* Section 5: Stats */}
               <div className={styles.techSection}>
                 <h2 className={styles.sectionTitle}>
-                  {t.home.techTitle}
+                  {t.home.techTitle.split('\n').map((line, i, arr) => (
+                    <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                  ))}
                 </h2>
                 <div className={styles.statsRow}>
                   {([
                     t.home.stats.clientSide,
                     t.home.stats.serverStorage,
-                    t.home.stats.license,
                   ]).map((stat) => (
                     <div key={stat.label} className={styles.statItem}>
                       <span className={styles.statValue}>{stat.value}</span>

@@ -430,6 +430,19 @@ describe('ViewerPage - File info dialog', () => {
     expect(screen.queryByText('File Info')).toBeNull();
   });
 
+  it('displays full long file name without truncation', () => {
+    mockSearchParams.set('name', 'this-is-a-very-long-markdown-filename-that-would-normally-be-truncated.md');
+    renderWithProviders(<ViewerPage />);
+
+    const longName = 'this-is-a-very-long-markdown-filename-that-would-normally-be-truncated.md';
+    const titleButton = screen.getByText(longName).closest('button')!;
+    fireEvent.click(titleButton);
+
+    // The long file name should appear in both the header and the dialog (no truncation)
+    const fileNames = screen.getAllByText(longName);
+    expect(fileNames.length).toBeGreaterThanOrEqual(2); // header + dialog
+  });
+
   it('clicking overlay closes the dialog', () => {
     renderWithProviders(<ViewerPage />);
     const titleButton = screen.getByText('test.md').closest('button')!;

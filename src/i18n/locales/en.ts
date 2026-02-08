@@ -54,11 +54,10 @@ export const en = {
       },
     },
     featuresTitle: 'Everything you need',
-    techTitle: 'Built with modern technology',
+    techTitle: 'Your data stays\nwith you',
     stats: {
       clientSide: { value: '100%', label: 'Client-side' },
       serverStorage: { value: '0', label: 'Server storage' },
-      license: { value: 'MIT', label: 'License' },
     },
     benefitsTitle: 'Why MarkDrive?',
     benefit: {
@@ -367,7 +366,6 @@ export type Translations = {
     stats: {
       clientSide: { value: string; label: string };
       serverStorage: { value: string; label: string };
-      license: { value: string; label: string };
     };
     benefitsTitle: string;
     benefit: {
