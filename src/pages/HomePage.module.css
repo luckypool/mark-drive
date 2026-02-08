@@ -885,6 +885,7 @@
 }
 
 .recentName {
+  display: block;
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
@@ -894,6 +895,7 @@
 }
 
 .recentTime {
+  display: block;
   font-size: var(--font-size-xs);
   margin-top: 2px;
   color: var(--color-text-muted);
