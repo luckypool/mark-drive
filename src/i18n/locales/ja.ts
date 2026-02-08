@@ -60,7 +60,6 @@ export const ja: Translations = {
     stats: {
       clientSide: { value: '100%', label: 'クライアントサイド' },
       serverStorage: { value: '0', label: 'サーバー保存' },
-      license: { value: 'MIT', label: 'ライセンス' },
     },
     benefitsTitle: 'MarkDriveの特長',
     benefit: {
