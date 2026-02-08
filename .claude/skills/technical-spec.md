@@ -4,8 +4,7 @@
 
 ### 必須要件
 
-- Node.js 20+
-- npm 10+
+- Bun 1.2+
 
 ### 推奨エディタ設定
 
@@ -48,13 +47,13 @@ export default defineConfig({
 
 | コマンド | 説明 |
 |---------|------|
-| `npm run dev` | 開発サーバー起動 (localhost:8081) |
-| `npm run build` | 型チェック + プロダクションビルド |
-| `npm run preview` | ビルド結果のプレビュー (localhost:8081) |
-| `npm test` | テスト実行 (Vitest) |
-| `npm run test:watch` | テスト (watch モード) |
-| `npm run test:coverage` | テストカバレッジ |
-| `npm run lint` | ESLint チェック |
+| `bun run dev` | 開発サーバー起動 (localhost:8081) |
+| `bun run build` | 型チェック + プロダクションビルド |
+| `bun run preview` | ビルド結果のプレビュー (localhost:8081) |
+| `bun test` | テスト実行 (Vitest) |
+| `bun run test:watch` | テスト (watch モード) |
+| `bun run test:coverage` | テストカバレッジ |
+| `bun run lint` | ESLint チェック |
 
 ## コード品質
 
@@ -74,7 +73,7 @@ export default [
 
 ```bash
 # ビルド時に型チェック
-npm run build  # tsc -b && vite build
+bun run build  # tsc -b && vite build
 ```
 
 ## デプロイ
