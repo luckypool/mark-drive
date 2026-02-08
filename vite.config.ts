@@ -14,7 +14,11 @@ export default defineConfig({
     },
     extensions: ['.web.tsx', '.web.ts', '.web.js', '.tsx', '.ts', '.js'],
   },
-  envPrefix: 'VITE_',
+  envPrefix: 'EXPO_PUBLIC_',
+  define: {
+    'process.env.EXPO_PUBLIC_GOOGLE_API_KEY': JSON.stringify(process.env.EXPO_PUBLIC_GOOGLE_API_KEY ?? ''),
+    'process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID': JSON.stringify(process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID ?? ''),
+  },
   test: {
     globals: true,
     environment: 'node',
