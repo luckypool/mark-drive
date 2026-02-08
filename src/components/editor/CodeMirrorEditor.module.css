@@ -6,7 +6,7 @@
   border-width: 1px;
   border-left-width: 3px;
   border-style: solid;
-  border-radius: var(--radius-md);
+  border-radius: var(--border-radius-md);
   overflow: hidden;
 }
 

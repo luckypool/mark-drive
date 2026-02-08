@@ -3,26 +3,17 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { LanguageProvider } from '../contexts/LanguageContext';
 import { FontSettingsProvider } from '../contexts/FontSettingsContext';
-import { useRouterSetup } from '../shims/expo-router';
 import styles from './RootLayout.module.css';
-
-function RootLayoutContent() {
-  useRouterSetup();
-
-  return (
-    <div className={styles.container}>
-      <Outlet />
-      <SpeedInsights />
-    </div>
-  );
-}
 
 export default function RootLayout() {
   return (
     <ThemeProvider>
       <LanguageProvider>
         <FontSettingsProvider>
-          <RootLayoutContent />
+          <div className={styles.container}>
+            <Outlet />
+            <SpeedInsights />
+          </div>
         </FontSettingsProvider>
       </LanguageProvider>
     </ThemeProvider>
