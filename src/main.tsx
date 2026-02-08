@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { FontSettingsProvider } from './contexts/FontSettingsContext';
@@ -11,6 +12,7 @@ function App() {
       <LanguageProvider>
         <FontSettingsProvider>
           <HomeScreen />
+          <SpeedInsights />
         </FontSettingsProvider>
       </LanguageProvider>
     </ThemeProvider>
