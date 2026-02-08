@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useCallback } from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { IoClose } from 'react-icons/io5';
 import { useTheme } from '../../hooks/useTheme';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useFontSettings, FontSize, FontFamily } from '../../contexts/FontSettingsContext';
@@ -68,7 +68,7 @@ export function FontSettingsPanel({ visible, onClose }: FontSettingsPanelProps) 
             {t.fontSettings.title}
           </span>
           <button onClick={onClose} className={styles.closeButton} type="button">
-            <Ionicons name="close" size={24} color={colors.textSecondary} />
+            <IoClose size={24} color={colors.textSecondary} />
           </button>
         </div>
 

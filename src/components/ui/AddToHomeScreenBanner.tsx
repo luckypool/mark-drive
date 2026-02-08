@@ -1,5 +1,5 @@
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { IoAddCircleOutline, IoShareOutline, IoClose } from 'react-icons/io5';
 import { useTheme } from '../../hooks/useTheme';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useAddToHomeScreen } from '../../hooks/useAddToHomeScreen';
@@ -22,7 +22,7 @@ export function AddToHomeScreenBanner() {
 
       <div className={styles.content}>
         <div className={styles.iconContainer}>
-          <Ionicons name="add-circle-outline" size={24} color={colors.accent} />
+          <IoAddCircleOutline size={24} color={colors.accent} />
         </div>
 
         <div className={styles.textContainer}>
@@ -34,11 +34,7 @@ export function AddToHomeScreenBanner() {
           </span>
           <span className={styles.instruction}>
             {instructionParts[0]}
-            <Ionicons
-              name="share-outline"
-              size={14}
-              color={colors.accent}
-            />
+            <IoShareOutline size={14} color={colors.accent} />
             {instructionParts[1]}
           </span>
         </div>
@@ -48,7 +44,7 @@ export function AddToHomeScreenBanner() {
           className={styles.closeButton}
           type="button"
         >
-          <Ionicons name="close" size={16} color={colors.textMuted} />
+          <IoClose size={16} color={colors.textMuted} />
         </button>
       </div>
     </div>
