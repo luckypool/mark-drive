@@ -1,8 +1,8 @@
 /**
  * Tests for googleDrive service
- * Run with: npx tsx src/services/googleDrive.test.ts
  */
 
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   searchMarkdownFiles,
   listRecentMarkdownFiles,
@@ -16,43 +16,19 @@ import type { DriveFile } from '../types/googleDrive';
 const originalFetch = globalThis.fetch;
 
 function mockFetch(response: unknown, ok = true, statusText = 'OK') {
-  globalThis.fetch = async () =>
+  globalThis.fetch = vi.fn(async () =>
     ({
       ok,
       statusText,
       json: async () => response,
       text: async () => (typeof response === 'string' ? response : JSON.stringify(response)),
-    }) as Response;
+    }) as Response
+  );
 }
 
-function restoreFetch() {
+afterEach(() => {
   globalThis.fetch = originalFetch;
-}
-
-// Test results tracking
-let passed = 0;
-let failed = 0;
-
-function assert(condition: boolean, message: string) {
-  if (condition) {
-    console.log(`  ✓ ${message}`);
-    passed++;
-  } else {
-    console.log(`  ✗ ${message}`);
-    failed++;
-  }
-}
-
-async function assertThrows(fn: () => Promise<unknown>, message: string) {
-  try {
-    await fn();
-    console.log(`  ✗ ${message} (did not throw)`);
-    failed++;
-  } catch {
-    console.log(`  ✓ ${message}`);
-    passed++;
-  }
-}
+});
 
 // Test data
 const mockFiles: DriveFile[] = [
@@ -79,160 +55,109 @@ const mockFiles: DriveFile[] = [
   },
 ];
 
-// Tests
-async function testListRecentMarkdownFiles() {
-  console.log('\nlistRecentMarkdownFiles:');
+describe('listRecentMarkdownFiles', () => {
+  it('should return only .md and .markdown files', async () => {
+    mockFetch({ files: mockFiles });
+    const files = await listRecentMarkdownFiles('test-token');
+    expect(files).toHaveLength(2);
+    expect(files[0].name).toBe('readme.md');
+    expect(files[1].name).toBe('notes.markdown');
+  });
 
-  // Test: Returns markdown files sorted by date
-  mockFetch({ files: mockFiles });
-  const files = await listRecentMarkdownFiles('test-token');
-  assert(files.length === 2, 'Should return only .md and .markdown files');
-  assert(files[0].name === 'readme.md', 'First file should be readme.md');
-  assert(files[1].name === 'notes.markdown', 'Second file should be notes.markdown');
-  restoreFetch();
+  it('should return empty array for no files', async () => {
+    mockFetch({ files: [] });
+    const files = await listRecentMarkdownFiles('test-token');
+    expect(files).toHaveLength(0);
+  });
 
-  // Test: Handles empty response
-  mockFetch({ files: [] });
-  const emptyFiles = await listRecentMarkdownFiles('test-token');
-  assert(emptyFiles.length === 0, 'Should return empty array for no files');
-  restoreFetch();
+  it('should return empty array for null files', async () => {
+    mockFetch({ files: null });
+    const files = await listRecentMarkdownFiles('test-token');
+    expect(files).toHaveLength(0);
+  });
 
-  // Test: Handles null files in response
-  mockFetch({ files: null });
-  const nullFiles = await listRecentMarkdownFiles('test-token');
-  assert(nullFiles.length === 0, 'Should return empty array for null files');
-  restoreFetch();
+  it('should throw on API error', async () => {
+    mockFetch({}, false, 'Unauthorized');
+    await expect(listRecentMarkdownFiles('invalid-token')).rejects.toThrow();
+  });
 
-  // Test: Throws on API error
-  mockFetch({}, false, 'Unauthorized');
-  await assertThrows(
-    () => listRecentMarkdownFiles('invalid-token'),
-    'Should throw on API error'
-  );
-  restoreFetch();
+  it('should accept maxResults parameter', async () => {
+    mockFetch({ files: mockFiles });
+    await listRecentMarkdownFiles('test-token', 10);
+    expect(globalThis.fetch).toHaveBeenCalled();
+  });
+});
 
-  // Test: Respects maxResults parameter
-  mockFetch({ files: mockFiles });
-  await listRecentMarkdownFiles('test-token', 10);
-  // Verify fetch was called (we can't easily check params without more complex mocking)
-  assert(true, 'Should accept maxResults parameter');
-  restoreFetch();
-}
+describe('searchMarkdownFiles', () => {
+  it('should return filtered markdown files', async () => {
+    mockFetch({ files: mockFiles });
+    const files = await searchMarkdownFiles('test-token', 'readme');
+    expect(files).toHaveLength(2);
+  });
 
-async function testSearchMarkdownFiles() {
-  console.log('\nsearchMarkdownFiles:');
+  it('should return empty for empty query', async () => {
+    const files = await searchMarkdownFiles('test-token', '');
+    expect(files).toHaveLength(0);
+  });
 
-  // Test: Returns matching files
-  mockFetch({ files: mockFiles });
-  const files = await searchMarkdownFiles('test-token', 'readme');
-  assert(files.length === 2, 'Should return filtered markdown files');
-  restoreFetch();
+  it('should return empty for whitespace query', async () => {
+    const files = await searchMarkdownFiles('test-token', '   ');
+    expect(files).toHaveLength(0);
+  });
 
-  // Test: Returns empty for empty query
-  const emptyQueryFiles = await searchMarkdownFiles('test-token', '');
-  assert(emptyQueryFiles.length === 0, 'Should return empty for empty query');
+  it('should handle special characters in query', async () => {
+    mockFetch({ files: [] });
+    const files = await searchMarkdownFiles('test-token', "test's");
+    expect(files).toHaveLength(0);
+  });
+});
 
-  // Test: Returns empty for whitespace query
-  const whitespaceFiles = await searchMarkdownFiles('test-token', '   ');
-  assert(whitespaceFiles.length === 0, 'Should return empty for whitespace query');
+describe('fetchFileContent', () => {
+  it('should return file content', async () => {
+    mockFetch('# Hello World\n\nThis is content.');
+    const content = await fetchFileContent('test-token', 'file-id');
+    expect(content).toBe('# Hello World\n\nThis is content.');
+  });
 
-  // Test: Handles special characters in query
-  mockFetch({ files: [] });
-  const specialFiles = await searchMarkdownFiles('test-token', "test's");
-  assert(specialFiles.length === 0, 'Should handle special characters in query');
-  restoreFetch();
-}
+  it('should throw on file not found', async () => {
+    mockFetch('', false, 'Not Found');
+    await expect(fetchFileContent('test-token', 'invalid-id')).rejects.toThrow();
+  });
+});
 
-async function testFetchFileContent() {
-  console.log('\nfetchFileContent:');
+describe('fetchFileInfo', () => {
+  it('should return file info', async () => {
+    mockFetch(mockFiles[0]);
+    const info = await fetchFileInfo('test-token', 'file-id');
+    expect(info).not.toBeNull();
+    expect(info?.name).toBe('readme.md');
+  });
 
-  // Test: Returns file content
-  mockFetch('# Hello World\n\nThis is content.');
-  const content = await fetchFileContent('test-token', 'file-id');
-  assert(content === '# Hello World\n\nThis is content.', 'Should return file content');
-  restoreFetch();
+  it('should return null on error', async () => {
+    mockFetch({}, false, 'Not Found');
+    const info = await fetchFileInfo('test-token', 'invalid-id');
+    expect(info).toBeNull();
+  });
+});
 
-  // Test: Throws on API error
-  mockFetch('', false, 'Not Found');
-  await assertThrows(
-    () => fetchFileContent('test-token', 'invalid-id'),
-    'Should throw on file not found'
-  );
-  restoreFetch();
-}
+describe('isMarkdownFile', () => {
+  it('should recognize .md files', () => {
+    expect(isMarkdownFile({ id: '1', name: 'readme.md', mimeType: 'text/markdown' })).toBe(true);
+  });
 
-async function testFetchFileInfo() {
-  console.log('\nfetchFileInfo:');
+  it('should recognize .markdown files', () => {
+    expect(isMarkdownFile({ id: '2', name: 'notes.markdown', mimeType: 'text/markdown' })).toBe(true);
+  });
 
-  // Test: Returns file info
-  const mockFile = mockFiles[0];
-  mockFetch(mockFile);
-  const info = await fetchFileInfo('test-token', 'file-id');
-  assert(info !== null, 'Should return file info');
-  assert(info?.name === 'readme.md', 'Should have correct file name');
-  restoreFetch();
+  it('should recognize uppercase .MD files', () => {
+    expect(isMarkdownFile({ id: '3', name: 'README.MD', mimeType: 'text/markdown' })).toBe(true);
+  });
 
-  // Test: Returns null on error
-  mockFetch({}, false, 'Not Found');
-  const notFoundInfo = await fetchFileInfo('test-token', 'invalid-id');
-  assert(notFoundInfo === null, 'Should return null on error');
-  restoreFetch();
-}
+  it('should reject .txt files', () => {
+    expect(isMarkdownFile({ id: '4', name: 'document.txt', mimeType: 'text/plain' })).toBe(false);
+  });
 
-function testIsMarkdownFile() {
-  console.log('\nisMarkdownFile:');
-
-  // Test: Recognizes .md files
-  assert(
-    isMarkdownFile({ id: '1', name: 'readme.md', mimeType: 'text/markdown' }),
-    'Should recognize .md files'
-  );
-
-  // Test: Recognizes .markdown files
-  assert(
-    isMarkdownFile({ id: '2', name: 'notes.markdown', mimeType: 'text/markdown' }),
-    'Should recognize .markdown files'
-  );
-
-  // Test: Recognizes uppercase extensions
-  assert(
-    isMarkdownFile({ id: '3', name: 'README.MD', mimeType: 'text/markdown' }),
-    'Should recognize uppercase .MD files'
-  );
-
-  // Test: Rejects non-markdown files
-  assert(
-    !isMarkdownFile({ id: '4', name: 'document.txt', mimeType: 'text/plain' }),
-    'Should reject .txt files'
-  );
-
-  // Test: Rejects files without extensions
-  assert(
-    !isMarkdownFile({ id: '5', name: 'readme', mimeType: 'text/plain' }),
-    'Should reject files without extension'
-  );
-}
-
-// Run all tests
-async function runTests() {
-  console.log('=== Google Drive Service Tests ===');
-
-  await testListRecentMarkdownFiles();
-  await testSearchMarkdownFiles();
-  await testFetchFileContent();
-  await testFetchFileInfo();
-  testIsMarkdownFile();
-
-  console.log('\n=== Results ===');
-  console.log(`Passed: ${passed}`);
-  console.log(`Failed: ${failed}`);
-
-  if (failed > 0) {
-    process.exit(1);
-  }
-}
-
-runTests().catch((err) => {
-  console.error('Test error:', err);
-  process.exit(1);
+  it('should reject files without extension', () => {
+    expect(isMarkdownFile({ id: '5', name: 'readme', mimeType: 'text/plain' })).toBe(false);
+  });
 });
