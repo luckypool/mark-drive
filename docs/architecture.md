@@ -131,7 +131,7 @@ mark-drive/
 | 技術 | バージョン | 用途 |
 |------|-----------|------|
 | Expo SDK | 54 | React Native フレームワーク |
-| React Native Web | 0.81 | Web プラットフォーム対応 |
+| React Native Web | 0.21 | Web プラットフォーム対応 |
 | Expo Router | 6 | ファイルベースルーティング |
 | TypeScript | 5.9 | 型安全な開発 |
 
@@ -209,7 +209,7 @@ mark-drive/
 5. 履歴に追加（localStorage）
 ```
 
-### Google Drive ファイル編集・書き戻し
+### ファイル編集・保存
 
 ```
 1. ユーザーがプレビュー画面で「Edit」モードに切り替え
@@ -223,14 +223,14 @@ mark-drive/
    │
 5. useMarkdownEditor.save() を呼び出し
    │
-6. Google Drive API でファイルを更新
-   │   PATCH https://www.googleapis.com/upload/drive/v3/files/{fileId}
-   │   （drive.file スコープが必要、不足時は再認証を要求）
+6. 保存処理（ファイルソースによって異なる）
+   │   ├─ ローカルファイル（File System Access API 対応）: 元ファイルを直接上書き
+   │   └─ その他: 新しいファイルとしてダウンロード
    │
 7. 保存成功メッセージを 3 秒間表示
 ```
 
-> **Note:** 編集モードは Google Drive ファイルでのみ有効です。ローカルファイルでは使用できません。
+> **Note:** 編集モードはすべてのファイルで利用可能です。ローカルファイルは File System Access API 対応ブラウザで直接上書き保存できます。Google Drive ファイルはダウンロード保存となります。
 
 ## 状態管理
 
@@ -251,19 +251,21 @@ mark-drive/
 | `markdrive-font-settings` | `{ fontSize, fontFamily }` |
 | `markdrive-file-history` | ファイル履歴（最大10件） |
 | `markdrive-a2hs-dismissed` | ホーム画面追加バナーの非表示タイムスタンプ |
+| `googleDriveAccessToken` | Google OAuth アクセストークン |
+| `googleDriveTokenExpiry` | トークン有効期限タイムスタンプ |
 
 ## セキュリティ
 
 ### 認証フロー
 
 1. Google Identity Services (GIS) でポップアップ認証
-2. アクセストークンをメモリに保持（ストレージに保存しない）
-3. リフレッシュトークンは使用しない（セッション単位の認証）
+2. アクセストークンを localStorage に保存（セッション間で維持）
+3. 有効期限チェック（5分のマージン）で自動失効
+4. リフレッシュトークンは使用しない（有効期限切れ時は再認証）
 
 ### API アクセス
 
-- 閲覧時: `drive.readonly` スコープ
-- 編集時: `drive.file` スコープ（必要に応じて再認証）
+- `drive.readonly` スコープ（読み取り専用）
 - ファイル内容はサーバーを経由せず、ブラウザから直接取得
 
 ### CSRF 対策

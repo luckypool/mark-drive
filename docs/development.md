@@ -147,5 +147,6 @@ Access to fetch has been blocked by CORS policy
 
 ### 編集モードで保存できない
 
-- `drive.file` スコープでの再認証が必要です。保存ボタン横の再認証リンクをクリックしてください
-- Google Cloud Console で `drive.file` スコープが OAuth 同意画面に追加されているか確認
+- ローカルファイルの直接上書き保存には File System Access API 対応ブラウザ（Chrome, Edge 等）が必要です
+- 非対応ブラウザではダウンロードとして保存されます
+- Google Drive ファイルの編集内容はダウンロード保存となります

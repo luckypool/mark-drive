@@ -53,7 +53,7 @@ export default function AboutScreen() {
             resizeMode="contain"
           />
           <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>{t.about.appName}</Text>
-          <Text style={[styles.heroVersion, { color: colors.textMuted }]}>{t.about.version.replace('{version}', '1.0.0')}</Text>
+          <Text style={[styles.heroVersion, { color: colors.textMuted }]}>{t.about.version.replace('{version}', '2.0.0')}</Text>
         </View>
 
         {/* Description */}

@@ -145,7 +145,7 @@ export const ja: Translations = {
     version: 'バージョン {version}',
     whatIs: 'MarkDriveとは？',
     description:
-      'MarkDriveはGoogle Driveに保存されたMarkdownファイルを美しく表示するWebアプリケーションです。シンタックスハイライト、図表サポート、PDF出力機能により、快適な閲覧体験を提供します。',
+      'MarkDriveはGoogle Driveやローカルデバイスに保存されたMarkdownファイルを美しく表示・編集するWebアプリケーションです。シンタックスハイライト、図表サポート、PDF出力機能により、快適な閲覧・編集体験を提供します。',
     features: '機能',
     feature: {
       drive: {
@@ -262,7 +262,7 @@ export const ja: Translations = {
   legal: {
     terms: {
       title: '利用規約',
-      lastUpdated: '最終更新日: 2025年1月',
+      lastUpdated: '最終更新日: 2026年2月',
       sections: {
         acceptance: {
           title: '1. 利用規約への同意',
@@ -270,11 +270,11 @@ export const ja: Translations = {
         },
         description: {
           title: '2. サービスの説明',
-          body: 'MarkDriveは、Google Driveまたはローカルデバイスに保存されたMarkdownファイルを表示するWebベースのMarkdownビューアです。本サービスはブラウザ内で完全に動作し、お客様のファイルやデータを外部サーバーに保存することはありません。',
+          body: 'MarkDriveは、Google Driveまたはローカルデバイスに保存されたMarkdownファイルを表示・編集するWebベースのMarkdownビューア・エディタです。本サービスはブラウザ内で完全に動作し、お客様のファイルやデータを外部サーバーに保存することはありません。編集機能では、ローカルファイルの直接上書き保存（File System Access API対応ブラウザ）またはダウンロード保存が可能です。',
         },
         googleApi: {
           title: '3. Google APIの利用',
-          body: '本サービスは、読み取り専用権限（drive.readonlyスコープ）でGoogle Drive APIを使用してMarkdownファイルにアクセスします。Google Drive連携を使用することにより、お客様はGoogleの利用規約にも同意するものとします。本サービスは機能に必要な最小限の権限のみを要求します。',
+          body: '本サービスは、読み取り専用権限（drive.readonlyスコープ）でGoogle Drive APIを使用してMarkdownファイルにアクセスします。Google Drive連携を使用することにより、お客様はGoogleの利用規約にも同意するものとします。本サービスは機能に必要な最小限の権限のみを要求し、Google Drive上のファイルを変更・書き込みすることはありません。',
         },
         intellectual: {
           title: '4. 知的財産権',
@@ -297,7 +297,7 @@ export const ja: Translations = {
     },
     privacy: {
       title: 'プライバシーポリシー',
-      lastUpdated: '最終更新日: 2025年1月',
+      lastUpdated: '最終更新日: 2026年2月',
       sections: {
         intro: {
           title: '1. はじめに',
@@ -305,7 +305,7 @@ export const ja: Translations = {
         },
         collect: {
           title: '2. 保存する情報',
-          body: '以下のデータがブラウザのlocalStorageにローカル保存されます。\n\n• Google OAuth認証トークン（Google Driveアクセス用）\n• テーマ設定（ライト/ダーク）\n• フォント設定（サイズとファミリー）\n• 言語設定（英語/日本語）\n• 最近閲覧したファイルの履歴',
+          body: '以下のデータがブラウザのlocalStorageにローカル保存されます。\n\n• Google OAuthアクセストークンと有効期限（Google Driveアクセス用、期限切れ時は自動的に無効化）\n• テーマ設定（ライト/ダーク/システム）\n• フォント設定（サイズとファミリー）\n• 言語設定（英語/日本語）\n• 最近閲覧したファイルの履歴（ファイルIDと名前のみ、ファイル内容は含みません）\n• PWAホーム画面バナーの非表示状態',
         },
         notCollect: {
           title: '3. 収集しない情報',

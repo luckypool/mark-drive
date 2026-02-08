@@ -143,7 +143,7 @@ export const en = {
     version: 'Version {version}',
     whatIs: 'What is MarkDrive?',
     description:
-      'MarkDrive is a web application that beautifully renders Markdown files stored in your Google Drive. It provides a seamless reading experience with syntax highlighting, diagram support, and PDF export capabilities.',
+      'MarkDrive is a web application that beautifully renders and edits Markdown files stored in your Google Drive or local device. It provides a seamless reading and editing experience with syntax highlighting, diagram support, and PDF export capabilities.',
     features: 'Features',
     feature: {
       drive: {
@@ -260,7 +260,7 @@ export const en = {
   legal: {
     terms: {
       title: 'Terms of Service',
-      lastUpdated: 'Last updated: January 2025',
+      lastUpdated: 'Last updated: February 2026',
       sections: {
         acceptance: {
           title: '1. Acceptance of Terms',
@@ -268,11 +268,11 @@ export const en = {
         },
         description: {
           title: '2. Description of Service',
-          body: 'MarkDrive is a web-based Markdown file viewer that renders Markdown files stored in Google Drive or on your local device. The Service operates entirely within your browser and does not store any of your files or data on external servers.',
+          body: 'MarkDrive is a web-based Markdown viewer and editor that renders Markdown files stored in Google Drive or on your local device. The Service operates entirely within your browser and does not store any of your files or data on external servers. Editing capabilities include in-place saving for local files (via File System Access API) and download saving for other files.',
         },
         googleApi: {
           title: '3. Google API Usage',
-          body: 'The Service uses the Google Drive API to access your Markdown files with read-only permission (drive.readonly scope). By using the Google Drive integration, you also agree to Google\'s Terms of Service. The Service only requests the minimum permissions necessary to function.',
+          body: 'The Service uses the Google Drive API to access your Markdown files with read-only permission (drive.readonly scope). By using the Google Drive integration, you also agree to Google\'s Terms of Service. The Service only requests the minimum permissions necessary to function. The Service does not write to or modify files on your Google Drive.',
         },
         intellectual: {
           title: '4. Intellectual Property',
@@ -295,7 +295,7 @@ export const en = {
     },
     privacy: {
       title: 'Privacy Policy',
-      lastUpdated: 'Last updated: January 2025',
+      lastUpdated: 'Last updated: February 2026',
       sections: {
         intro: {
           title: '1. Introduction',
@@ -303,7 +303,7 @@ export const en = {
         },
         collect: {
           title: '2. Information We Store',
-          body: 'The following data is stored locally in your browser\'s localStorage:\n\n• Google OAuth authentication token (for Google Drive access)\n• Theme preference (light/dark)\n• Font settings (size and family)\n• Language preference (English/Japanese)\n• Recently viewed file history',
+          body: 'The following data is stored locally in your browser\'s localStorage:\n\n• Google OAuth access token and its expiry time (for Google Drive access, automatically invalidated when expired)\n• Theme preference (light/dark/system)\n• Font settings (size and family)\n• Language preference (English/Japanese)\n• Recently viewed file history (file IDs and names only, not file contents)\n• PWA home screen banner dismissal status',
         },
         notCollect: {
           title: '3. Information We Do Not Collect',
