@@ -4,8 +4,7 @@ MarkDrive の開発環境セットアップと Google Cloud Console の設定方
 
 ## 前提条件
 
-- Node.js 18 以上
-- npm または yarn
+- Bun 1.2+
 - Google アカウント（Google Drive 連携を使用する場合）
 
 ## 基本セットアップ
@@ -20,13 +19,13 @@ cd mark-drive
 ### 2. 依存パッケージのインストール
 
 ```bash
-npm install
+bun install
 ```
 
 ### 3. 開発サーバーの起動
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 ブラウザで http://localhost:5173 を開きます。
@@ -121,7 +120,7 @@ VITE_GOOGLE_CLIENT_ID=your_web_client_id_here
 ### ビルド
 
 ```bash
-npm run build
+bun run build
 ```
 
 `dist/` ディレクトリに静的ファイルが生成されます。

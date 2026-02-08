@@ -67,6 +67,6 @@
 レビュー前に以下を実行:
 
 ```bash
-npm run lint
-npm run build
+bun run lint
+bun run build
 ```

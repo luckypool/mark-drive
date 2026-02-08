@@ -16,8 +16,8 @@
 ## クイックスタート
 
 ```bash
-npm install
-npm start
+bun install
+bun run dev
 ```
 
 http://localhost:8081 を開いて使えます。

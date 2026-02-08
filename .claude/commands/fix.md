@@ -24,8 +24,8 @@
    - 副作用がないことを確認
 
 4. **検証**
-   - ビルド確認 (`npm run build`)
-   - Lint 確認 (`npm run lint`)
+   - ビルド確認 (`bun run build`)
+   - Lint 確認 (`bun run lint`)
    - 問題が解決したことを確認
 
 ## よくある問題と対処

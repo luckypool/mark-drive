@@ -119,7 +119,7 @@ GET https://www.googleapis.com/drive/v3/files
 GET https://www.googleapis.com/drive/v3/files/{fileId}?alt=media
 ```
 
-### npm パッケージ
+### パッケージ
 
 | パッケージ | 用途 |
 |-----------|------|

@@ -32,13 +32,13 @@
 
 ```bash
 # ビルドエラーの場合
-npm run build
+bun run build
 
 # Lint エラーの場合
-npm run lint
+bun run lint
 
 # 実行時エラーの場合
-npm run dev  # ブラウザのコンソールを確認
+bun run dev  # ブラウザのコンソールを確認
 ```
 
 ### Step 4: 原因の特定
