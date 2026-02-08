@@ -115,6 +115,7 @@
   max-width: 1080px;
   width: 100%;
   margin: 0 auto;
+  overflow: hidden;
 }
 
 /* Hero Row */
@@ -409,6 +410,7 @@
   line-height: 1.6;
   text-align: left;
   color: var(--color-text-secondary);
+  word-break: break-word;
 }
 
 .stepChevron {
@@ -470,6 +472,7 @@
   gap: var(--spacing-sm);
   background-color: var(--color-bg-card);
   flex-basis: 100%;
+  min-width: 0;
 }
 
 @media (min-width: 500px) {
@@ -505,6 +508,7 @@
   font-size: var(--font-size-xl);
   line-height: 1.6;
   color: var(--color-text-secondary);
+  word-break: break-word;
 }
 
 /* Benefits Feature Card (horizontal layout) */
@@ -516,6 +520,7 @@
   padding: var(--spacing-lg);
   gap: var(--spacing-md);
   background-color: var(--color-bg-card);
+  min-width: 0;
 }
 
 .featureContent {
