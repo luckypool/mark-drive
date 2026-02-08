@@ -1,9 +1,41 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, type Plugin } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+/**
+ * Vite plugin to transform Metro-style require() for assets
+ * into Vite-compatible new URL() imports.
+ * e.g. require('../assets/images/icon.png') → new URL('../assets/images/icon.png', import.meta.url).href
+ */
+function requireAssetPlugin(): Plugin {
+  return {
+    name: 'vite-plugin-require-asset',
+    enforce: 'pre',
+    transform(code, id) {
+      if (!/\.[tj]sx?$/.test(id)) return;
+      if (!code.includes('require(')) return;
+
+      // Match require('...path to image...')
+      const requireRegex = /require\(\s*(['"])([^'"]+\.(png|jpe?g|gif|svg|webp|ico|bmp|avif))\1\s*\)/g;
+      if (!requireRegex.test(code)) return;
+
+      // Reset regex lastIndex after test
+      requireRegex.lastIndex = 0;
+      const transformed = code.replace(
+        requireRegex,
+        (_match, _quote, assetPath) => `new URL('${assetPath}', import.meta.url).href`,
+      );
+
+      return { code: transformed, map: null };
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [requireAssetPlugin(), react()],
+  server: {
+    port: 8081,
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
