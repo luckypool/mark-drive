@@ -141,12 +141,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  align-items: flex-start;
+  align-items: center;
 }
 
 @media (min-width: 768px) {
   .heroLeft {
     flex: 1;
+    align-items: flex-start;
   }
 }
 
@@ -190,7 +191,7 @@
   font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--spacing-md);
-  text-align: left;
+  text-align: center;
   line-height: 1.15;
   color: var(--color-text-primary);
 }
@@ -198,6 +199,7 @@
 @media (min-width: 768px) {
   .heroTitle {
     font-size: 56px;
+    text-align: left;
   }
 }
 
@@ -207,16 +209,28 @@
 
 .heroSubtitle {
   font-size: var(--font-size-xs);
-  text-align: left;
+  text-align: center;
   line-height: 1.6;
   color: var(--color-text-secondary);
 }
 
+@media (min-width: 768px) {
+  .heroSubtitle {
+    text-align: left;
+  }
+}
+
 .heroTagline {
   font-size: var(--font-size-xs);
-  text-align: left;
+  text-align: center;
   margin-top: var(--spacing-sm);
   color: var(--color-text-muted);
+}
+
+@media (min-width: 768px) {
+  .heroTagline {
+    text-align: left;
+  }
 }
 
 /* Tech Chips (Feature Badges) */
@@ -224,9 +238,15 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
   gap: var(--spacing-sm);
   margin-top: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .techChips {
+    justify-content: flex-start;
+  }
 }
 
 .techChip {
@@ -328,7 +348,7 @@
 .sectionTitle {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
-  text-align: left;
+  text-align: center;
   margin-bottom: 48px;
   color: var(--color-text-primary);
 }
@@ -336,7 +356,6 @@
 @media (min-width: 768px) {
   .sectionTitle {
     font-size: var(--font-size-4xl);
-    text-align: center;
   }
 }
 
@@ -531,26 +550,20 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   padding: 80px 0;
-}
-
-@media (min-width: 768px) {
-  .techSection {
-    align-items: center;
-  }
 }
 
 .statsRow {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   gap: var(--spacing-md);
   flex-wrap: wrap;
 }
 
 @media (min-width: 768px) {
   .statsRow {
-    justify-content: center;
     gap: var(--spacing-xl);
   }
 }
@@ -595,6 +608,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   padding: 80px var(--spacing-md);
   background-color: var(--color-accent-muted);
   border-radius: var(--border-radius-xl);
@@ -607,23 +621,17 @@
   }
 }
 
-@media (min-width: 768px) {
-  .closingCtaSection {
-    align-items: center;
-  }
-}
-
 .closingCtaTitle {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--spacing-md);
+  text-align: center;
   color: var(--color-text-primary);
 }
 
 @media (min-width: 768px) {
   .closingCtaTitle {
     font-size: var(--font-size-4xl);
-    text-align: center;
   }
 }
 
@@ -631,14 +639,13 @@
   font-size: var(--font-size-xl);
   line-height: 1.5;
   margin-bottom: var(--spacing-xl);
+  text-align: center;
   color: var(--color-text-secondary);
 }
 
 @media (min-width: 768px) {
   .closingCtaSubtitle {
     font-size: var(--font-size-2xl);
-    text-align: center;
-    line-height: 1.5;
   }
 }
 
