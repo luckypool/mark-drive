@@ -444,7 +444,6 @@ export default function HomePage() {
                   {([
                     t.home.stats.clientSide,
                     t.home.stats.serverStorage,
-                    t.home.stats.license,
                   ]).map((stat) => (
                     <div key={stat.label} className={styles.statItem}>
                       <span className={styles.statValue}>{stat.value}</span>

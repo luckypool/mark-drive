@@ -54,7 +54,7 @@ export const en = {
       },
     },
     featuresTitle: 'Everything you need',
-    techTitle: 'Built with modern technology',
+    techTitle: 'Your data stays with you',
     stats: {
       clientSide: { value: '100%', label: 'Client-side' },
       serverStorage: { value: '0', label: 'Server storage' },
