@@ -96,11 +96,18 @@
 .content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .contentContainer {
   flex-grow: 1;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .contentContainer {
+    padding: var(--spacing-xl);
+  }
 }
 
 /* Landing Page */
@@ -583,9 +590,16 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 80px var(--spacing-xl);
+  padding: 80px var(--spacing-md);
   background-color: var(--color-accent-muted);
   border-radius: var(--border-radius-xl);
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .closingCtaSection {
+    padding: 80px var(--spacing-xl);
+  }
 }
 
 @media (min-width: 768px) {
