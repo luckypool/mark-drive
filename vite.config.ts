@@ -7,6 +7,9 @@ export default defineConfig({
   server: {
     port: 8081,
   },
+  preview: {
+    port: 8081,
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),

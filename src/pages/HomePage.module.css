@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
   background-color: var(--color-bg-primary);
 }
 
@@ -104,10 +105,9 @@
 
 /* Landing Page */
 .landingContainer {
-  flex: 1;
   max-width: 1080px;
-  align-self: center;
   width: 100%;
+  margin: 0 auto;
 }
 
 /* Hero Row */
@@ -230,6 +230,7 @@
   border-radius: var(--border-radius-full);
   border: 1px solid var(--color-accent);
   background-color: var(--color-accent-muted);
+  color: var(--color-accent);
 }
 
 .techChipIcon {
@@ -380,6 +381,7 @@
   justify-content: center;
   margin-bottom: var(--spacing-xs);
   background-color: var(--color-accent-muted);
+  color: var(--color-accent);
 }
 
 .stepIconWrapIcon {
@@ -476,6 +478,7 @@
   align-items: center;
   justify-content: center;
   background-color: var(--color-accent-muted);
+  color: var(--color-accent);
 }
 
 .featureIconContainerIcon {
@@ -945,6 +948,7 @@
 }
 
 .menuUserName {
+  display: block;
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
@@ -954,6 +958,7 @@
 }
 
 .menuUserEmail {
+  display: block;
   font-size: var(--font-size-sm);
   margin-top: 2px;
   color: var(--color-text-muted);

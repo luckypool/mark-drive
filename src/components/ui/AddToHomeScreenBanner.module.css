@@ -37,7 +37,7 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: var(--radius-md);
+  border-radius: var(--border-radius-md);
   background-color: var(--color-accent-muted);
   flex-shrink: 0;
 }
@@ -71,7 +71,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: var(--radius-full);
+  border-radius: var(--border-radius-full);
   background-color: var(--color-bg-tertiary);
   border: none;
   cursor: pointer;
