@@ -100,6 +100,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   const resolvedMode: 'dark' | 'light' = mode === 'system' ? systemScheme : mode;
 
+  // Sync data-theme attribute on <html> for CSS Variables
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const root = document.documentElement;
+    if (mode === 'system') {
+      delete root.dataset.theme;
+    } else {
+      root.dataset.theme = mode;
+    }
+  }, [mode]);
+
   const toggleTheme = useCallback(() => {
     setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
   }, []);
