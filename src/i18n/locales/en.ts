@@ -5,37 +5,37 @@
 export const en = {
   // Home Screen
   home: {
-    welcomeLine1: 'Beautiful Markdown',
-    welcomeLine2: 'for ',
-    welcomeHighlight: 'Google Drive',
-    subtitle: 'Preview your .md files with syntax highlighting, diagrams, and PDF export — all in your browser.',
+    welcomeLine1: 'Bring Markdown Previews',
+    welcomeLine2: 'to ',
+    welcomeHighlight: 'Google Drive.',
+    subtitle: 'Preview Markdown files directly in your browser without downloading. Upgrade your Google Drive experience instantly.',
     feature: {
       drive: {
         title: 'Google Drive Integration',
-        desc: 'Search and open Markdown files directly from your Google Drive',
+        desc: 'Search and preview Markdown files directly from Drive — no downloads needed',
       },
       rendering: {
-        title: 'Beautiful Rendering',
-        desc: 'Syntax highlighting, Mermaid diagrams, and clean typography',
+        title: 'Professional Rendering',
+        desc: 'GFM tables, task lists, clean typography, and beautiful output ready for sharing',
       },
       pdf: {
         title: 'Export to PDF',
-        desc: 'Share your documents as beautifully formatted PDFs',
+        desc: 'Generate PDFs for documentation review and team sharing in one click',
       },
       syntax: {
         title: 'Syntax Highlighting',
-        desc: 'Code blocks with highlighting for all major programming languages',
+        desc: 'Code blocks rendered with highlighting for all major languages',
       },
       mermaid: {
         title: 'Mermaid Diagrams',
-        desc: 'Flowcharts, sequence diagrams, and more rendered automatically',
+        desc: 'Flowcharts, sequence diagrams, and ER diagrams rendered automatically',
       },
       local: {
         title: 'Local File Support',
-        desc: 'Open Markdown files from your device without signing in',
+        desc: 'Open Markdown files from your device — no sign-in or upload required',
       },
     },
-    tagline: 'Free. Open source. No server storage.',
+    tagline: 'Privacy-first. Open source. Your files never leave your browser.',
     previewTitle: 'See it in action',
     previewCaption: 'Dark and light themes supported',
     howItWorks: {
@@ -53,8 +53,8 @@ export const en = {
         desc: 'Enjoy beautifully rendered documents instantly',
       },
     },
-    featuresTitle: 'Everything you need',
-    techTitle: 'Your data stays\nwith you',
+    featuresTitle: 'Everything for technical docs',
+    techTitle: 'Serverless by design.\nYour data stays with you.',
     stats: {
       clientSide: { value: '100%', label: 'Client-side' },
       serverStorage: { value: '0', label: 'Server storage' },
@@ -63,20 +63,20 @@ export const en = {
     benefit: {
       privacy: {
         title: 'Privacy First',
-        desc: 'Your files never leave your browser. No server storage, no tracking of your documents.',
+        desc: 'Files go directly from Google Drive to your browser — no intermediary server. Safe for confidential docs and compliant with enterprise security policies.',
       },
       instant: {
         title: 'Instant Access',
-        desc: 'No downloads or installs needed. Open any Markdown file directly from Google Drive.',
+        desc: 'No downloads, no installs, no setup. Sign in with Google and start previewing Markdown in seconds.',
       },
       beautiful: {
         title: 'Beautiful Output',
-        desc: 'Professional rendering with syntax highlighting, diagrams, and PDF export.',
+        desc: 'Syntax highlighting, Mermaid diagrams, GFM tables, and one-click PDF export — everything technical writers and engineers need.',
       },
     },
     closingCta: {
-      title: 'Ready to get started?',
-      subtitle: 'View your Google Drive Markdown files beautifully — free and private.',
+      title: 'Open your first Markdown file',
+      subtitle: 'Connect your Google Drive for free — or try with a local file.',
     },
     footer: {
       builtWith: 'Built with Vite and React',
