@@ -214,6 +214,10 @@ export default function HomePage() {
       {/* Landing Header - Settings bar for non-authenticated users */}
       {!isAuthenticated && (
         <div className={styles.landingHeader}>
+          <div className={styles.headerBrand}>
+            <img src={iconImage} alt="MarkDrive" className={styles.headerLogo} />
+            <span className={styles.headerAppName}>MarkDrive</span>
+          </div>
           <div className={styles.headerActions}>
             <LanguageToggle />
             <ThemeToggle />
