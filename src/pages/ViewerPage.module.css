@@ -408,10 +408,7 @@
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: break-all;
 }
 
 .fileInfoLabel {
