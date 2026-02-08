@@ -5,7 +5,6 @@
  */
 
 import React, { useId } from 'react';
-import { Platform } from 'react-native';
 
 interface TooltipProps {
   label: string;
@@ -14,10 +13,6 @@ interface TooltipProps {
 
 export function Tooltip({ label, children }: TooltipProps) {
   const id = useId();
-
-  if (Platform.OS !== 'web') {
-    return <>{children}</>;
-  }
 
   // CSS class names derived from useId (strip colons for valid CSS)
   const wrapperId = `tooltip-${id.replace(/:/g, '')}`;

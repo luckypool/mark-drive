@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
-import { colors, spacing, fontSize } from '../../theme';
+import styles from './LoadingSpinner.module.css';
 
 interface LoadingSpinnerProps {
   size?: 'small' | 'large';
@@ -13,29 +12,18 @@ export function LoadingSpinner({
   message,
   fullScreen = false,
 }: LoadingSpinnerProps) {
-  const content = (
-    <View style={[styles.container, fullScreen && styles.fullScreen]}>
-      <ActivityIndicator size={size} color={colors.accent} />
-      {message && <Text style={styles.message}>{message}</Text>}
-    </View>
+  const containerClass = fullScreen
+    ? `${styles.container} ${styles.fullScreen}`
+    : styles.container;
+
+  const spinnerClass = size === 'small'
+    ? `${styles.spinner} ${styles.spinnerSmall}`
+    : `${styles.spinner} ${styles.spinnerLarge}`;
+
+  return (
+    <div className={containerClass}>
+      <div className={spinnerClass} />
+      {message && <span className={styles.message}>{message}</span>}
+    </div>
   );
-
-  return content;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.xl,
-  },
-  fullScreen: {
-    flex: 1,
-    backgroundColor: colors.bgPrimary,
-  },
-  message: {
-    color: colors.textMuted,
-    fontSize: fontSize.base,
-  },
-});

@@ -4,8 +4,8 @@
  */
 
 import React, { useId, useRef, useEffect, useState, useMemo } from 'react';
-import { View, StyleSheet } from 'react-native';
 import ReactMarkdown from 'react-markdown';
+import moduleStyles from './MarkdownRenderer.module.css';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import mermaid from 'mermaid';
@@ -479,19 +479,13 @@ export function MarkdownRenderer({ content, onLinkPress, themeMode: propThemeMod
   );
 
   return (
-    <View style={styles.container}>
+    <div className={moduleStyles.container}>
       <style dangerouslySetInnerHTML={{ __html: webStyles }} />
       <div className="markdown-content">
         <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
           {content}
         </ReactMarkdown>
       </div>
-    </View>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

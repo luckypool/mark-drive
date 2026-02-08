@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import {
   Link as RRLink,
   useSearchParams,
   useLocation,
   useNavigate,
 } from 'react-router';
+import { flattenStyle } from '../utils/flattenStyle';
 
 // Module-level navigate function, initialized by useRouterSetup()
 let _navigate: ReturnType<typeof useNavigate> | null = null;
@@ -97,7 +97,7 @@ export function Link({
 }) {
   // Flatten RN style arrays (e.g. [styles.foo, { color: 'red' }]) into a plain object
   // so DOM elements can consume them.
-  const flatStyle = style ? (StyleSheet.flatten(style as never) as React.CSSProperties) : undefined;
+  const flatStyle = flattenStyle(style);
   return (
     <RRLink to={href} style={flatStyle} {...props}>
       {children}

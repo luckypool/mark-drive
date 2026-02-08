@@ -1,6 +1,5 @@
 import { useRouteError, Link } from 'react-router';
-import { View, Text, StyleSheet } from 'react-native';
-import { spacing, fontSize, fontWeight } from '../theme';
+import styles from './ErrorPage.module.css';
 
 export default function ErrorPage() {
   const error = useRouteError();
@@ -11,37 +10,12 @@ export default function ErrorPage() {
       : 'An unexpected error occurred.';
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Something went wrong</Text>
-      <Text style={styles.message}>{message}</Text>
-      <Link to="/" style={{ marginTop: spacing.md }}>
-        <Text style={styles.linkText}>Go to Home</Text>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Something went wrong</h1>
+      <p className={styles.message}>{message}</p>
+      <Link to="/" className={styles.link}>
+        Go to Home
       </Link>
-    </View>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xl,
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.semibold,
-    marginBottom: spacing.md,
-    color: '#333',
-  },
-  message: {
-    fontSize: fontSize.base,
-    color: '#666',
-    textAlign: 'center',
-  },
-  linkText: {
-    fontSize: fontSize.base,
-    color: '#4285f4',
-  },
-});

@@ -1,13 +1,14 @@
 import React from 'react';
-import { View } from 'react-native';
+import { flattenStyle } from '../utils/flattenStyle';
 
 export function SafeAreaView({ children, style, edges, ...props }: {
   children?: React.ReactNode;
-  style?: object | object[];
+  style?: unknown;
   edges?: string[];
   [key: string]: unknown;
 }) {
-  return <View style={style} {...props}>{children}</View>;
+  const flatStyle = flattenStyle(style);
+  return <div style={flatStyle} {...props}>{children}</div>;
 }
 
 export function SafeAreaProvider({ children }: { children?: React.ReactNode }) {

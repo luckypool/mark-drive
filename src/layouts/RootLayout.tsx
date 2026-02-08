@@ -1,21 +1,19 @@
 import { Outlet } from 'react-router';
-import { View, StyleSheet } from 'react-native';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import { LanguageProvider } from '../contexts/LanguageContext';
 import { FontSettingsProvider } from '../contexts/FontSettingsContext';
-import { useTheme } from '../hooks';
 import { useRouterSetup } from '../shims/expo-router';
+import styles from './RootLayout.module.css';
 
 function RootLayoutContent() {
-  const { colors } = useTheme();
   useRouterSetup();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.bgPrimary }]}>
+    <div className={styles.container}>
       <Outlet />
       <SpeedInsights />
-    </View>
+    </div>
   );
 }
 
@@ -30,9 +28,3 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
