@@ -7,37 +7,37 @@ import type { Translations } from './en';
 export const ja: Translations = {
   // Home Screen
   home: {
-    welcomeLine1: 'Beautiful Markdown',
-    welcomeLine2: 'for ',
-    welcomeHighlight: 'Google Drive',
-    subtitle: 'シンタックスハイライト、図表、PDF出力に対応した .md ファイルプレビュー — すべてブラウザ上で。',
+    welcomeLine1: 'Google Drive に、',
+    welcomeLine2: '',
+    welcomeHighlight: 'Markdown のプレビューを。',
+    subtitle: 'Markdownファイルをダウンロードせずに、ブラウザ上でそのまま確認。あなたの Google Drive をもっと便利にアップグレードします。',
     feature: {
       drive: {
         title: 'Google Drive連携',
-        desc: 'Google Driveから直接Markdownファイルを検索・表示',
+        desc: 'Drive内のMarkdownファイルを検索・プレビュー。ダウンロード不要',
       },
       rendering: {
-        title: '美しいレンダリング',
-        desc: 'シンタックスハイライト、Mermaid図表、美しいタイポグラフィ',
+        title: 'プロフェッショナルな表示',
+        desc: 'GFMテーブル、タスクリスト、美しいタイポグラフィで共有に最適な出力',
       },
       pdf: {
         title: 'PDF出力',
-        desc: 'ドキュメントを美しいPDFとして共有',
+        desc: 'ワンクリックでPDFを生成。レビューやチーム共有に',
       },
       syntax: {
         title: 'シンタックスハイライト',
-        desc: '主要なプログラミング言語のコードブロックをハイライト表示',
+        desc: '主要プログラミング言語のコードブロックをハイライト表示',
       },
       mermaid: {
         title: 'Mermaid図表',
-        desc: 'フローチャートやシーケンス図などを自動レンダリング',
+        desc: 'フローチャート、シーケンス図、ER図を自動レンダリング',
       },
       local: {
         title: 'ローカルファイル対応',
-        desc: 'サインインなしでデバイスのMarkdownファイルを開けます',
+        desc: 'サインインもアップロードも不要。デバイスのファイルをそのまま開けます',
       },
     },
-    tagline: '無料。オープンソース。サーバー保存なし。',
+    tagline: 'プライバシー重視。オープンソース。ファイルはブラウザから出ません。',
     previewTitle: '実際の画面',
     previewCaption: 'ダーク・ライトテーマ対応',
     howItWorks: {
@@ -55,30 +55,30 @@ export const ja: Translations = {
         desc: '美しくレンダリングされたドキュメントを即座に閲覧',
       },
     },
-    featuresTitle: '充実の機能',
-    techTitle: 'あなたのデータは\nあなたの手元に',
+    featuresTitle: '技術ドキュメントに必要なすべて',
+    techTitle: 'サーバーレス設計。\nデータはあなたの手元に。',
     stats: {
       clientSide: { value: '100%', label: 'クライアントサイド' },
       serverStorage: { value: '0', label: 'サーバー保存' },
     },
-    benefitsTitle: 'MarkDriveの特長',
+    benefitsTitle: 'なぜMarkDrive？',
     benefit: {
       privacy: {
-        title: 'プライバシー重視',
-        desc: 'ファイルはブラウザから出ません。サーバー保存なし、ドキュメントの追跡なし。',
+        title: 'プライバシーファースト',
+        desc: 'ファイルはGoogle Driveからブラウザに直接送信。中間サーバーは介在しません。機密文書も安心して閲覧でき、企業のセキュリティポリシーにも準拠します。',
       },
       instant: {
         title: '即時アクセス',
-        desc: 'ダウンロードやインストール不要。Google DriveのMarkdownファイルを直接開けます。',
+        desc: 'ダウンロード不要、インストール不要、セットアップ不要。Googleでサインインするだけで、すぐにMarkdownプレビューを始められます。',
       },
       beautiful: {
         title: '美しい出力',
-        desc: 'シンタックスハイライト、図表、PDF出力によるプロフェッショナルなレンダリング。',
+        desc: 'シンタックスハイライト、Mermaid図表、GFMテーブル、ワンクリックPDF出力 — エンジニアやテクニカルライターに必要なものがすべて揃っています。',
       },
     },
     closingCta: {
-      title: 'さっそく使ってみる',
-      subtitle: 'Google DriveのMarkdownを、きれいに表示。無料で、データはあなたの手元に。',
+      title: '最初のMarkdownを開いてみよう',
+      subtitle: 'Google Driveに無料で接続 — またはローカルファイルで試す。',
     },
     footer: {
       builtWith: 'Vite + React で構築',
