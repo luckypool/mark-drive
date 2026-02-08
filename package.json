@@ -1,12 +1,14 @@
 {
   "name": "markdrive",
-  "main": "expo-router/entry",
   "version": "2.0.0",
   "scripts": {
-    "start": "expo start --web",
-    "web": "expo start --web",
-    "build": "expo export -p web",
-    "build:web": "expo export -p web",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "start": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -37,9 +39,14 @@
   "devDependencies": {
     "@types/html2pdf.js": "^0.10.0",
     "@types/react": "~19.1.0",
+    "@types/react-dom": "~19.1.0",
     "@types/react-syntax-highlighter": "^15.5.13",
+    "@vitejs/plugin-react": "^5.1.3",
+    "@vitest/coverage-v8": "^4.0.18",
     "react-test-renderer": "19.1.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   },
   "private": true
 }

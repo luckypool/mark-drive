@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" />
+
+    <!-- Primary Meta Tags -->
+    <title>MarkDrive - Beautiful Markdown Viewer for Google Drive</title>
+    <meta name="title" content="MarkDrive - Beautiful Markdown Viewer for Google Drive" />
+    <meta name="description" content="A privacy-first Markdown viewer for Google Drive. Syntax highlighting, Mermaid diagrams, PDF export — all rendered in your browser with zero server storage. Free and open source." />
+    <meta name="author" content="luckypool" />
+    <meta name="theme-color" content="#6366f1" />
+    <link rel="canonical" href="https://mark-drive.com/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mark-drive.com/" />
+    <meta property="og:site_name" content="MarkDrive" />
+    <meta property="og:title" content="MarkDrive - Beautiful Markdown Viewer for Google Drive" />
+    <meta property="og:description" content="A privacy-first Markdown viewer for Google Drive. Syntax highlighting, Mermaid diagrams, PDF export — all rendered in your browser with zero server storage." />
+    <meta property="og:image" content="https://mark-drive.com/og-image.png" />
+    <meta property="og:image:alt" content="MarkDrive — Beautiful Markdown Viewer for Google Drive" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://mark-drive.com/" />
+    <meta name="twitter:title" content="MarkDrive - Beautiful Markdown Viewer for Google Drive" />
+    <meta name="twitter:description" content="Privacy-first Markdown viewer for Google Drive. Syntax highlighting, Mermaid diagrams, PDF export — free and open source." />
+    <meta name="twitter:image" content="https://mark-drive.com/og-image.png" />
+
+    <!-- Apple PWA meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="MarkDrive" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- ScrollViewStyleReset equivalent -->
+    <style>
+      html, body, #root {
+        width: 100%;
+        height: 100%;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        overflow: hidden;
+        overscroll-behavior-y: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        -ms-overflow-style: scrollbar;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+
+    <!-- Background color (no dark-mode flicker) -->
+    <style>
+      body {
+        background-color: #fff;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #0a0b14;
+        }
+      }
+      @keyframes crossfade-raw {
+        0%   { opacity: 1; }
+        12%  { opacity: 1; }
+        25%  { opacity: 0; }
+        62%  { opacity: 0; }
+        75%  { opacity: 1; }
+        100% { opacity: 1; }
+      }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YKEK6L4D33"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-YKEK6L4D33');</script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

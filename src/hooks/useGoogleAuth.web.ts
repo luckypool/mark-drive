@@ -15,8 +15,8 @@ import {
 import { storage } from '../services/storage';
 
 // 環境変数から設定を取得
-const API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY || '';
-const CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '';
+const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 // Google API のスコープ（読み取りのみ）
 const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';

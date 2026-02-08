@@ -1,189 +1,172 @@
 /**
  * Tests for markdownToHtml function
- * Run with: npx tsx src/utils/markdownToHtml.test.ts
  */
 
+import { describe, it, expect } from 'vitest';
 import { markdownToHtml, PdfFontSettings } from './markdownToHtml';
 
-interface TestCase {
-  name: string;
-  input: string;
-  expectedContains: string[];
-  expectedNotContains?: string[];
-}
-
-const testCases: TestCase[] = [
+describe('markdownToHtml - HTML Content', () => {
   // Headings
-  {
-    name: 'H1 heading',
-    input: '# Hello World',
-    expectedContains: ['<h1', '>Hello World</h1>'],
-  },
-  {
-    name: 'H2 heading',
-    input: '## Section Title',
-    expectedContains: ['<h2', '>Section Title</h2>'],
-  },
-  {
-    name: 'H3 heading',
-    input: '### Subsection',
-    expectedContains: ['<h3', '>Subsection</h3>'],
-  },
-  {
-    name: 'H4 heading',
-    input: '#### Level 4',
-    expectedContains: ['<h4', '>Level 4</h4>'],
-    expectedNotContains: ['####'],
-  },
-  {
-    name: 'H5 heading',
-    input: '##### Level 5',
-    expectedContains: ['<h5', '>Level 5</h5>'],
-    expectedNotContains: ['#####'],
-  },
-  {
-    name: 'H6 heading',
-    input: '###### Level 6',
-    expectedContains: ['<h6', '>Level 6</h6>'],
-    expectedNotContains: ['######'],
-  },
+  it.each([
+    { name: 'H1', input: '# Hello World', contains: ['<h1', '>Hello World</h1>'] },
+    { name: 'H2', input: '## Section Title', contains: ['<h2', '>Section Title</h2>'] },
+    { name: 'H3', input: '### Subsection', contains: ['<h3', '>Subsection</h3>'] },
+    { name: 'H4', input: '#### Level 4', contains: ['<h4', '>Level 4</h4>'] },
+    { name: 'H5', input: '##### Level 5', contains: ['<h5', '>Level 5</h5>'] },
+    { name: 'H6', input: '###### Level 6', contains: ['<h6', '>Level 6</h6>'] },
+  ])('$name heading', async ({ input, contains }) => {
+    const html = await markdownToHtml(input);
+    for (const expected of contains) {
+      expect(html).toContain(expected);
+    }
+  });
+
+  it('should not leave raw markdown markers for H4+', async () => {
+    expect(await markdownToHtml('#### Level 4')).not.toContain('####');
+    expect(await markdownToHtml('##### Level 5')).not.toContain('#####');
+    expect(await markdownToHtml('###### Level 6')).not.toContain('######');
+  });
 
   // Text formatting
-  {
-    name: 'Bold text with **',
-    input: 'This is **bold** text',
-    expectedContains: ['<strong>bold</strong>'],
-    expectedNotContains: ['**'],
-  },
-  {
-    name: 'Italic text with *',
-    input: 'This is *italic* text',
-    expectedContains: ['<em>italic</em>'],
-  },
-  {
-    name: 'Strikethrough',
-    input: 'This is ~~deleted~~ text',
-    expectedContains: ['<del>deleted</del>'],
-    expectedNotContains: ['~~'],
-  },
+  it('should render bold text', async () => {
+    const html = await markdownToHtml('This is **bold** text');
+    expect(html).toContain('<strong>bold</strong>');
+    expect(html).not.toContain('**');
+  });
 
-  // Lists - Unordered
-  {
-    name: 'Unordered list with -',
-    input: '- Item 1\n- Item 2\n- Item 3',
-    expectedContains: ['<ul', '<li>Item 1</li>', '<li>Item 2</li>', '<li>Item 3</li>', '</ul>'],
-    expectedNotContains: ['- Item'],
-  },
-  {
-    name: 'Unordered list with *',
-    input: '* Apple\n* Banana\n* Cherry',
-    expectedContains: ['<ul', '<li>Apple</li>', '<li>Banana</li>', '</ul>'],
-    expectedNotContains: ['* Apple'],
-  },
-  {
-    name: 'Unordered list with +',
-    input: '+ One\n+ Two',
-    expectedContains: ['<ul', '<li>One</li>', '<li>Two</li>', '</ul>'],
-  },
+  it('should render italic text', async () => {
+    const html = await markdownToHtml('This is *italic* text');
+    expect(html).toContain('<em>italic</em>');
+  });
 
-  // Lists - Ordered
-  {
-    name: 'Ordered list',
-    input: '1. First\n2. Second\n3. Third',
-    expectedContains: ['<ol', '<li>First</li>', '<li>Second</li>', '<li>Third</li>', '</ol>'],
-    expectedNotContains: ['1. First', '2. Second'],
-  },
+  it('should render strikethrough text', async () => {
+    const html = await markdownToHtml('This is ~~deleted~~ text');
+    expect(html).toContain('<del>deleted</del>');
+    expect(html).not.toContain('~~');
+  });
+
+  // Lists
+  it('should render unordered list with -', async () => {
+    const html = await markdownToHtml('- Item 1\n- Item 2\n- Item 3');
+    expect(html).toContain('<ul');
+    expect(html).toContain('<li>Item 1</li>');
+    expect(html).toContain('<li>Item 2</li>');
+    expect(html).toContain('<li>Item 3</li>');
+    expect(html).toContain('</ul>');
+    expect(html).not.toContain('- Item');
+  });
+
+  it('should render unordered list with *', async () => {
+    const html = await markdownToHtml('* Apple\n* Banana\n* Cherry');
+    expect(html).toContain('<ul');
+    expect(html).toContain('<li>Apple</li>');
+    expect(html).not.toContain('* Apple');
+  });
+
+  it('should render unordered list with +', async () => {
+    const html = await markdownToHtml('+ One\n+ Two');
+    expect(html).toContain('<ul');
+    expect(html).toContain('<li>One</li>');
+  });
+
+  it('should render ordered list', async () => {
+    const html = await markdownToHtml('1. First\n2. Second\n3. Third');
+    expect(html).toContain('<ol');
+    expect(html).toContain('<li>First</li>');
+    expect(html).toContain('<li>Second</li>');
+    expect(html).not.toContain('1. First');
+  });
 
   // Task lists
-  {
-    name: 'Task list unchecked',
-    input: '- [ ] Todo item',
-    expectedContains: ['<input type="checkbox" disabled', 'Todo item'],
-    expectedNotContains: ['[ ]'],
-  },
-  {
-    name: 'Task list checked',
-    input: '- [x] Done item',
-    expectedContains: ['<input type="checkbox" checked disabled', 'Done item'],
-    expectedNotContains: ['[x]'],
-  },
+  it('should render unchecked task list item', async () => {
+    const html = await markdownToHtml('- [ ] Todo item');
+    expect(html).toContain('<input type="checkbox" disabled');
+    expect(html).toContain('Todo item');
+    expect(html).not.toContain('[ ]');
+  });
+
+  it('should render checked task list item', async () => {
+    const html = await markdownToHtml('- [x] Done item');
+    expect(html).toContain('<input type="checkbox" checked disabled');
+    expect(html).toContain('Done item');
+    expect(html).not.toContain('[x]');
+  });
 
   // Tables
-  {
-    name: 'Simple table',
-    input: '| Name | Age |\n|------|-----|\n| John | 30 |\n| Jane | 25 |',
-    expectedContains: [
-      '<table',
-      '<thead>',
-      '<th',
-      '>Name</th>',
-      '>Age</th>',
-      '</thead>',
-      '<tbody>',
-      '<td',
-      '>John</td>',
-      '>30</td>',
-      '>Jane</td>',
-      '>25</td>',
-      '</tbody>',
-      '</table>',
-    ],
-    expectedNotContains: ['|---'],
-  },
+  it('should render simple table', async () => {
+    const html = await markdownToHtml('| Name | Age |\n|------|-----|\n| John | 30 |\n| Jane | 25 |');
+    expect(html).toContain('<table');
+    expect(html).toContain('<thead>');
+    expect(html).toContain('>Name</th>');
+    expect(html).toContain('>Age</th>');
+    expect(html).toContain('>John</td>');
+    expect(html).toContain('>30</td>');
+    expect(html).toContain('</table>');
+    expect(html).not.toContain('|---');
+  });
 
   // Code
-  {
-    name: 'Inline code',
-    input: 'Use `console.log()` for debugging',
-    expectedContains: ['<code', '>console.log()</code>'],
-    expectedNotContains: ['`console'],
-  },
-  {
-    name: 'Code block',
-    input: '```js\nconst x = 1;\n```',
-    expectedContains: ['<pre', '<code>', 'const x = 1;', '</code>', '</pre>'],
-    expectedNotContains: ['```'],
-  },
-  {
-    name: 'Code block escapes HTML',
-    input: '```html\n<div>test</div>\n```',
-    expectedContains: ['&lt;div&gt;', '&lt;/div&gt;'],
-    expectedNotContains: ['<div>test</div>'],
-  },
+  it('should render inline code', async () => {
+    const html = await markdownToHtml('Use `console.log()` for debugging');
+    expect(html).toContain('<code');
+    expect(html).toContain('>console.log()</code>');
+    expect(html).not.toContain('`console');
+  });
+
+  it('should render code block', async () => {
+    const html = await markdownToHtml('```js\nconst x = 1;\n```');
+    expect(html).toContain('<pre');
+    expect(html).toContain('<code>');
+    expect(html).toContain('const x = 1;');
+    expect(html).not.toContain('```');
+  });
+
+  it('should escape HTML in code blocks', async () => {
+    const html = await markdownToHtml('```html\n<div>test</div>\n```');
+    expect(html).toContain('&lt;div&gt;');
+    expect(html).not.toContain('<div>test</div>');
+  });
 
   // Links and Images
-  {
-    name: 'Link',
-    input: 'Visit [Google](https://google.com)',
-    expectedContains: ['<a href="https://google.com"', '>Google</a>'],
-    expectedNotContains: ['[Google]'],
-  },
-  {
-    name: 'Image',
-    input: '![Alt text](https://example.com/image.png)',
-    expectedContains: ['<img src="https://example.com/image.png"', 'alt="Alt text"'],
-  },
+  it('should render link', async () => {
+    const html = await markdownToHtml('Visit [Google](https://google.com)');
+    expect(html).toContain('<a href="https://google.com"');
+    expect(html).toContain('>Google</a>');
+    expect(html).not.toContain('[Google]');
+  });
+
+  it('should render image', async () => {
+    const html = await markdownToHtml('![Alt text](https://example.com/image.png)');
+    expect(html).toContain('<img src="https://example.com/image.png"');
+    expect(html).toContain('alt="Alt text"');
+  });
 
   // Blockquote
-  {
-    name: 'Blockquote',
-    input: '> This is a quote',
-    expectedContains: ['<blockquote', '>This is a quote</blockquote>'],
-    expectedNotContains: ['> This'],
-  },
+  it('should render blockquote', async () => {
+    const html = await markdownToHtml('> This is a quote');
+    expect(html).toContain('<blockquote');
+    expect(html).toContain('>This is a quote</blockquote>');
+    expect(html).not.toContain('> This');
+  });
 
   // Horizontal rule
-  {
-    name: 'Horizontal rule ---',
-    input: '---',
-    expectedContains: ['<hr'],
-    expectedNotContains: ['---'],
-  },
+  it('should render horizontal rule', async () => {
+    const html = await markdownToHtml('---');
+    expect(html).toContain('<hr');
+    expect(html).not.toContain('---');
+  });
+
+  // Mermaid
+  it('should render mermaid block as code fallback', async () => {
+    const html = await markdownToHtml('```mermaid\ngraph TD\n    A-->B\n```');
+    expect(html).toContain('<pre');
+    expect(html).toContain('graph TD');
+    expect(html).not.toContain('```mermaid');
+  });
 
   // Complex document
-  {
-    name: 'Complex document',
-    input: `# Title
+  it('should render a complex document', async () => {
+    const input = `# Title
 
 This is a paragraph with **bold** and *italic* text.
 
@@ -204,238 +187,103 @@ function hello() {
 | Header 1 | Header 2 |
 |----------|----------|
 | Cell 1   | Cell 2   |
-`,
-    expectedContains: [
-      '<h1',
-      '>Title</h1>',
-      '<strong>bold</strong>',
-      '<em>italic</em>',
-      '<h2',
-      '>Features</h2>',
-      '<ul',
-      '<li>Feature 1</li>',
-      '</ul>',
-      '<h3',
-      '>Code Example</h3>',
-      '<pre',
-      '<code>',
-      'function hello()',
-      '</code>',
-      '</pre>',
-      '<table',
-      '<th',
-      '>Header 1</th>',
-      '<td',
-      '>Cell 1</td>',
-    ],
-  },
+`;
+    const html = await markdownToHtml(input);
+    expect(html).toContain('>Title</h1>');
+    expect(html).toContain('<strong>bold</strong>');
+    expect(html).toContain('<em>italic</em>');
+    expect(html).toContain('>Features</h2>');
+    expect(html).toContain('<li>Feature 1</li>');
+    expect(html).toContain('>Code Example</h3>');
+    expect(html).toContain('function hello()');
+    expect(html).toContain('>Header 1</th>');
+    expect(html).toContain('>Cell 1</td>');
+  });
+});
 
-  // Mermaid (basic test - just check it's processed)
-  // Note: In Node.js environment without DOM, Mermaid falls back to code display
-  {
-    name: 'Mermaid block placeholder',
-    input: '```mermaid\ngraph TD\n    A-->B\n```',
-    expectedContains: ['<pre', '<code>', 'graph TD'], // Fallback in Node.js environment
-    expectedNotContains: ['```mermaid'],
-  },
+describe('markdownToHtml - PDF display quality', () => {
+  it('should have table-layout:fixed for width control', async () => {
+    const html = await markdownToHtml('| Col1 | Col2 |\n|------|------|\n| A | B |');
+    expect(html).toContain('table-layout:fixed');
+  });
 
-  // ==========================================================
-  // PDF display quality tests
-  // These tests verify CSS properties that prevent text overlap,
-  // overflow, and other rendering issues in PDF export.
-  // ==========================================================
+  it('should have word-break for table cells', async () => {
+    const html = await markdownToHtml('| Col1 | Col2 |\n|------|------|\n| A | B |');
+    expect(html).toContain('word-break:break-word');
+  });
 
-  // Table layout constraints
-  {
-    name: 'PDF: Table has table-layout:fixed for width control',
-    input: '| Col1 | Col2 |\n|------|------|\n| A | B |',
-    expectedContains: ['table-layout:fixed'],
-  },
-  {
-    name: 'PDF: Table cells have word-break for long text',
-    input: '| Col1 | Col2 |\n|------|------|\n| A | B |',
-    expectedContains: ['word-break:break-word'],
-  },
+  it('should have overflow-wrap for code blocks', async () => {
+    const html = await markdownToHtml('```js\nconst x = 1;\n```');
+    expect(html).toContain('overflow-wrap:break-word');
+    expect(html).toContain('white-space:pre-wrap');
+  });
 
-  // Code block overflow handling
-  {
-    name: 'PDF: Code block has overflow-wrap for PDF rendering',
-    input: '```js\nconst x = 1;\n```',
-    expectedContains: ['overflow-wrap:break-word', 'white-space:pre-wrap'],
-  },
+  it('should have sufficient padding for inline code', async () => {
+    const html = await markdownToHtml('Use `code` here');
+    expect(html).toContain('padding:2px 5px');
+  });
 
-  // Inline code padding
-  {
-    name: 'PDF: Inline code has sufficient vertical padding',
-    input: 'Use `code` here',
-    expectedContains: ['padding:2px 5px'],
-  },
+  it('should have overflow-wrap for paragraphs', async () => {
+    const html = await markdownToHtml('This is a paragraph with potentially long words.');
+    expect(html).toContain('overflow-wrap:break-word');
+  });
 
-  // Container-level text wrapping (paragraph)
-  {
-    name: 'PDF: Paragraphs have overflow-wrap for long words',
-    input: 'This is a paragraph with potentially long words.',
-    expectedContains: ['overflow-wrap:break-word'],
-  },
+  it('should have explicit line-height for H1', async () => {
+    const html = await markdownToHtml('# Heading');
+    expect(html).toContain('line-height:');
+  });
 
-  // Heading line-height
-  {
-    name: 'PDF: H1 has explicit line-height',
-    input: '# Heading',
-    expectedContains: ['line-height:'],
-  },
-  {
-    name: 'PDF: H2 has explicit line-height',
-    input: '## Heading',
-    expectedContains: ['line-height:'],
-  },
-];
+  it('should have explicit line-height for H2', async () => {
+    const html = await markdownToHtml('## Heading');
+    expect(html).toContain('line-height:');
+  });
+});
 
-// ==========================================================
-// Font size constraint tests
-// Verify minimum font sizes to prevent unreadable PDF output
-// ==========================================================
+describe('markdownToHtml - Font size constraints', () => {
+  const smallFont: PdfFontSettings = { fontSize: 'small', fontFamily: 'system' };
 
-interface FontSizeTest {
-  name: string;
-  fontSettings: PdfFontSettings;
-  element: string;
-  input: string;
-  minFontSize: number;
-}
-
-const fontSizeTests: FontSizeTest[] = [
-  {
-    name: 'Font: Base body text >= 9px (small)',
-    fontSettings: { fontSize: 'small', fontFamily: 'system' },
-    element: 'p',
-    input: 'Body text paragraph.',
-    minFontSize: 9,
-  },
-  {
-    name: 'Font: Code block text >= 8px (small)',
-    fontSettings: { fontSize: 'small', fontFamily: 'system' },
-    element: 'pre',
-    input: '```js\ncode\n```',
-    minFontSize: 8,
-  },
-  {
-    name: 'Font: Table text >= 8px (small)',
-    fontSettings: { fontSize: 'small', fontFamily: 'system' },
-    element: 'td',
-    input: '| A | B |\n|---|---|\n| 1 | 2 |',
-    minFontSize: 8,
-  },
-  {
-    name: 'Font: H6 heading >= 9px (small)',
-    fontSettings: { fontSize: 'small', fontFamily: 'system' },
-    element: 'h6',
-    input: '###### Small heading',
-    minFontSize: 9,
-  },
-  {
-    name: 'Font: Inline code >= 8px (small)',
-    fontSettings: { fontSize: 'small', fontFamily: 'system' },
-    element: 'code',
-    input: 'Use `snippet` here',
-    minFontSize: 8,
-  },
-];
-
-async function runTests(): Promise<void> {
-  let passed = 0;
-  let failed = 0;
-  const failures: { name: string; error: string; html: string }[] = [];
-
-  console.log('Running markdownToHtml tests...\n');
-
-  // --- Existing HTML content tests ---
-  console.log('--- HTML Content Tests ---\n');
-
-  for (const testCase of testCases) {
-    const html = await markdownToHtml(testCase.input);
-    let testPassed = true;
-    let errorMessages: string[] = [];
-
-    // Check expected contains
-    for (const expected of testCase.expectedContains) {
-      if (!html.includes(expected)) {
-        testPassed = false;
-        errorMessages.push(`Missing: "${expected}"`);
-      }
+  it('should have base body text >= 9px for small font', async () => {
+    const html = await markdownToHtml('Body text paragraph.', smallFont);
+    const matches = [...html.matchAll(/<p[^>]*font-size:(\d+)px/g)];
+    expect(matches.length).toBeGreaterThan(0);
+    for (const match of matches) {
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(9);
     }
+  });
 
-    // Check expected not contains
-    if (testCase.expectedNotContains) {
-      for (const notExpected of testCase.expectedNotContains) {
-        if (html.includes(notExpected)) {
-          testPassed = false;
-          errorMessages.push(`Should not contain: "${notExpected}"`);
-        }
-      }
+  it('should have code block text >= 8px for small font', async () => {
+    const html = await markdownToHtml('```js\ncode\n```', smallFont);
+    const matches = [...html.matchAll(/<pre[^>]*font-size:(\d+)px/g)];
+    expect(matches.length).toBeGreaterThan(0);
+    for (const match of matches) {
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(8);
     }
+  });
 
-    if (testPassed) {
-      console.log(`✓ ${testCase.name}`);
-      passed++;
-    } else {
-      console.log(`✗ ${testCase.name}`);
-      errorMessages.forEach((msg) => console.log(`  ${msg}`));
-      failures.push({ name: testCase.name, error: errorMessages.join('; '), html });
-      failed++;
+  it('should have table text >= 8px for small font', async () => {
+    const html = await markdownToHtml('| A | B |\n|---|---|\n| 1 | 2 |', smallFont);
+    const matches = [...html.matchAll(/<td[^>]*font-size:(\d+)px/g)];
+    expect(matches.length).toBeGreaterThan(0);
+    for (const match of matches) {
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(8);
     }
-  }
+  });
 
-  // --- Font size constraint tests ---
-  console.log('\n--- Font Size Constraint Tests ---\n');
-
-  for (const test of fontSizeTests) {
-    const html = await markdownToHtml(test.input, test.fontSettings);
-    let testPassed = true;
-    let errorMessages: string[] = [];
-
-    // Extract font-size values from the target element
-    const fontSizeRegex = new RegExp(`<${test.element}[^>]*font-size:(\\d+)px`, 'g');
-    const matches = [...html.matchAll(fontSizeRegex)];
-
-    if (matches.length === 0) {
-      testPassed = false;
-      errorMessages.push(`No font-size found on <${test.element}> element`);
-    } else {
-      for (const match of matches) {
-        const size = parseInt(match[1], 10);
-        if (size < test.minFontSize) {
-          testPassed = false;
-          errorMessages.push(`font-size ${size}px < minimum ${test.minFontSize}px`);
-        }
-      }
+  it('should have H6 heading >= 9px for small font', async () => {
+    const html = await markdownToHtml('###### Small heading', smallFont);
+    const matches = [...html.matchAll(/<h6[^>]*font-size:(\d+)px/g)];
+    expect(matches.length).toBeGreaterThan(0);
+    for (const match of matches) {
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(9);
     }
+  });
 
-    if (testPassed) {
-      console.log(`✓ ${test.name}`);
-      passed++;
-    } else {
-      console.log(`✗ ${test.name}`);
-      errorMessages.forEach((msg) => console.log(`  ${msg}`));
-      failures.push({ name: test.name, error: errorMessages.join('; '), html });
-      failed++;
+  it('should have inline code >= 8px for small font', async () => {
+    const html = await markdownToHtml('Use `snippet` here', smallFont);
+    const matches = [...html.matchAll(/<code[^>]*font-size:(\d+)px/g)];
+    expect(matches.length).toBeGreaterThan(0);
+    for (const match of matches) {
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(8);
     }
-  }
-
-  console.log(`\n${'='.repeat(50)}`);
-  console.log(`Results: ${passed} passed, ${failed} failed`);
-
-  if (failures.length > 0) {
-    console.log(`\n${'='.repeat(50)}`);
-    console.log('Failed test outputs:\n');
-    for (const failure of failures) {
-      console.log(`--- ${failure.name} ---`);
-      console.log('Input HTML:');
-      console.log(failure.html);
-      console.log('');
-    }
-    process.exit(1);
-  }
-}
-
-runTests();
+  });
+});
