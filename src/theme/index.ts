@@ -22,11 +22,8 @@ export type {
   FontWeightKey,
 } from './spacing';
 
-// Common shadow styles (web-only, empty objects for compatibility with app/)
-// Note: ViewStyle is import type only (erased at runtime), kept for app/ compatibility
-import type { ViewStyle } from 'react-native';
-
-export const shadows: Record<string, ViewStyle> = {
+// Common shadow styles (web-only, empty objects for compatibility)
+export const shadows: Record<string, React.CSSProperties> = {
   sm: {},
   md: {},
   lg: {},

@@ -1,0 +1,468 @@
+/* ViewerPage styles */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background-color: var(--color-bg-primary);
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  transition: opacity 200ms ease;
+}
+
+.headerFullscreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+
+.headerTitle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: 0 var(--spacing-md);
+  background: none;
+  border: none;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.headerTitle:hover {
+  opacity: 0.7;
+}
+
+.fileName {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  max-width: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text-primary);
+}
+
+.unsavedDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background-color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.headerTitleChevron {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+}
+
+.headerActionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+
+.headerActionButton:disabled {
+  cursor: default;
+}
+
+/* Segmented Control */
+.segmentedControl {
+  display: flex;
+  border-radius: var(--border-radius-full);
+  padding: 2px;
+  background-color: var(--color-bg-tertiary);
+}
+
+.segmentedTab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-full);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.segmentedTabActive {
+  background-color: var(--color-accent);
+}
+
+.segmentedLabel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.segmentedLabelActive {
+  color: #fff;
+}
+
+.segmentedIcon {
+  color: var(--color-text-secondary);
+}
+
+.segmentedIconActive {
+  color: #fff;
+}
+
+/* Loading */
+.loadingContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinnerSmall {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-text-muted);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingText {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+}
+
+/* Error */
+.errorContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  gap: var(--spacing-md);
+}
+
+.errorIcon {
+  color: var(--color-error);
+}
+
+.errorText {
+  font-size: var(--font-size-base);
+  text-align: center;
+  color: var(--color-error);
+}
+
+.retryButton {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-tertiary);
+  cursor: pointer;
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+}
+
+.retryButton:hover {
+  opacity: 0.8;
+}
+
+/* Empty */
+.emptyContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.emptyIcon {
+  color: var(--color-text-muted);
+}
+
+.emptyText {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+}
+
+/* Content */
+.contentPressable {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollView {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+}
+
+.scrollViewFullscreen {
+  padding-top: 48px;
+}
+
+.contentContainer {
+  /* default */
+}
+
+.fullscreenCard {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+/* Editor */
+.editorContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.editorFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  flex-wrap: wrap;
+}
+
+.editorFooterText {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.editorFooterRight {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.unsavedDotSmall {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #f59e0b;
+}
+
+.saveSuccessText {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+}
+
+.saveErrorText {
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unsavedText {
+  font-size: var(--font-size-xs);
+  color: #f59e0b;
+}
+
+/* Dialog Overlay */
+.dialogOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  z-index: 1000;
+}
+
+.dialogPanel {
+  width: 100%;
+  max-width: 400px;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  overflow: hidden;
+}
+
+.dialogHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dialogTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.dialogClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+.dialogClose:hover {
+  opacity: 0.7;
+}
+
+.dialogSection {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid transparent;
+}
+
+.dialogSectionWithBorder {
+  border-bottom-color: var(--color-border);
+}
+
+.dialogSectionTitle {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-muted);
+}
+
+.fileInfoRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.fileInfoIcon {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.fileInfoName {
+  flex: 1;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileInfoLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.fileInfoValue {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.dialogSettingRow {
+  margin-bottom: var(--spacing-md);
+}
+
+.dialogSettingLabel {
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-primary);
+}
+
+.dialogSettingOptions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.dialogOption {
+  flex: 1;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dialogOption:hover {
+  opacity: 0.85;
+}
+
+.dialogOptionWide {
+  gap: var(--spacing-xs);
+}
+
+.dialogOptionText {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.pdfSection {
+  border-top: 1px solid var(--color-border);
+}
+
+.pdfButton {
+  width: 100%;
+}
