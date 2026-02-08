@@ -18,9 +18,9 @@ export const fontSizeMultipliers: Record<FontSize, number> = {
 
 // Font family stacks
 export const fontFamilyStacks: Record<FontFamily, string> = {
-  system: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-  serif: 'Georgia, "Times New Roman", Times, serif',
-  'sans-serif': '"Helvetica Neue", Helvetica, Arial, sans-serif',
+  system: '"Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  serif: '"Noto Serif JP", Georgia, "Times New Roman", Times, serif',
+  'sans-serif': '"Noto Sans JP", "Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
 export interface FontSettings {
