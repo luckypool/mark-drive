@@ -45,6 +45,10 @@
         width: 100%;
         height: 100%;
       }
+      #root {
+        display: flex;
+        flex-direction: column;
+      }
       html {
         scroll-behavior: smooth;
       }
@@ -80,12 +84,16 @@
       }
     </style>
 
+    <!-- Ionicons (for Vite build) -->
+    <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YKEK6L4D33"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-YKEK6L4D33');</script>
   </head>
   <body>
     <div id="root"></div>
+    <script>var global = globalThis;</script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
