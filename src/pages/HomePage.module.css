@@ -187,7 +187,7 @@
 
 /* Hero Title */
 .heroTitle {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--spacing-md);
   text-align: left;
@@ -197,7 +197,7 @@
 
 @media (min-width: 768px) {
   .heroTitle {
-    font-size: var(--font-size-4xl);
+    font-size: 56px;
   }
 }
 
