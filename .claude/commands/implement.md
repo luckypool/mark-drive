@@ -26,8 +26,8 @@
    - スタイル調整
 
 4. **品質チェック**
-   - TypeScript 型チェック (`npm run build`)
-   - ESLint (`npm run lint`)
+   - TypeScript 型チェック (`bun run build`)
+   - ESLint (`bun run lint`)
    - 動作確認
 
 5. **コミット**

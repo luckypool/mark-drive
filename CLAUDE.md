@@ -26,22 +26,22 @@ Vite + React で構築。
 
 ```bash
 # 依存関係インストール
-npm install
+bun install
 
 # 開発サーバー起動
-npm run dev
+bun run dev
 
 # ビルド（型チェック + Vite ビルド）
-npm run build
+bun run build
 
 # プレビュー
-npm run preview
+bun run preview
 
 # 型チェック
-npx tsc --noEmit
+bunx tsc --noEmit
 
 # テスト
-npm test
+bun test
 ```
 
 ## プロジェクト構造

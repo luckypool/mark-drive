@@ -78,7 +78,7 @@ gh pr merge --merge --delete-branch
 - [変更内容のサマリー]
 
 ### チェック項目
-- [ ] 型エラーなし (`npx tsc --noEmit`)
+- [ ] 型エラーなし (`bunx tsc --noEmit`)
 - [ ] コード品質OK
 - [ ] セキュリティ問題なし
 

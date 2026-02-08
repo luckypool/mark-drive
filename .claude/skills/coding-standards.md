@@ -106,9 +106,9 @@ return loading ? <Spinner /> : error ? <ErrorMessage /> : <Content />
 
 ```
 components/
-├── MarkdownViewer.tsx      # コンポーネント本体
-├── MarkdownViewer.css      # スタイル（必要な場合）
-└── MarkdownViewer.test.tsx # テスト（必要な場合）
+├── MarkdownViewer.tsx          # コンポーネント本体
+├── MarkdownViewer.module.css   # スタイル（CSS Modules）
+└── MarkdownViewer.test.tsx     # テスト（必要な場合）
 ```
 
 ### インポート順序
@@ -125,13 +125,13 @@ import remarkGfm from 'remark-gfm'
 import { Button } from './Button'
 
 // 4. フック
-import { useGooglePicker } from '../hooks/useGooglePicker'
+import { useGoogleAuth } from '../hooks/useGoogleAuth'
 
 // 5. 型定義
 import type { MarkdownData } from '../types'
 
 // 6. スタイル
-import './MarkdownViewer.css'
+import styles from './MarkdownViewer.module.css'
 ```
 
 ## エラーハンドリング

@@ -4,8 +4,7 @@ MarkDrive の開発環境セットアップと Google Cloud Console の設定方
 
 ## 前提条件
 
-- Node.js 18 以上
-- npm または yarn
+- Bun 1.2+
 - Google アカウント（Google Drive 連携を使用する場合）
 
 ## 基本セットアップ
@@ -20,18 +19,16 @@ cd mark-drive
 ### 2. 依存パッケージのインストール
 
 ```bash
-npm install
+bun install
 ```
 
 ### 3. 開発サーバーの起動
 
 ```bash
-npm start
-# または
-npm run web
+bun run dev
 ```
 
-ブラウザで http://localhost:8081 を開きます。
+ブラウザで http://localhost:5173 を開きます。
 
 > **Note:** Google Drive 連携を使用しない場合は、ここまでの手順でローカルファイルのプレビュー機能が使用できます。
 
@@ -80,7 +77,7 @@ Google Drive からファイルを読み込むには、Google Cloud Console で�
 3. **アプリケーションの種類**: 「ウェブ アプリケーション」を選択
 4. **名前**: `MarkDrive Web Client`
 5. **承認済みの JavaScript 生成元** を追加:
-   - `http://localhost:8081`（開発用）
+   - `http://localhost:5173`（開発用）
    - `https://your-domain.vercel.app`（本番用）
 6. 「作成」をクリック
 7. 表示された **クライアント ID** をコピー
@@ -104,8 +101,8 @@ cp .env.example .env
 `.env` ファイルを編集:
 
 ```env
-EXPO_PUBLIC_GOOGLE_API_KEY=your_api_key_here
-EXPO_PUBLIC_GOOGLE_CLIENT_ID=your_web_client_id_here
+VITE_GOOGLE_API_KEY=your_api_key_here
+VITE_GOOGLE_CLIENT_ID=your_web_client_id_here
 ```
 
 ---
@@ -116,14 +113,14 @@ EXPO_PUBLIC_GOOGLE_CLIENT_ID=your_web_client_id_here
 
 1. [Vercel](https://vercel.com) でプロジェクトをインポート
 2. 環境変数を設定:
-   - `EXPO_PUBLIC_GOOGLE_API_KEY`
-   - `EXPO_PUBLIC_GOOGLE_CLIENT_ID`
+   - `VITE_GOOGLE_API_KEY`
+   - `VITE_GOOGLE_CLIENT_ID`
 3. デプロイ後、Google Cloud Console で本番ドメインを「承認済みの JavaScript 生成元」に追加
 
 ### ビルド
 
 ```bash
-npm run build
+bun run build
 ```
 
 `dist/` ディレクトリに静的ファイルが生成されます。
@@ -147,7 +144,7 @@ The request is missing a valid API key
 ```
 
 **解決方法:**
-- `.env` ファイルに `EXPO_PUBLIC_GOOGLE_API_KEY` が設定されているか確認
+- `.env` ファイルに `VITE_GOOGLE_API_KEY` が設定されているか確認
 - 開発サーバーを再起動
 
 ### CORS エラー
