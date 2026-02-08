@@ -1,11 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Platform } from 'react-native';
 
 const STORAGE_KEY = 'markdrive-a2hs-dismissed';
 const DISMISS_DURATION_DAYS = 7;
 
 function isIOSSafari(): boolean {
-  if (Platform.OS !== 'web') return false;
   if (typeof navigator === 'undefined') return false;
 
   const ua = navigator.userAgent;

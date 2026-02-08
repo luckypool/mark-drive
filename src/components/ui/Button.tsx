@@ -1,32 +1,45 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
-  ActivityIndicator,
-} from 'react-native';
-import { spacing, borderRadius, fontSize, fontWeight } from '../../theme';
-import { useTheme } from '../../hooks/useTheme';
+import styles from './Button.module.css';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps {
-  onPress: () => void;
+  onPress?: () => void;
+  onClick?: () => void;
   children: React.ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
   disabled?: boolean;
   loading?: boolean;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: React.CSSProperties;
+  textStyle?: React.CSSProperties;
   icon?: React.ReactNode;
 }
 
+const sizeClasses: Record<ButtonSize, string> = {
+  sm: styles.sizeSm,
+  md: styles.sizeMd,
+  lg: styles.sizeLg,
+};
+
+const textSizeClasses: Record<ButtonSize, string> = {
+  sm: styles.textSm,
+  md: styles.textMd,
+  lg: styles.textLg,
+};
+
+const variantClasses: Record<ButtonVariant, string> = {
+  primary: styles.primary,
+  secondary: styles.secondary,
+  outline: styles.outline,
+  ghost: styles.ghost,
+  danger: styles.danger,
+};
+
 export function Button({
   onPress,
+  onClick,
   children,
   variant = 'primary',
   size = 'md',
@@ -36,103 +49,37 @@ export function Button({
   textStyle,
   icon,
 }: ButtonProps) {
-  const { colors } = useTheme();
   const isDisabled = disabled || loading;
+  const handleClick = onClick ?? onPress;
 
-  const variantStyles: Record<ButtonVariant, ViewStyle> = {
-    primary: { backgroundColor: colors.accent },
-    secondary: { backgroundColor: colors.bgTertiary, borderWidth: 1, borderColor: colors.border },
-    outline: { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.accent },
-    ghost: { backgroundColor: 'transparent' },
-    danger: { backgroundColor: colors.error },
-  };
-
-  const textVariantStyles: Record<ButtonVariant, TextStyle> = {
-    primary: { color: colors.bgPrimary },
-    secondary: { color: colors.textPrimary },
-    outline: { color: colors.accent },
-    ghost: { color: colors.textPrimary },
-    danger: { color: colors.textPrimary },
-  };
+  const className = [
+    styles.base,
+    variantClasses[variant],
+    sizeClasses[size],
+    isDisabled && styles.disabled,
+  ].filter(Boolean).join(' ');
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
+    <button
+      onClick={handleClick}
       disabled={isDisabled}
-      style={[
-        styles.base,
-        variantStyles[variant],
-        styles[`size_${size}`],
-        isDisabled && styles.disabled,
-        style,
-      ]}
-      activeOpacity={0.7}
+      className={className}
+      style={style}
+      type="button"
     >
       {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={variant === 'primary' ? colors.bgPrimary : colors.accent}
-        />
+        <div className={`${styles.spinner}${variant === 'primary' ? ` ${styles.spinnerPrimary}` : ''}`} />
       ) : (
         <>
           {icon}
-          <Text
-            style={[
-              styles.text,
-              textVariantStyles[variant],
-              styles[`text_${size}`],
-              textStyle,
-            ]}
+          <span
+            className={`${styles.text} ${textSizeClasses[size]}`}
+            style={textStyle}
           >
             {children}
-          </Text>
+          </span>
         </>
       )}
-    </TouchableOpacity>
+    </button>
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    borderRadius: borderRadius.md,
-  },
-
-  // Sizes
-  size_sm: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-  },
-  size_md: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-  },
-  size_lg: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
-  },
-
-  // States
-  disabled: {
-    opacity: 0.6,
-  },
-
-  // Text styles
-  text: {
-    fontWeight: fontWeight.semibold,
-  },
-
-  // Text sizes
-  text_sm: {
-    fontSize: fontSize.sm,
-  },
-  text_md: {
-    fontSize: fontSize.base,
-  },
-  text_lg: {
-    fontSize: fontSize.lg,
-  },
-});

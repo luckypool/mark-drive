@@ -1,13 +1,10 @@
 import React from 'react';
-import { Platform } from 'react-native';
 
 interface GoogleLogoProps {
   size?: number;
 }
 
 export function GoogleLogo({ size = 18 }: GoogleLogoProps) {
-  if (Platform.OS !== 'web') return null;
-
   return (
     <svg
       width={size}

@@ -3,7 +3,6 @@
  */
 
 import React, { useRef, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
 import { EditorState } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
@@ -14,6 +13,7 @@ import { tags, Tag, styleTags } from '@lezer/highlight';
 import { useTheme } from '../../hooks/useTheme';
 import { useFontSettings, fontSizeMultipliers } from '../../contexts/FontSettingsContext';
 import { spacing, borderRadius, fontSize as themeFontSize } from '../../theme';
+import styles from './CodeMirrorEditor.module.css';
 
 // Custom tags for markdown markers (allows separate styling for #, **, - etc.)
 const headerMarkTag = Tag.define();
@@ -192,27 +192,14 @@ export function CodeMirrorEditor({ value, onChange, onSave, autoFocus }: CodeMir
   }, [value]);
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          borderColor: colors.border,
-          borderLeftColor: colors.accent,
-        },
-      ]}
+    <div
+      className={styles.container}
+      style={{
+        borderColor: colors.border,
+        borderLeftColor: colors.accent,
+      }}
     >
-      <div ref={editorRef} style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }} />
-    </View>
+      <div ref={editorRef} className={styles.editorWrapper} />
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: spacing.sm,
-    borderWidth: 1,
-    borderLeftWidth: 3,
-    borderRadius: borderRadius.md,
-    overflow: 'hidden',
-  },
-});

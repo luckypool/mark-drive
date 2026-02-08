@@ -3,13 +3,12 @@
  * UI for adjusting font size and family
  */
 
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Pressable } from 'react-native';
+import React, { useEffect, useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 import { useTheme } from '../../hooks/useTheme';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useFontSettings, FontSize, FontFamily } from '../../contexts/FontSettingsContext';
+import styles from './FontSettingsPanel.module.css';
 
 interface FontSettingsPanelProps {
   visible: boolean;
@@ -33,6 +32,18 @@ export function FontSettingsPanel({ visible, onClose }: FontSettingsPanelProps) 
   const { t } = useLanguage();
   const { settings, setFontSize, setFontFamily } = useFontSettings();
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!visible) return;
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [visible, handleKeyDown]);
+
+  if (!visible) return null;
+
   const fontSizeLabels: Record<'small' | 'medium' | 'large', string> = {
     small: t.fontSettings.small,
     medium: t.fontSettings.medium,
@@ -46,172 +57,79 @@ export function FontSettingsPanel({ visible, onClose }: FontSettingsPanelProps) 
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable
-          style={[styles.panel, { backgroundColor: colors.bgSecondary, borderColor: colors.border }]}
-          onPress={(e) => e.stopPropagation()}
-        >
-          {/* Header */}
-          <View style={[styles.header, { borderBottomColor: colors.border }]}>
-            <Text style={[styles.title, { color: colors.textPrimary }]}>
-              {t.fontSettings.title}
-            </Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color={colors.textSecondary} />
-            </TouchableOpacity>
-          </View>
+    <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true">
+      <div
+        className={styles.panel}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className={styles.header}>
+          <span className={styles.title}>
+            {t.fontSettings.title}
+          </span>
+          <button onClick={onClose} className={styles.closeButton} type="button">
+            <Ionicons name="close" size={24} color={colors.textSecondary} />
+          </button>
+        </div>
 
-          {/* Font Size */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-              {t.fontSettings.fontSize}
-            </Text>
-            <View style={styles.optionGroup}>
-              {fontSizeOptions.map(option => (
-                <TouchableOpacity
+        {/* Font Size */}
+        <div className={styles.section}>
+          <span className={styles.sectionTitle}>
+            {t.fontSettings.fontSize}
+          </span>
+          <div className={styles.optionGroup}>
+            {fontSizeOptions.map(option => {
+              const isActive = settings.fontSize === option.value;
+              return (
+                <button
                   key={option.value}
-                  style={[
-                    styles.option,
-                    {
-                      backgroundColor: settings.fontSize === option.value ? colors.accentMuted : colors.bgTertiary,
-                      borderColor: settings.fontSize === option.value ? colors.accent : colors.border,
-                    }
-                  ]}
-                  onPress={() => setFontSize(option.value)}
+                  className={`${styles.option}${isActive ? ` ${styles.optionActive}` : ''}`}
+                  onClick={() => setFontSize(option.value)}
+                  type="button"
                 >
-                  <Text style={[
-                    styles.optionText,
-                    {
-                      color: settings.fontSize === option.value ? colors.accent : colors.textSecondary,
-                      fontWeight: settings.fontSize === option.value ? '600' : '400',
-                    }
-                  ]}>
+                  <span className={`${styles.optionText}${isActive ? ` ${styles.optionTextActive}` : ''}`}>
                     {fontSizeLabels[option.labelKey]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-          {/* Font Family */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-              {t.fontSettings.fontFamily}
-            </Text>
-            <View style={styles.optionGroup}>
-              {fontFamilyOptions.map(option => (
-                <TouchableOpacity
+        {/* Font Family */}
+        <div className={styles.section}>
+          <span className={styles.sectionTitle}>
+            {t.fontSettings.fontFamily}
+          </span>
+          <div className={styles.optionGroup}>
+            {fontFamilyOptions.map(option => {
+              const isActive = settings.fontFamily === option.value;
+              return (
+                <button
                   key={option.value}
-                  style={[
-                    styles.option,
-                    {
-                      backgroundColor: settings.fontFamily === option.value ? colors.accentMuted : colors.bgTertiary,
-                      borderColor: settings.fontFamily === option.value ? colors.accent : colors.border,
-                    }
-                  ]}
-                  onPress={() => setFontFamily(option.value)}
+                  className={`${styles.option}${isActive ? ` ${styles.optionActive}` : ''}`}
+                  onClick={() => setFontFamily(option.value)}
+                  type="button"
                 >
-                  <Text style={[
-                    styles.optionText,
-                    {
-                      color: settings.fontFamily === option.value ? colors.accent : colors.textSecondary,
-                      fontWeight: settings.fontFamily === option.value ? '600' : '400',
-                    }
-                  ]}>
+                  <span className={`${styles.optionText}${isActive ? ` ${styles.optionTextActive}` : ''}`}>
                     {fontFamilyLabels[option.labelKey]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-          {/* Preview */}
-          <View style={[styles.preview, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}>
-            <Text style={[styles.previewLabel, { color: colors.textMuted }]}>
-              {t.fontSettings.preview}
-            </Text>
-            <Text style={[styles.previewText, { color: colors.textSecondary }]}>
-              {t.fontSettings.previewText}
-            </Text>
-          </View>
-        </Pressable>
-      </Pressable>
-    </Modal>
+        {/* Preview */}
+        <div className={styles.preview}>
+          <span className={styles.previewLabel}>
+            {t.fontSettings.preview}
+          </span>
+          <p className={styles.previewText}>
+            {t.fontSettings.previewText}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.xl,
-  },
-  panel: {
-    width: '100%',
-    maxWidth: 400,
-    borderRadius: borderRadius.lg,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-  },
-  title: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.semibold,
-  },
-  closeButton: {
-    padding: spacing.xs,
-  },
-  section: {
-    padding: spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.medium,
-    marginBottom: spacing.sm,
-  },
-  optionGroup: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  option: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    alignItems: 'center',
-  },
-  optionText: {
-    fontSize: fontSize.sm,
-  },
-  preview: {
-    margin: spacing.lg,
-    marginTop: 0,
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-  },
-  previewLabel: {
-    fontSize: fontSize.xs,
-    marginBottom: spacing.xs,
-  },
-  previewText: {
-    fontSize: fontSize.base,
-    lineHeight: fontSize.base * 1.6,
-  },
-});

@@ -1,0 +1,72 @@
+.base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  padding: 0;
+  background: transparent;
+}
+
+.base:active {
+  opacity: 0.7;
+}
+
+/* Variants */
+.accent {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.danger {
+  background-color: transparent;
+}
+
+.ghost {
+  background-color: transparent;
+  border: none;
+}
+
+/* Sizes */
+.sizeSm {
+  width: 28px;
+  height: 28px;
+}
+
+.sizeMd {
+  width: 36px;
+  height: 36px;
+}
+
+.sizeLg {
+  width: 44px;
+  height: 44px;
+}
+
+/* States */
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinnerAccent {
+  border-color: var(--color-bg-primary);
+  border-top-color: transparent;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

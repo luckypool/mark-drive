@@ -1,0 +1,31 @@
+.fab {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.fab:active {
+  opacity: 0.8;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 150ms ease;
+}
+
+.iconWrapperOpen {
+  transform: rotate(45deg);
+}

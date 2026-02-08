@@ -1,63 +1,29 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  StyleSheet,
-  ViewStyle,
-  Animated,
-} from 'react-native';
-import { colors, shadows } from '../../theme';
+import styles from './FAB.module.css';
 
 interface FABProps {
-  onPress: () => void;
+  onPress?: () => void;
+  onClick?: () => void;
   icon: React.ReactNode;
   isOpen?: boolean;
-  style?: ViewStyle;
+  style?: React.CSSProperties;
 }
 
-export function FAB({ onPress, icon, isOpen = false, style }: FABProps) {
-  const rotation = React.useRef(new Animated.Value(0)).current;
+export function FAB({ onPress, onClick, icon, isOpen = false, style }: FABProps) {
+  const handleClick = onClick ?? onPress;
 
-  React.useEffect(() => {
-    Animated.timing(rotation, {
-      toValue: isOpen ? 1 : 0,
-      duration: 150,
-      useNativeDriver: true,
-    }).start();
-  }, [isOpen, rotation]);
-
-  const rotateStyle = {
-    transform: [
-      {
-        rotate: rotation.interpolate({
-          inputRange: [0, 1],
-          outputRange: ['0deg', '45deg'],
-        }),
-      },
-    ],
-  };
+  const iconClass = isOpen
+    ? `${styles.iconWrapper} ${styles.iconWrapperOpen}`
+    : styles.iconWrapper;
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[styles.fab, shadows.lg, style]}
-      activeOpacity={0.8}
+    <button
+      onClick={handleClick}
+      className={styles.fab}
+      style={style}
+      type="button"
     >
-      <Animated.View style={rotateStyle}>{icon}</Animated.View>
-    </TouchableOpacity>
+      <div className={iconClass}>{icon}</div>
+    </button>
   );
 }
-
-const styles = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    bottom: 24,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 900,
-  },
-});

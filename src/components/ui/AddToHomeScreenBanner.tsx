@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 import { useTheme } from '../../hooks/useTheme';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useAddToHomeScreen } from '../../hooks/useAddToHomeScreen';
+import styles from './AddToHomeScreenBanner.module.css';
 
 export function AddToHomeScreenBanner() {
   const { colors } = useTheme();
@@ -17,31 +16,23 @@ export function AddToHomeScreenBanner() {
   const instructionParts = t.addToHomeScreen.instruction.split('{shareIcon}');
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.bgSecondary,
-          borderTopColor: colors.border,
-        },
-      ]}
-    >
+    <div className={styles.container}>
       {/* Arrow pointing down to Safari toolbar */}
-      <View style={[styles.arrow, { borderTopColor: colors.accent }]} />
+      <div className={styles.arrow} />
 
-      <View style={styles.content}>
-        <View style={[styles.iconContainer, { backgroundColor: colors.accentMuted }]}>
+      <div className={styles.content}>
+        <div className={styles.iconContainer}>
           <Ionicons name="add-circle-outline" size={24} color={colors.accent} />
-        </View>
+        </div>
 
-        <View style={styles.textContainer}>
-          <Text style={[styles.title, { color: colors.textPrimary }]}>
+        <div className={styles.textContainer}>
+          <span className={styles.title}>
             {t.addToHomeScreen.title}
-          </Text>
-          <Text style={[styles.description, { color: colors.textSecondary }]}>
+          </span>
+          <span className={styles.description}>
             {t.addToHomeScreen.description}
-          </Text>
-          <Text style={[styles.instruction, { color: colors.textMuted }]}>
+          </span>
+          <span className={styles.instruction}>
             {instructionParts[0]}
             <Ionicons
               name="share-outline"
@@ -49,78 +40,17 @@ export function AddToHomeScreenBanner() {
               color={colors.accent}
             />
             {instructionParts[1]}
-          </Text>
-        </View>
+          </span>
+        </div>
 
-        <TouchableOpacity
-          onPress={dismiss}
-          style={[styles.closeButton, { backgroundColor: colors.bgTertiary }]}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        <button
+          onClick={dismiss}
+          className={styles.closeButton}
+          type="button"
         >
           <Ionicons name="close" size={16} color={colors.textMuted} />
-        </TouchableOpacity>
-      </View>
-    </View>
+        </button>
+      </div>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute' as const,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderTopWidth: 1,
-    paddingBottom: 20, // Safe area for iPhone home indicator
-    paddingTop: spacing.sm,
-    paddingHorizontal: spacing.md,
-    zIndex: 1000,
-  },
-  arrow: {
-    position: 'absolute',
-    bottom: -8,
-    alignSelf: 'center',
-    left: '50%',
-    marginLeft: -8,
-    width: 0,
-    height: 0,
-    borderLeftWidth: 8,
-    borderRightWidth: 8,
-    borderTopWidth: 8,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: borderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textContainer: {
-    flex: 1,
-    gap: 2,
-  },
-  title: {
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold as '600',
-  },
-  description: {
-    fontSize: fontSize.xs,
-  },
-  instruction: {
-    fontSize: fontSize.xs,
-  },
-  closeButton: {
-    width: 28,
-    height: 28,
-    borderRadius: borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

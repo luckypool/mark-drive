@@ -1,0 +1,16 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-tertiary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.button:active {
+  opacity: 0.7;
+}

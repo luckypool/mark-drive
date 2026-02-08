@@ -1,35 +1,20 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
-import { spacing, borderRadius, shadows } from '../../theme';
-import { useTheme } from '../../hooks/useTheme';
+import styles from './Card.module.css';
 
 interface CardProps {
   children: React.ReactNode;
-  style?: ViewStyle;
+  style?: React.CSSProperties;
   variant?: 'default' | 'elevated';
 }
 
 export function Card({ children, style, variant = 'default' }: CardProps) {
-  const { colors } = useTheme();
+  const className = variant === 'elevated'
+    ? `${styles.card} ${styles.elevated}`
+    : styles.card;
 
   return (
-    <View
-      style={[
-        styles.card,
-        { backgroundColor: colors.bgCard, borderColor: colors.border },
-        variant === 'elevated' && shadows.md,
-        style,
-      ]}
-    >
+    <div className={className} style={style}>
       {children}
-    </View>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderWidth: 1,
-    borderRadius: borderRadius.lg,
-    padding: spacing.lg,
-  },
-});

@@ -4,12 +4,11 @@
  */
 
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
-import { borderRadius } from '../../theme';
 import { Tooltip } from './Tooltip';
 import type { ThemeMode } from '../../contexts/ThemeContext';
+import styles from './ThemeToggle.module.css';
 
 const cycle: ThemeMode[] = ['light', 'dark', 'system'];
 
@@ -36,30 +35,18 @@ export function ThemeToggle() {
 
   return (
     <Tooltip label={tooltipMap[mode]}>
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: colors.bgTertiary, borderColor: colors.border }]}
-        onPress={handlePress}
-        activeOpacity={0.7}
-        accessibilityLabel={tooltipMap[mode]}
-        accessibilityRole="button"
+      <button
+        className={styles.button}
+        onClick={handlePress}
+        aria-label={tooltipMap[mode]}
+        type="button"
       >
         <Ionicons
           name={iconMap[mode]}
           size={20}
           color={colors.accent}
         />
-      </TouchableOpacity>
+      </button>
     </Tooltip>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: borderRadius.sm,
-    borderWidth: 1,
-  },
-});
