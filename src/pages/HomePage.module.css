@@ -10,7 +10,7 @@
 
 /* Landing Header (non-authenticated) */
 .landingHeader {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -20,6 +20,10 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-sm) var(--spacing-md);
+  background-color: color-mix(in srgb, var(--color-bg-secondary) 85%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .headerBrand {
@@ -182,27 +186,6 @@
     width: 100%;
     margin-top: 0;
   }
-}
-
-/* Hero Logo */
-.heroLogoRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
-.heroLogoIcon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--border-radius-lg);
-}
-
-.heroLogoText {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
 }
 
 /* Hero Title */

@@ -263,16 +263,6 @@ export default function HomePage() {
               <div className={styles.heroRow}>
                 {/* Left: Text content */}
                 <div className={styles.heroLeft}>
-                  {/* Logo row */}
-                  <div className={styles.heroLogoRow}>
-                    <img
-                      src={iconImage}
-                      alt="MarkDrive"
-                      className={styles.heroLogoIcon}
-                    />
-                    <span className={styles.heroLogoText}>MarkDrive</span>
-                  </div>
-
                   <h1 className={styles.heroTitle}>
                     {t.home.welcomeLine1}
                     <br />
