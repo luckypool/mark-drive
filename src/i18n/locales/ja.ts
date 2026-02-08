@@ -56,7 +56,7 @@ export const ja: Translations = {
       },
     },
     featuresTitle: '充実の機能',
-    techTitle: 'あなたのデータは、あなたの手元に',
+    techTitle: 'あなたのデータは\nあなたの手元に',
     stats: {
       clientSide: { value: '100%', label: 'クライアントサイド' },
       serverStorage: { value: '0', label: 'サーバー保存' },

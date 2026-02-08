@@ -438,7 +438,9 @@ export default function HomePage() {
               {/* Section 5: Stats */}
               <div className={styles.techSection}>
                 <h2 className={styles.sectionTitle}>
-                  {t.home.techTitle}
+                  {t.home.techTitle.split('\n').map((line, i, arr) => (
+                    <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                  ))}
                 </h2>
                 <div className={styles.statsRow}>
                   {([
