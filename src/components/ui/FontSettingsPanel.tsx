@@ -3,7 +3,7 @@
  * UI for adjusting font size and family
  */
 
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
 import { useLanguage } from '../../hooks/useLanguage';
@@ -32,6 +32,16 @@ export function FontSettingsPanel({ visible, onClose }: FontSettingsPanelProps) 
   const { t } = useLanguage();
   const { settings, setFontSize, setFontFamily } = useFontSettings();
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!visible) return;
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [visible, handleKeyDown]);
+
   if (!visible) return null;
 
   const fontSizeLabels: Record<'small' | 'medium' | 'large', string> = {
@@ -47,7 +57,7 @@ export function FontSettingsPanel({ visible, onClose }: FontSettingsPanelProps) 
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true">
       <div
         className={styles.panel}
         onClick={(e) => e.stopPropagation()}

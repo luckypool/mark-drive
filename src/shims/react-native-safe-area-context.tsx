@@ -7,14 +7,13 @@ const safeAreaViewBase: React.CSSProperties = {
   minHeight: 0,
 };
 
-export function SafeAreaView({ children, style, edges, ...props }: {
+export function SafeAreaView({ children, style, edges }: {
   children?: React.ReactNode;
   style?: unknown;
   edges?: string[];
-  [key: string]: unknown;
 }) {
   const flatStyle = flattenStyle(style);
-  return <div style={{ ...safeAreaViewBase, ...flatStyle }} {...props}>{children}</div>;
+  return <div style={{ ...safeAreaViewBase, ...flatStyle }}>{children}</div>;
 }
 
 export function SafeAreaProvider({ children }: { children?: React.ReactNode }) {

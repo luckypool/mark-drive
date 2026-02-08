@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '../../hooks/useTheme';
 import styles from './Button.module.css';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -30,6 +29,14 @@ const textSizeClasses: Record<ButtonSize, string> = {
   lg: styles.textLg,
 };
 
+const variantClasses: Record<ButtonVariant, string> = {
+  primary: styles.primary,
+  secondary: styles.secondary,
+  outline: styles.outline,
+  ghost: styles.ghost,
+  danger: styles.danger,
+};
+
 export function Button({
   onPress,
   onClick,
@@ -42,28 +49,12 @@ export function Button({
   textStyle,
   icon,
 }: ButtonProps) {
-  const { colors } = useTheme();
   const isDisabled = disabled || loading;
   const handleClick = onClick ?? onPress;
 
-  const variantStyles: Record<ButtonVariant, React.CSSProperties> = {
-    primary: { backgroundColor: colors.accent },
-    secondary: { backgroundColor: colors.bgTertiary, border: `1px solid ${colors.border}` },
-    outline: { backgroundColor: 'transparent', border: `1px solid ${colors.accent}` },
-    ghost: { backgroundColor: 'transparent' },
-    danger: { backgroundColor: colors.error },
-  };
-
-  const textVariantColors: Record<ButtonVariant, string> = {
-    primary: colors.bgPrimary,
-    secondary: colors.textPrimary,
-    outline: colors.accent,
-    ghost: colors.textPrimary,
-    danger: colors.textPrimary,
-  };
-
   const className = [
     styles.base,
+    variantClasses[variant],
     sizeClasses[size],
     isDisabled && styles.disabled,
   ].filter(Boolean).join(' ');
@@ -73,7 +64,7 @@ export function Button({
       onClick={handleClick}
       disabled={isDisabled}
       className={className}
-      style={{ ...variantStyles[variant], ...style }}
+      style={style}
       type="button"
     >
       {loading ? (
@@ -83,7 +74,7 @@ export function Button({
           {icon}
           <span
             className={`${styles.text} ${textSizeClasses[size]}`}
-            style={{ color: textVariantColors[variant], ...textStyle }}
+            style={textStyle}
           >
             {children}
           </span>

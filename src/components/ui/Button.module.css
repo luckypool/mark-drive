@@ -13,6 +13,34 @@
   opacity: 0.7;
 }
 
+/* Variants */
+.primary {
+  background-color: var(--color-accent);
+  color: var(--color-bg-primary);
+}
+
+.secondary {
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.outline {
+  background-color: transparent;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+}
+
+.ghost {
+  background-color: transparent;
+  color: var(--color-text-primary);
+}
+
+.danger {
+  background-color: var(--color-error);
+  color: var(--color-text-primary);
+}
+
 /* Sizes */
 .sizeSm {
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -35,6 +63,7 @@
 /* Text */
 .text {
   font-weight: var(--font-weight-semibold);
+  color: inherit;
 }
 
 .textSm {

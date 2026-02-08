@@ -8,8 +8,12 @@ interface CardProps {
 }
 
 export function Card({ children, style, variant = 'default' }: CardProps) {
+  const className = variant === 'elevated'
+    ? `${styles.card} ${styles.elevated}`
+    : styles.card;
+
   return (
-    <div className={styles.card} style={style}>
+    <div className={className} style={style}>
       {children}
     </div>
   );
