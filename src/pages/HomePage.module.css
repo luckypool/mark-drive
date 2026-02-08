@@ -370,6 +370,8 @@
   padding: var(--spacing-xl);
   gap: var(--spacing-sm);
   width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
   background-color: var(--color-bg-card);
 }
 
