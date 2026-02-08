@@ -114,11 +114,10 @@ vi.mock('../hooks', () => ({
           mermaid: { title: 'Mermaid Diagrams', desc: 'Diagram support' },
           local: { title: 'Local Files', desc: 'Open local files' },
         },
-        techTitle: 'Technology',
+        techTitle: 'Your data\nstays with you',
         stats: {
           clientSide: { value: '100%', label: 'Client-Side' },
           serverStorage: { value: '0', label: 'Server Storage' },
-          license: { value: 'MIT', label: 'License' },
         },
         benefitsTitle: 'Benefits',
         benefit: {
@@ -248,5 +247,60 @@ describe('HomePage (unauthenticated)', () => {
   it('renders how it works section title', () => {
     renderWithProviders(<HomePage />);
     expect(screen.getByText('How It Works')).toBeTruthy();
+  });
+});
+
+describe('HomePage - Header brand', () => {
+  it('has MarkDrive logo image in header', () => {
+    renderWithProviders(<HomePage />);
+    // Both header and footer have img with alt="MarkDrive"
+    const logos = screen.getAllByAltText('MarkDrive', { exact: true });
+    expect(logos.length).toBeGreaterThanOrEqual(1);
+    expect(logos[0].tagName.toLowerCase()).toBe('img');
+  });
+
+  it('has app name text "MarkDrive" in header', () => {
+    renderWithProviders(<HomePage />);
+    // "MarkDrive" appears in header brand and footer
+    const matches = screen.getAllByText('MarkDrive');
+    expect(matches.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('has theme toggle and language toggle in header', () => {
+    renderWithProviders(<HomePage />);
+    expect(screen.getByTestId('theme-toggle')).toBeTruthy();
+    expect(screen.getByTestId('language-toggle')).toBeTruthy();
+  });
+});
+
+describe('HomePage - Stats section', () => {
+  it('shows clientSide stat', () => {
+    renderWithProviders(<HomePage />);
+    expect(screen.getByText('100%')).toBeTruthy();
+    expect(screen.getByText('Client-Side')).toBeTruthy();
+  });
+
+  it('shows serverStorage stat', () => {
+    renderWithProviders(<HomePage />);
+    expect(screen.getByText('0')).toBeTruthy();
+    expect(screen.getByText('Server Storage')).toBeTruthy();
+  });
+
+  it('does NOT show license stat', () => {
+    renderWithProviders(<HomePage />);
+    expect(screen.queryByText('MIT')).toBeNull();
+    expect(screen.queryByText('License')).toBeNull();
+  });
+});
+
+describe('HomePage - techTitle line break', () => {
+  it('renders h2 with both lines of techTitle', () => {
+    renderWithProviders(<HomePage />);
+    // techTitle is "Your data\nstays with you" rendered via .split('\n').map()
+    const headings = screen.getAllByRole('heading', { level: 2 });
+    const techHeading = headings.find(
+      (h) => h.textContent?.includes('Your data') && h.textContent?.includes('stays with you'),
+    );
+    expect(techHeading).toBeTruthy();
   });
 });

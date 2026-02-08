@@ -148,3 +148,22 @@ describe('AboutPage', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/license');
   });
 });
+
+describe('AboutPage - Header structure', () => {
+  it('header renders theme toggle', () => {
+    renderWithProviders(<AboutPage />);
+    expect(screen.getByTestId('theme-toggle')).toBeTruthy();
+  });
+
+  it('header renders language toggle', () => {
+    renderWithProviders(<AboutPage />);
+    expect(screen.getByTestId('language-toggle')).toBeTruthy();
+  });
+
+  it('header renders back button and title in the same container', () => {
+    renderWithProviders(<AboutPage />);
+    const backButton = screen.getByTestId('icon-arrow-back').closest('button')!;
+    const title = screen.getByText('About');
+    expect(backButton.parentElement).toBe(title.parentElement);
+  });
+});
