@@ -8,8 +8,9 @@
 
 ```typescript
 // ✅ Good: 責務が明確
-// MarkdownViewer.tsx - Markdown の表示のみ
-// PickerButton.tsx - ファイル選択ボタンのみ
+// MarkdownRenderer.tsx - Markdown の表示のみ
+// Button.tsx - UI ボタンのみ
+// useGoogleAuth.ts - Google 認証ロジックのみ
 
 // ❌ Bad: 複数の責務
 // AllInOneComponent.tsx - 表示、選択、状態管理を全て含む
@@ -47,44 +48,45 @@ export const MarkdownViewer = () => {
 ### 状態とロジックの分離
 
 ```typescript
-// hooks/useGooglePicker.ts
-export const useGooglePicker = () => {
-  const [file, setFile] = useState<GoogleFile | null>(null)
-  const [error, setError] = useState<Error | null>(null)
+// hooks/useGoogleAuth.ts - Google OAuth + Drive API
+export const useGoogleAuth = () => {
+  const [isApiLoaded, setIsApiLoaded] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const openPicker = useCallback(async () => {
-    try {
-      const result = await showGooglePicker()
-      setFile(result)
-    } catch (err) {
-      setError(err as Error)
-    }
+  const authenticate = useCallback(() => {
+    tokenClientRef.current?.requestAccessToken({ prompt: '', state })
   }, [])
 
-  const reset = useCallback(() => {
-    setFile(null)
-    setError(null)
+  const searchFiles = useCallback(async (query: string) => {
+    // Drive API でファイル検索
   }, [])
 
-  return { file, error, openPicker, reset }
+  return { isApiLoaded, isLoading, error, authenticate, searchFiles, ... }
+}
+
+// hooks/useFilePicker.ts - ローカルファイル選択
+export const useFilePicker = () => {
+  const openFile = useCallback(async () => {
+    const [handle] = await window.showOpenFilePicker({ ... })
+    const file = await handle.getFile()
+    return { content: await file.text(), name: file.name, handle }
+  }, [])
+
+  return { openFile }
 }
 ```
 
 ### フックの合成
 
 ```typescript
-// 複数のフックを組み合わせる
-export const useMarkdownFromDrive = () => {
-  const { file, openPicker } = useGooglePicker()
-  const { content, loading, error } = useFileContent(file?.id)
+// ページコンポーネントで複数のフックを組み合わせる
+export const HomePage = () => {
+  const { isApiLoaded, authenticate, searchFiles } = useGoogleAuth()
+  const { openFile } = useFilePicker()
 
-  return {
-    content,
-    loading,
-    error,
-    openPicker,
-    hasFile: file !== null
-  }
+  // 認証状態に応じて UI を出し分け
+  return isApiLoaded ? <SearchView /> : <LandingView />
 }
 ```
 
@@ -186,19 +188,40 @@ export const CodeBlock = ({ code, language }: CodeBlockProps) => (
 ### コンポーネントテスト
 
 ```typescript
-// MarkdownViewer.test.tsx
+// HomePage.test.tsx
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { MarkdownViewer } from './MarkdownViewer'
+import { MemoryRouter } from 'react-router'
+import HomePage from './HomePage'
 
-describe('MarkdownViewer', () => {
-  it('renders markdown content', () => {
-    render(<MarkdownViewer content="# Hello" />)
-    expect(screen.getByRole('heading', { name: 'Hello' })).toBeInTheDocument()
+// モック状態を mutable オブジェクトで管理（テストごとに変更可能）
+const mockAuthState = {
+  isApiLoaded: false,
+  isLoading: false,
+  authenticate: vi.fn(),
+}
+
+vi.mock('../hooks/useGoogleAuth', () => ({
+  useGoogleAuth: () => mockAuthState,
+}))
+
+describe('HomePage', () => {
+  beforeEach(() => {
+    // テストごとにモック状態をリセット
+    mockAuthState.isApiLoaded = false
+    mockAuthState.isLoading = false
+    mockAuthState.authenticate.mockClear()
   })
 
-  it('renders code blocks with syntax highlighting', () => {
-    render(<MarkdownViewer content="```js\nconst x = 1\n```" />)
-    expect(screen.getByText('const x = 1')).toBeInTheDocument()
+  it('shows landing when not authenticated', () => {
+    render(<MemoryRouter><HomePage /></MemoryRouter>)
+    expect(screen.getByText(/sign in/i)).toBeInTheDocument()
+  })
+
+  it('shows search when authenticated', () => {
+    mockAuthState.isApiLoaded = true
+    render(<MemoryRouter><HomePage /></MemoryRouter>)
+    expect(screen.getByRole('searchbox')).toBeInTheDocument()
   })
 })
 ```
@@ -206,19 +229,25 @@ describe('MarkdownViewer', () => {
 ### フックテスト
 
 ```typescript
-// useGooglePicker.test.ts
+// useFilePicker.test.ts
+import { describe, it, expect, vi } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import { useGooglePicker } from './useGooglePicker'
+import { useFilePicker } from './useFilePicker'
 
-describe('useGooglePicker', () => {
-  it('opens picker and returns file', async () => {
-    const { result } = renderHook(() => useGooglePicker())
-    
+describe('useFilePicker', () => {
+  it('opens file and returns content', async () => {
+    const mockFile = new File(['# Hello'], 'test.md', { type: 'text/markdown' })
+    vi.stubGlobal('showOpenFilePicker', vi.fn().mockResolvedValue([{
+      getFile: () => Promise.resolve(mockFile),
+    }]))
+
+    const { result } = renderHook(() => useFilePicker())
+
     await act(async () => {
-      await result.current.openPicker()
+      await result.current.openFile()
     })
-    
-    expect(result.current.file).not.toBeNull()
+
+    expect(result.current.fileName).toBe('test.md')
   })
 })
 ```

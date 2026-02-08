@@ -19,12 +19,13 @@
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  // 必要に応じてカスタム設定
+  server: { port: 8081 },
+  preview: { port: 8081 },
 })
 ```
 
@@ -47,9 +48,12 @@ export default defineConfig({
 
 | コマンド | 説明 |
 |---------|------|
-| `npm run dev` | 開発サーバー起動 (localhost:5173) |
-| `npm run build` | プロダクションビルド |
-| `npm run preview` | ビルド結果のプレビュー |
+| `npm run dev` | 開発サーバー起動 (localhost:8081) |
+| `npm run build` | 型チェック + プロダクションビルド |
+| `npm run preview` | ビルド結果のプレビュー (localhost:8081) |
+| `npm test` | テスト実行 (Vitest) |
+| `npm run test:watch` | テスト (watch モード) |
+| `npm run test:coverage` | テストカバレッジ |
 | `npm run lint` | ESLint チェック |
 
 ## コード品質
