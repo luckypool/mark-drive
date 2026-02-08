@@ -858,6 +858,7 @@
   background-color: var(--color-bg-card);
   cursor: pointer;
   transition: opacity 0.15s ease;
+  overflow: hidden;
 }
 
 .recentItem:hover {
