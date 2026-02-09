@@ -34,26 +34,43 @@ export default function PrivacyPage() {
               {t.legal.privacy.lastUpdated}
             </p>
 
-            {Object.entries(sections).map(([key, section]) => (
-              <div key={key} className={styles.section}>
-                <h3 className={styles.sectionTitle}>
-                  {section.title}
-                </h3>
-                <p className={styles.sectionBody}>
-                  {section.body}
-                </p>
-                {'url' in section && section.url && (
-                  <button
-                    className={styles.contactLink}
-                    onClick={() => window.open(section.url, '_blank')}
-                  >
-                    <IoLogoGithub size={16} />
-                    <span>GitHub Issues</span>
-                    <IoOpenOutline size={14} />
-                  </button>
-                )}
-              </div>
-            ))}
+            {Object.entries(sections).map(([key, section]) => {
+              const paragraphs = section.body.split('\n\n');
+              const items = 'items' in section ? (section.items as string[]) : undefined;
+
+              return (
+                <div key={key} className={styles.section}>
+                  <h3 className={styles.sectionTitle}>
+                    {section.title}
+                  </h3>
+                  <p className={styles.sectionBody}>
+                    {paragraphs[0]}
+                  </p>
+                  {items && (
+                    <ul className={styles.sectionList}>
+                      {items.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {paragraphs.slice(1).map((p, i) => (
+                    <p key={i} className={styles.sectionBody}>
+                      {p}
+                    </p>
+                  ))}
+                  {'url' in section && section.url && (
+                    <button
+                      className={styles.contactLink}
+                      onClick={() => window.open(section.url, '_blank')}
+                    >
+                      <IoLogoGithub size={16} />
+                      <span>GitHub Issues</span>
+                      <IoOpenOutline size={14} />
+                    </button>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

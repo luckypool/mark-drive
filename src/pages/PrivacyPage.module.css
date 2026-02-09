@@ -85,6 +85,14 @@
   color: var(--color-text-secondary);
 }
 
+.sectionList {
+  font-size: var(--font-size-sm);
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  margin: var(--spacing-sm) 0;
+  padding-left: var(--spacing-lg);
+}
+
 .contactLink {
   display: flex;
   align-items: center;

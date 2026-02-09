@@ -83,6 +83,7 @@
   font-size: var(--font-size-sm);
   line-height: 1.8;
   color: var(--color-text-secondary);
+  white-space: pre-line;
 }
 
 .contactLink {
