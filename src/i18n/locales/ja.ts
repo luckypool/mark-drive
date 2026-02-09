@@ -308,7 +308,7 @@ export const ja: Translations = {
         },
         notCollect: {
           title: '3. 収集しない情報',
-          body: '以下の情報は収集、保存、送信しません。\n\n• Markdownファイルの内容\n• 個人情報やプロフィールデータ\n• Google Driveのファイル名やファイルID\n\nなお、サービス改善のためGoogle Analyticsを使用し、ページビュー、おおよその地域情報、デバイス・ブラウザの種類などの匿名データを収集しています。',
+          body: '以下の情報は収集、保存、送信しません。\n\n• Markdownファイルの内容\n• 個人情報やプロフィールデータ\n• Google Driveのファイル名やファイルID\n\nなお、サービス改善のため以下のアナリティクスサービスを使用し、匿名データを収集しています。\n\n• Google Analytics: ページビュー、おおよその地域情報、デバイス・ブラウザの種類\n• Vercel Analytics: ページビュー、リファラー、地域情報、ブラウザ、デバイスの種類（Cookie不使用、個人を特定する情報は収集しません）\n• Vercel Speed Insights: ページ読み込み時間などのWeb Vitalsパフォーマンス指標（Cookie不使用、個人を特定する情報は収集しません）',
         },
         google: {
           title: '4. Google APIの利用',
@@ -316,11 +316,11 @@ export const ja: Translations = {
         },
         storage: {
           title: '5. データの保存',
-          body: 'ユーザー設定等のデータはブラウザのlocalStorageにのみ保存されます。ブラウザのローカルストレージをクリアするか、本サービスからサインアウトすることで、いつでも保存されたデータを削除できます。なお、Google Analyticsはアクセス解析のためにCookieを使用します。Cookieはブラウザの設定から削除・無効化できます。',
+          body: 'ユーザー設定等のデータはブラウザのlocalStorageにのみ保存されます。ブラウザのローカルストレージをクリアするか、本サービスからサインアウトすることで、いつでも保存されたデータを削除できます。なお、Google Analyticsはアクセス解析のためにCookieを使用します。Cookieはブラウザの設定から削除・無効化できます。Vercel AnalyticsおよびSpeed InsightsはCookieを使用しません。',
         },
         thirdParty: {
           title: '6. サードパーティサービス',
-          body: '本サービスはファイルアクセスのためにGoogle Drive APIと連携しています。Googleでサインインすると、認証はGoogleのIdentity Servicesによって直接処理されます。また、サービス改善のためGoogle Analyticsを使用しており、匿名のアクセスデータがGoogleに送信されます。Google Analyticsのオプトアウトをご希望の場合は、Google Analytics オプトアウトアドオンをご利用ください。Googleがお客様のデータをどのように取り扱うかについては、Googleのプライバシーポリシーをご確認ください。',
+          body: '本サービスは以下のサードパーティサービスと連携しています。\n\n• Google Drive API: ファイルアクセスに使用。Googleでサインインすると、認証はGoogleのIdentity Servicesによって直接処理されます。\n• Google Analytics: 匿名のアクセス解析に使用。オプトアウトをご希望の場合は、Google Analytics オプトアウトアドオンをご利用ください。\n• Vercel Analytics: 匿名のページビュー解析に使用。Cookieは使用せず、個人を特定する情報は収集しません。IPアドレスは国・地域の特定にのみ使用され、保存されません。\n• Vercel Speed Insights: 匿名のパフォーマンス監視（Web Vitals）に使用。Cookieは使用せず、個人を特定する情報は収集しません。\n\nGoogleおよびVercelがお客様のデータをどのように取り扱うかについては、それぞれのプライバシーポリシーをご確認ください。',
         },
         children: {
           title: '7. お子様のプライバシー',

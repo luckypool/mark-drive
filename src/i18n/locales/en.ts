@@ -306,7 +306,7 @@ export const en = {
         },
         notCollect: {
           title: '3. Information We Do Not Collect',
-          body: 'We do not collect, store, or transmit:\n\n• Contents of your Markdown files\n• Personal information or profile data\n• Google Drive file names or file IDs\n\nHowever, we use Google Analytics to collect anonymous usage data such as page views, approximate geographic location, and device/browser type for service improvement.',
+          body: 'We do not collect, store, or transmit:\n\n• Contents of your Markdown files\n• Personal information or profile data\n• Google Drive file names or file IDs\n\nHowever, we use the following analytics services to collect anonymous usage data for service improvement:\n\n• Google Analytics: page views, approximate geographic location, and device/browser type\n• Vercel Analytics: page views, referrer, geographic region, browser, and device type (no cookies, no personally identifiable information)\n• Vercel Speed Insights: Web Vitals performance metrics such as page load time (no cookies, no personally identifiable information)',
         },
         google: {
           title: '4. Google API Usage',
@@ -314,11 +314,11 @@ export const en = {
         },
         storage: {
           title: '5. Data Storage',
-          body: 'User preferences and settings are stored exclusively in your browser\'s localStorage. You can clear all stored data at any time by clearing your browser\'s local storage or signing out of the Service. Google Analytics uses cookies for usage analysis. You can delete or disable cookies through your browser settings.',
+          body: 'User preferences and settings are stored exclusively in your browser\'s localStorage. You can clear all stored data at any time by clearing your browser\'s local storage or signing out of the Service. Google Analytics uses cookies for usage analysis. You can delete or disable cookies through your browser settings. Vercel Analytics and Speed Insights do not use cookies.',
         },
         thirdParty: {
           title: '6. Third-Party Services',
-          body: 'The Service integrates with Google Drive API for file access. When you sign in with Google, your authentication is handled directly by Google\'s Identity Services. We also use Google Analytics to collect anonymous usage data for service improvement. To opt out of Google Analytics, you can use the Google Analytics Opt-out Browser Add-on. We recommend reviewing Google\'s Privacy Policy for information about how Google handles your data.',
+          body: 'The Service integrates with the following third-party services:\n\n• Google Drive API: for file access. When you sign in with Google, your authentication is handled directly by Google\'s Identity Services.\n• Google Analytics: for anonymous usage analytics. To opt out, you can use the Google Analytics Opt-out Browser Add-on.\n• Vercel Analytics: for anonymous page view analytics. No cookies are used and no personally identifiable information is collected. IP addresses are used only to derive country/region and are not stored.\n• Vercel Speed Insights: for anonymous performance monitoring (Web Vitals). No cookies are used and no personally identifiable information is collected.\n\nWe recommend reviewing Google\'s Privacy Policy and Vercel\'s Privacy Policy for information about how these services handle your data.',
         },
         children: {
           title: '7. Children\'s Privacy',
