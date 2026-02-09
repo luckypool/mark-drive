@@ -7,9 +7,9 @@ import type { Translations } from './en';
 export const ja: Translations = {
   // Home Screen
   home: {
-    welcomeLine1: 'Google Drive に、',
-    welcomeLine2: '',
-    welcomeHighlight: 'Markdown のプレビューを。',
+    welcomeLine1: 'Bring',
+    welcomeLine2: 'to Google Drive.',
+    welcomeHighlight: 'Markdown Previews',
     subtitle: 'Markdownファイルをダウンロードせずに、ブラウザ上でそのまま確認。あなたの Google Drive をもっと便利にアップグレードします。',
     feature: {
       drive: {
