@@ -266,8 +266,9 @@ export default function HomePage() {
                   <h1 className={styles.heroTitle}>
                     {t.home.welcomeLine1}
                     <br />
-                    {t.home.welcomeLine2}
                     <span className={styles.heroHighlight}>{t.home.welcomeHighlight}</span>
+                    <br />
+                    {t.home.welcomeLine2}
                   </h1>
                   <p className={styles.heroSubtitle}>
                     {t.home.subtitle}
