@@ -304,11 +304,24 @@ export const ja: Translations = {
         },
         collect: {
           title: '2. 保存する情報',
-          body: '以下のデータがブラウザのlocalStorageにローカル保存されます。\n\n• Google OAuthアクセストークンと有効期限（Google Driveアクセス用、期限切れ時は自動的に無効化）\n• テーマ設定（ライト/ダーク/システム）\n• フォント設定（サイズとファミリー）\n• 言語設定（英語/日本語）\n• 最近閲覧したファイルの履歴（ファイルIDと名前のみ、ファイル内容は含みません）\n• PWAホーム画面バナーの非表示状態',
+          body: '以下のデータがブラウザのlocalStorageにローカル保存されます。',
+          items: [
+            'Google OAuthアクセストークンと有効期限（Google Driveアクセス用、期限切れ時は自動的に無効化）',
+            'テーマ設定（ライト/ダーク/システム）',
+            'フォント設定（サイズとファミリー）',
+            '言語設定（英語/日本語）',
+            '最近閲覧したファイルの履歴（ファイルIDと名前のみ、ファイル内容は含みません）',
+            'PWAホーム画面バナーの非表示状態',
+          ],
         },
         notCollect: {
           title: '3. 収集しない情報',
-          body: '以下の情報は収集、保存、送信しません。\n\n• Markdownファイルの内容\n• 個人情報やプロフィールデータ\n• Google Driveのファイル名やファイルID\n\nなお、サービス改善のため以下のアナリティクスサービスを使用し、匿名データを収集しています。\n\n• Google Analytics: ページビュー、おおよその地域情報、デバイス・ブラウザの種類\n• Vercel Analytics: ページビュー、リファラー、地域情報、ブラウザ、デバイスの種類（Cookie不使用、個人を特定する情報は収集しません）\n• Vercel Speed Insights: ページ読み込み時間などのWeb Vitalsパフォーマンス指標（Cookie不使用、個人を特定する情報は収集しません）',
+          body: '以下の情報は収集、保存、送信しません。\n\nなお、サービス改善のためアナリティクスサービス（Google Analytics、Vercel Analytics、Vercel Speed Insights）を使用し、ページビュー、おおよその地域情報、デバイス・ブラウザの種類、Web Vitalsパフォーマンス指標などの匿名データを収集しています。Vercel AnalyticsおよびSpeed InsightsはCookieを使用せず、個人を特定する情報は収集しません。',
+          items: [
+            'Markdownファイルの内容',
+            '個人情報やプロフィールデータ',
+            'Google Driveのファイル名やファイルID',
+          ],
         },
         google: {
           title: '4. Google APIの利用',
@@ -320,7 +333,13 @@ export const ja: Translations = {
         },
         thirdParty: {
           title: '6. サードパーティサービス',
-          body: '本サービスは以下のサードパーティサービスと連携しています。\n\n• Google Drive API: ファイルアクセスに使用。Googleでサインインすると、認証はGoogleのIdentity Servicesによって直接処理されます。\n• Google Analytics: 匿名のアクセス解析に使用。オプトアウトをご希望の場合は、Google Analytics オプトアウトアドオンをご利用ください。\n• Vercel Analytics: 匿名のページビュー解析に使用。Cookieは使用せず、個人を特定する情報は収集しません。IPアドレスは国・地域の特定にのみ使用され、保存されません。\n• Vercel Speed Insights: 匿名のパフォーマンス監視（Web Vitals）に使用。Cookieは使用せず、個人を特定する情報は収集しません。\n\nGoogleおよびVercelがお客様のデータをどのように取り扱うかについては、それぞれのプライバシーポリシーをご確認ください。',
+          body: '本サービスは以下のサードパーティサービスと連携しています。\n\nGoogleおよびVercelがお客様のデータをどのように取り扱うかについては、それぞれのプライバシーポリシーをご確認ください。',
+          items: [
+            'Google Drive API: ファイルアクセスに使用。Googleでサインインすると、認証はGoogleのIdentity Servicesによって直接処理されます。',
+            'Google Analytics: 匿名のアクセス解析に使用。オプトアウトをご希望の場合は、Google Analytics オプトアウトアドオンをご利用ください。',
+            'Vercel Analytics: 匿名のページビュー解析に使用。Cookieは使用せず、個人を特定する情報は収集しません。IPアドレスは国・地域の特定にのみ使用され、保存されません。',
+            'Vercel Speed Insights: 匿名のパフォーマンス監視（Web Vitals）に使用。Cookieは使用せず、個人を特定する情報は収集しません。',
+          ],
         },
         children: {
           title: '7. お子様のプライバシー',

@@ -302,11 +302,24 @@ export const en = {
         },
         collect: {
           title: '2. Information We Store',
-          body: 'The following data is stored locally in your browser\'s localStorage:\n\n• Google OAuth access token and its expiry time (for Google Drive access, automatically invalidated when expired)\n• Theme preference (light/dark/system)\n• Font settings (size and family)\n• Language preference (English/Japanese)\n• Recently viewed file history (file IDs and names only, not file contents)\n• PWA home screen banner dismissal status',
+          body: 'The following data is stored locally in your browser\'s localStorage:',
+          items: [
+            'Google OAuth access token and its expiry time (for Google Drive access, automatically invalidated when expired)',
+            'Theme preference (light/dark/system)',
+            'Font settings (size and family)',
+            'Language preference (English/Japanese)',
+            'Recently viewed file history (file IDs and names only, not file contents)',
+            'PWA home screen banner dismissal status',
+          ],
         },
         notCollect: {
           title: '3. Information We Do Not Collect',
-          body: 'We do not collect, store, or transmit:\n\n• Contents of your Markdown files\n• Personal information or profile data\n• Google Drive file names or file IDs\n\nHowever, we use the following analytics services to collect anonymous usage data for service improvement:\n\n• Google Analytics: page views, approximate geographic location, and device/browser type\n• Vercel Analytics: page views, referrer, geographic region, browser, and device type (no cookies, no personally identifiable information)\n• Vercel Speed Insights: Web Vitals performance metrics such as page load time (no cookies, no personally identifiable information)',
+          body: 'We do not collect, store, or transmit the following:\n\nHowever, we use analytics services (Google Analytics, Vercel Analytics, Vercel Speed Insights) to collect anonymous usage data such as page views, approximate geographic location, device/browser type, and Web Vitals performance metrics for service improvement. Vercel Analytics and Speed Insights do not use cookies and do not collect personally identifiable information.',
+          items: [
+            'Contents of your Markdown files',
+            'Personal information or profile data',
+            'Google Drive file names or file IDs',
+          ],
         },
         google: {
           title: '4. Google API Usage',
@@ -318,7 +331,13 @@ export const en = {
         },
         thirdParty: {
           title: '6. Third-Party Services',
-          body: 'The Service integrates with the following third-party services:\n\n• Google Drive API: for file access. When you sign in with Google, your authentication is handled directly by Google\'s Identity Services.\n• Google Analytics: for anonymous usage analytics. To opt out, you can use the Google Analytics Opt-out Browser Add-on.\n• Vercel Analytics: for anonymous page view analytics. No cookies are used and no personally identifiable information is collected. IP addresses are used only to derive country/region and are not stored.\n• Vercel Speed Insights: for anonymous performance monitoring (Web Vitals). No cookies are used and no personally identifiable information is collected.\n\nWe recommend reviewing Google\'s Privacy Policy and Vercel\'s Privacy Policy for information about how these services handle your data.',
+          body: 'The Service integrates with the following third-party services:\n\nWe recommend reviewing Google\'s Privacy Policy and Vercel\'s Privacy Policy for information about how these services handle your data.',
+          items: [
+            'Google Drive API: for file access. When you sign in with Google, your authentication is handled directly by Google\'s Identity Services.',
+            'Google Analytics: for anonymous usage analytics. To opt out, you can use the Google Analytics Opt-out Browser Add-on.',
+            'Vercel Analytics: for anonymous page view analytics. No cookies are used and no personally identifiable information is collected. IP addresses are used only to derive country/region and are not stored.',
+            'Vercel Speed Insights: for anonymous performance monitoring (Web Vitals). No cookies are used and no personally identifiable information is collected.',
+          ],
         },
         children: {
           title: '7. Children\'s Privacy',
@@ -533,15 +552,15 @@ export type Translations = {
       title: string;
       lastUpdated: string;
       sections: {
-        intro: { title: string; body: string };
-        collect: { title: string; body: string };
-        notCollect: { title: string; body: string };
-        google: { title: string; body: string };
-        storage: { title: string; body: string };
-        thirdParty: { title: string; body: string };
-        children: { title: string; body: string };
-        changes: { title: string; body: string };
-        contact: { title: string; body: string; url: string };
+        intro: { title: string; body: string; items?: string[] };
+        collect: { title: string; body: string; items?: string[] };
+        notCollect: { title: string; body: string; items?: string[] };
+        google: { title: string; body: string; items?: string[] };
+        storage: { title: string; body: string; items?: string[] };
+        thirdParty: { title: string; body: string; items?: string[] };
+        children: { title: string; body: string; items?: string[] };
+        changes: { title: string; body: string; items?: string[] };
+        contact: { title: string; body: string; url: string; items?: string[] };
       };
     };
   };

@@ -83,7 +83,14 @@
   font-size: var(--font-size-sm);
   line-height: 1.8;
   color: var(--color-text-secondary);
-  white-space: pre-line;
+}
+
+.sectionList {
+  font-size: var(--font-size-sm);
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  margin: var(--spacing-sm) 0;
+  padding-left: var(--spacing-lg);
 }
 
 .contactLink {
