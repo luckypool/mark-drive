@@ -28,3 +28,7 @@ npm-debug.log*
 
 # Testing
 coverage/
+
+# Generated files
+third-party-licenses.txt
+public/third-party-licenses.txt

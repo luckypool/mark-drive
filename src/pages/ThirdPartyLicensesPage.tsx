@@ -1,139 +1,112 @@
 /**
  * MarkDrive - Third-Party Licenses Page
+ *
+ * Fetches and displays the auto-generated third-party-licenses.txt
+ * produced by generate-license-file.
  */
 
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { IoArrowBack, IoOpenOutline } from 'react-icons/io5';
+import { IoArrowBack, IoChevronDown, IoChevronUp } from 'react-icons/io5';
 import { useLanguage } from '../hooks';
 import { ThemeToggle, LanguageToggle } from '../components/ui';
 import styles from './ThirdPartyLicensesPage.module.css';
 
-interface LibraryInfo {
-  name: string;
-  version: string;
-  license: string;
-  url: string;
-  author?: string;
+interface LicenseGroup {
+  packages: string[];
+  licenseText: string;
 }
 
-const LIBRARIES: LibraryInfo[] = [
-  {
-    name: 'React',
-    version: '19.1.0',
-    license: 'MIT',
-    url: 'https://github.com/facebook/react',
-    author: 'Meta Platforms, Inc.',
-  },
-  {
-    name: 'React Router',
-    version: '7.6.1',
-    license: 'MIT',
-    url: 'https://github.com/remix-run/react-router',
-    author: 'Remix Software',
-  },
-  {
-    name: 'Vite',
-    version: '6.3.5',
-    license: 'MIT',
-    url: 'https://github.com/vitejs/vite',
-    author: 'Evan You',
-  },
-  {
-    name: '@codemirror/view',
-    version: '6.39.12',
-    license: 'MIT',
-    url: 'https://github.com/codemirror/view',
-    author: 'Marijn Haverbeke',
-  },
-  {
-    name: '@codemirror/state',
-    version: '6.5.4',
-    license: 'MIT',
-    url: 'https://github.com/codemirror/state',
-    author: 'Marijn Haverbeke',
-  },
-  {
-    name: '@codemirror/lang-markdown',
-    version: '6.5.0',
-    license: 'MIT',
-    url: 'https://github.com/codemirror/lang-markdown',
-    author: 'Marijn Haverbeke',
-  },
-  {
-    name: '@codemirror/commands',
-    version: '6.10.2',
-    license: 'MIT',
-    url: 'https://github.com/codemirror/commands',
-    author: 'Marijn Haverbeke',
-  },
-  {
-    name: '@codemirror/search',
-    version: '6.6.0',
-    license: 'MIT',
-    url: 'https://github.com/codemirror/search',
-    author: 'Marijn Haverbeke',
-  },
-  {
-    name: '@codemirror/language',
-    version: '6.12.1',
-    license: 'MIT',
-    url: 'https://github.com/codemirror/language',
-    author: 'Marijn Haverbeke',
-  },
-  {
-    name: '@lezer/highlight',
-    version: '1.2.3',
-    license: 'MIT',
-    url: 'https://github.com/lezer-parser/highlight',
-    author: 'Marijn Haverbeke',
-  },
-  {
-    name: 'react-markdown',
-    version: '10.1.0',
-    license: 'MIT',
-    url: 'https://github.com/remarkjs/react-markdown',
-    author: 'Espen Hovlandsdal',
-  },
-  {
-    name: 'remark-gfm',
-    version: '4.0.1',
-    license: 'MIT',
-    url: 'https://github.com/remarkjs/remark-gfm',
-    author: 'Titus Wormer',
-  },
-  {
-    name: 'react-syntax-highlighter',
-    version: '16.1.0',
-    license: 'MIT',
-    url: 'https://github.com/react-syntax-highlighter/react-syntax-highlighter',
-    author: 'Conor Hastings',
-  },
-  {
-    name: 'Mermaid',
-    version: '11.12.2',
-    license: 'MIT',
-    url: 'https://github.com/mermaid-js/mermaid',
-    author: 'Knut Sveidqvist',
-  },
-  {
-    name: 'html2pdf.js',
-    version: '0.14.0',
-    license: 'MIT',
-    url: 'https://github.com/eKoopmans/html2pdf.js',
-    author: 'Erik Koopmans',
-  },
-  {
-    name: 'react-icons',
-    version: '5.5.0',
-    license: 'MIT',
-    url: 'https://github.com/react-icons/react-icons',
-    author: 'Goran Alkovic',
-  },
-];
+function parseLicenseFile(text: string): LicenseGroup[] {
+  // Skip the header (first 2 lines + blank)
+  const headerEnd = text.indexOf('\n\n');
+  const body = headerEnd >= 0 ? text.slice(headerEnd + 2) : text;
+
+  const sections = body.split('\n-----------\n');
+  const groups: LicenseGroup[] = [];
+
+  for (const section of sections) {
+    const trimmed = section.trim();
+    if (!trimmed) continue;
+
+    // Extract package names: lines starting with " - "
+    const packages: string[] = [];
+    const lines = trimmed.split('\n');
+    let licenseStartIndex = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.startsWith(' - ')) {
+        packages.push(line.slice(3).trim());
+      } else if (
+        line.startsWith('This package contains the following license:') ||
+        line.startsWith('These packages each contain the following license:')
+      ) {
+        licenseStartIndex = i + 1;
+        break;
+      }
+    }
+
+    if (packages.length === 0) continue;
+
+    const licenseText = lines.slice(licenseStartIndex).join('\n').trim();
+    groups.push({ packages, licenseText });
+  }
+
+  return groups;
+}
+
+function LicenseSection({ group }: { group: LicenseGroup }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className={styles.licenseSection}>
+      <button
+        className={styles.sectionHeader}
+        onClick={() => setExpanded(!expanded)}
+      >
+        <div className={styles.packageList}>
+          {group.packages.map((pkg) => (
+            <span key={pkg} className={styles.packageBadge}>
+              {pkg}
+            </span>
+          ))}
+        </div>
+        <span className={styles.expandIcon}>
+          {expanded ? <IoChevronUp size={18} /> : <IoChevronDown size={18} />}
+        </span>
+      </button>
+      {expanded && (
+        <pre className={styles.licenseText}>{group.licenseText}</pre>
+      )}
+    </div>
+  );
+}
 
 export default function ThirdPartyLicensesPage() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [groups, setGroups] = useState<LicenseGroup[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/third-party-licenses.txt')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      })
+      .then((text) => {
+        setGroups(parseLicenseFile(text));
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  const totalPackages = groups.reduce((sum, g) => sum + g.packages.length, 0);
 
   return (
     <div className={styles.container}>
@@ -154,41 +127,26 @@ export default function ThirdPartyLicensesPage() {
             {t.about.thirdPartyDesc}
           </p>
 
-          <div className={styles.libraryList}>
-            {LIBRARIES.map((lib) => (
-              <div
-                key={lib.name}
-                className={styles.libraryCard}
-                onClick={() => window.open(lib.url, '_blank')}
-              >
-                <div className={styles.libraryHeader}>
-                  <span className={styles.libraryName}>{lib.name}</span>
-                  <span className={styles.licenseBadge}>
-                    <span className={styles.licenseText}>{lib.license}</span>
-                  </span>
-                </div>
-                <p className={styles.libraryVersion}>v{lib.version}</p>
-                {lib.author && (
-                  <p className={styles.libraryAuthor}>{lib.author}</p>
-                )}
-                <div className={styles.linkRow}>
-                  <IoOpenOutline size={14} />
-                  <span className={styles.linkText}>View on GitHub</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          {loading && (
+            <p className={styles.statusText}>Loading...</p>
+          )}
 
-          <div className={styles.mitNotice}>
-            <h3 className={styles.mitNoticeTitle}>MIT License</h3>
-            <p className={styles.mitNoticeText}>
-              Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-              {'\n\n'}
-              The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-              {'\n\n'}
-              THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-            </p>
-          </div>
+          {error && (
+            <p className={styles.statusText}>Error: {error}</p>
+          )}
+
+          {!loading && !error && (
+            <>
+              <p className={styles.summaryText}>
+                {totalPackages} packages / {groups.length} licenses
+              </p>
+              <div className={styles.licenseList}>
+                {groups.map((group, i) => (
+                  <LicenseSection key={i} group={group} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
