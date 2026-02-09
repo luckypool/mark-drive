@@ -49,7 +49,7 @@
 
 .contentContainer {
   padding: var(--spacing-xl);
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
@@ -58,97 +58,85 @@
 .description {
   font-size: var(--font-size-base);
   line-height: 1.6;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
   color: var(--color-text-secondary);
 }
 
-.libraryList {
+.statusText {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+}
+
+.summaryText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-lg);
+}
+
+.licenseList {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
-.libraryCard {
+.licenseSection {
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-md);
   background-color: var(--color-bg-card);
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: var(--spacing-md);
+  background: none;
+  border: none;
   cursor: pointer;
   text-align: left;
-  width: 100%;
-}
-
-.libraryCard:hover {
-  opacity: 0.85;
-}
-
-.libraryHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-xs);
-}
-
-.libraryName {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  flex: 1;
   color: var(--color-text-primary);
 }
 
-.licenseBadge {
-  padding: 2px var(--spacing-sm);
+.sectionHeader:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.packageList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  flex: 1;
+}
+
+.packageBadge {
+  display: inline-block;
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--border-radius-sm);
   background-color: var(--color-accent-muted);
+  color: var(--color-accent);
+  font-family: monospace;
+}
+
+.expandIcon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  padding-top: 2px;
 }
 
 .licenseText {
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-accent);
-}
-
-.libraryVersion {
-  font-size: var(--font-size-sm);
-  margin-bottom: var(--spacing-xs);
-  color: var(--color-text-muted);
-}
-
-.libraryAuthor {
-  font-size: var(--font-size-sm);
-  margin-bottom: var(--spacing-sm);
+  line-height: 1.5;
   color: var(--color-text-secondary);
-}
-
-.linkRow {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  color: var(--color-accent);
-}
-
-.linkText {
-  font-size: var(--font-size-sm);
-  color: var(--color-accent);
-}
-
-.mitNotice {
-  margin-top: var(--spacing-xl);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-lg);
-  background-color: var(--color-bg-tertiary);
-}
-
-.mitNoticeTitle {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--spacing-md);
-  color: var(--color-text-primary);
-}
-
-.mitNoticeText {
-  font-size: var(--font-size-sm);
-  line-height: 1.6;
-  color: var(--color-text-secondary);
+  padding: 0 var(--spacing-md) var(--spacing-md);
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-md);
 }

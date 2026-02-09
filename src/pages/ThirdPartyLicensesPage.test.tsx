@@ -1,8 +1,8 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { ThemeProvider } from '../contexts/ThemeContext';
 
 const mockNavigate = vi.fn();
@@ -34,13 +34,40 @@ vi.mock('../hooks', () => ({
 
 vi.mock('react-icons/io5', () => ({
   IoArrowBack: (props: any) => <span data-testid="icon-arrow-back" {...props} />,
-  IoOpenOutline: (props: any) => <span data-testid="icon-open" {...props} />,
+  IoChevronDown: (props: any) => <span data-testid="icon-chevron-down" {...props} />,
+  IoChevronUp: (props: any) => <span data-testid="icon-chevron-up" {...props} />,
 }));
 
 vi.mock('../components/ui', () => ({
   ThemeToggle: () => <button data-testid="theme-toggle">ThemeToggle</button>,
   LanguageToggle: () => <button data-testid="language-toggle">LanguageToggle</button>,
 }));
+
+const MOCK_LICENSE_FILE = `This file was generated with the generate-license-file npm package!
+https://www.npmjs.com/package/generate-license-file
+
+The following npm packages may be included in this product:
+
+ - react@19.1.0
+ - react-dom@19.1.0
+
+These packages each contain the following license:
+
+MIT License
+
+Copyright (c) Meta Platforms, Inc. and affiliates.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy.
+
+-----------
+
+The following npm package may be included in this product:
+
+ - @vercel/analytics@1.6.1
+
+This package contains the following license:
+
+Mozilla Public License Version 2.0`;
 
 function renderWithProviders(ui: React.ReactElement) {
   return render(<ThemeProvider>{ui}</ThemeProvider>);
@@ -58,6 +85,15 @@ beforeEach(() => {
     removeListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })) as unknown as typeof window.matchMedia;
+
+  vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+    ok: true,
+    text: () => Promise.resolve(MOCK_LICENSE_FILE),
+  } as Response);
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe('ThirdPartyLicensesPage', () => {
@@ -66,21 +102,23 @@ describe('ThirdPartyLicensesPage', () => {
     return mod.default;
   };
 
-  it('should render page title from t.about.thirdPartyLicenses', async () => {
+  it('should render page title', async () => {
     const ThirdPartyLicensesPage = await loadComponent();
     renderWithProviders(<ThirdPartyLicensesPage />);
     expect(screen.getByText('Third-Party Licenses')).toBeTruthy();
   });
 
-  it('should render library names', async () => {
+  it('should fetch and display license groups', async () => {
     const ThirdPartyLicensesPage = await loadComponent();
     renderWithProviders(<ThirdPartyLicensesPage />);
-    expect(screen.getByText('React')).toBeTruthy();
-    expect(screen.getByText('Vite')).toBeTruthy();
-    expect(screen.getByText('Mermaid')).toBeTruthy();
-    expect(screen.getByText('react-markdown')).toBeTruthy();
-    expect(screen.getByText('react-icons')).toBeTruthy();
-    expect(screen.getByText('html2pdf.js')).toBeTruthy();
+
+    await waitFor(() => {
+      expect(screen.getByText('react@19.1.0')).toBeTruthy();
+      expect(screen.getByText('react-dom@19.1.0')).toBeTruthy();
+      expect(screen.getByText('@vercel/analytics@1.6.1')).toBeTruthy();
+    });
+
+    expect(screen.getByText('3 packages / 2 licenses')).toBeTruthy();
   });
 
   it('should call navigate(-1) when clicking back button', async () => {
@@ -91,10 +129,36 @@ describe('ThirdPartyLicensesPage', () => {
     expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 
-  it('should render MIT License notice section', async () => {
+  it('should expand license text on click', async () => {
     const ThirdPartyLicensesPage = await loadComponent();
     renderWithProviders(<ThirdPartyLicensesPage />);
-    expect(screen.getByText('MIT License')).toBeTruthy();
+
+    await waitFor(() => {
+      expect(screen.getByText('react@19.1.0')).toBeTruthy();
+    });
+
+    // License text should not be visible initially
+    expect(screen.queryByText(/Permission is hereby granted/)).toBeNull();
+
+    // Click to expand
+    const reactBadge = screen.getByText('react@19.1.0');
+    const sectionButton = reactBadge.closest('button')!;
+    fireEvent.click(sectionButton);
+
     expect(screen.getByText(/Permission is hereby granted/)).toBeTruthy();
+  });
+
+  it('should show error on fetch failure', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+      ok: false,
+      status: 404,
+    } as Response);
+
+    const ThirdPartyLicensesPage = await loadComponent();
+    renderWithProviders(<ThirdPartyLicensesPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Error: HTTP 404')).toBeTruthy();
+    });
   });
 });
