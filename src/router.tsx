@@ -4,7 +4,6 @@ import ErrorPage from './pages/ErrorPage';
 import NotFoundPage from './pages/NotFoundPage';
 import HomePage from './pages/HomePage';
 import ViewerPage from './pages/ViewerPage';
-import SearchPage from './pages/SearchPage';
 import AboutPage from './pages/AboutPage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
@@ -19,7 +18,6 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'viewer', element: <ViewerPage /> },
-      { path: 'search', element: <SearchPage /> },
       { path: 'about', element: <AboutPage /> },
       { path: 'privacy', element: <PrivacyPage /> },
       { path: 'terms', element: <TermsPage /> },

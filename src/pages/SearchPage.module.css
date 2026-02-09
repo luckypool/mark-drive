@@ -119,6 +119,54 @@
   background-color: #f8f9fa;
 }
 
+/* Header Title */
+.headerTitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Picker Prompt */
+.pickerPrompt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  gap: var(--spacing-lg);
+}
+
+.pickerIcon {
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-sm);
+}
+
+.pickerHint {
+  font-size: var(--font-size-base);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.pickerButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  background-color: #ffffff;
+  border: 1px solid #dadce0;
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: #3c4043;
+  font-family: 'Roboto', sans-serif;
+}
+
+.pickerButton:hover {
+  background-color: #f8f9fa;
+}
+
 /* Empty State */
 .emptyState {
   flex: 1;

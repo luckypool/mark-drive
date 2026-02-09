@@ -49,7 +49,15 @@ function setupGoogleApis() {
         revoke: vi.fn((_token: string, cb: () => void) => cb()),
       },
     },
-  };
+    picker: {
+      PickerBuilder: vi.fn(),
+      DocsView: vi.fn(),
+      Action: { CANCEL: 'cancel', PICKED: 'picked' },
+      ViewId: { DOCS: 'all' },
+      DocsViewMode: { GRID: 'grid', LIST: 'list' },
+      Feature: { SUPPORT_DRIVES: 'supportDrives' },
+    },
+  } as unknown as typeof window.google;
 
   window.gapi = {
     load: vi.fn((_api: string, cb: () => void) => cb()),

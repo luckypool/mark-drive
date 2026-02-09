@@ -133,6 +133,8 @@ export const en = {
     recentTitle: 'Recent Files',
     recentHint: 'Showing recently modified Markdown files',
     noRecentFiles: 'No Markdown files found',
+    pickFile: 'Select from Google Drive',
+    pickFileHint: 'Choose a Markdown file from your Google Drive',
   },
 
   // About Screen
@@ -236,6 +238,11 @@ export const en = {
     title: 'Menu',
     account: 'Account',
     display: 'Display Settings',
+    picker: 'Google Drive',
+    pickerOwnedByMe: 'My Files Only',
+    pickerStarred: 'Starred Only',
+    on: 'ON',
+    off: 'OFF',
   },
 
   // File Info
@@ -447,6 +454,8 @@ export type Translations = {
     recentTitle: string;
     recentHint: string;
     noRecentFiles: string;
+    pickFile: string;
+    pickFileHint: string;
   };
   about: {
     title: string;
@@ -520,6 +529,11 @@ export type Translations = {
     title: string;
     account: string;
     display: string;
+    picker: string;
+    pickerOwnedByMe: string;
+    pickerStarred: string;
+    on: string;
+    off: string;
   };
   fileInfo: {
     title: string;

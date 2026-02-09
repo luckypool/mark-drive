@@ -17,13 +17,18 @@ import { storage } from '../services/storage';
 // 環境変数から設定を取得
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const APP_ID = import.meta.env.VITE_GOOGLE_APP_ID || '';
 
-// Google API のスコープ（読み取りのみ）
-const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+// Google API のスコープ（Picker で選択したファイルのみアクセス可能）
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
+// スコープバージョン（スコープ変更時にインクリメントして旧トークンを無効化）
+const SCOPE_VERSION = '2'; // v1: drive.readonly → v2: drive.file
 
 // ストレージのキー
 const TOKEN_KEY = 'googleDriveAccessToken';
 const TOKEN_EXPIRY_KEY = 'googleDriveTokenExpiry';
+const SCOPE_VERSION_KEY = 'googleDriveScopeVersion';
 const OAUTH_STATE_KEY = 'oauth_state';
 
 // Google API の型定義
@@ -62,6 +67,26 @@ interface TokenResponse {
   state?: string;
 }
 
+export interface PickerResult {
+  id: string;
+  name: string;
+}
+
+export interface PickerViewSettings {
+  ownedByMe: boolean;
+  starred: boolean;
+}
+
+export const DEFAULT_PICKER_SETTINGS: PickerViewSettings = {
+  ownedByMe: false,
+  starred: false,
+};
+
+export interface OpenDrivePickerOptions {
+  settings?: PickerViewSettings;
+  locale?: string;
+}
+
 export interface UseGoogleAuthReturn {
   isLoading: boolean;
   isApiLoaded: boolean;
@@ -77,6 +102,7 @@ export interface UseGoogleAuthReturn {
   logout: () => void;
   fetchFileContent: (fileId: string, signal?: AbortSignal) => Promise<string | null>;
   clearResults: () => void;
+  openDrivePicker: (options?: OpenDrivePickerOptions) => Promise<PickerResult | null>;
 }
 
 // スクリプトを動的に読み込む
@@ -98,9 +124,18 @@ function loadScript(src: string): Promise<void> {
   });
 }
 
-// ストレージからトークンを復元
+// ストレージからトークンを復元（スコープバージョンチェック付き）
 async function restoreToken(): Promise<{ token: string; expiry: number } | null> {
   try {
+    // スコープバージョンが変わっていたら旧トークンをクリア
+    const storedVersion = await storage.getItem(SCOPE_VERSION_KEY);
+    if (storedVersion !== SCOPE_VERSION) {
+      console.log('[useGoogleAuth] スコープバージョン変更検出、旧トークンをクリア');
+      await clearStoredToken();
+      await storage.setItem(SCOPE_VERSION_KEY, SCOPE_VERSION);
+      return null;
+    }
+
     const token = await storage.getItem(TOKEN_KEY);
     const expiryStr = await storage.getItem(TOKEN_EXPIRY_KEY);
     if (token && expiryStr) {
@@ -116,12 +151,13 @@ async function restoreToken(): Promise<{ token: string; expiry: number } | null>
   return null;
 }
 
-// トークンを保存
+// トークンを保存（スコープバージョンも記録）
 async function saveToken(token: string, expiresIn: number): Promise<void> {
   try {
     const expiry = Date.now() + expiresIn * 1000;
     await storage.setItem(TOKEN_KEY, token);
     await storage.setItem(TOKEN_EXPIRY_KEY, String(expiry));
+    await storage.setItem(SCOPE_VERSION_KEY, SCOPE_VERSION);
   } catch {
     // エラーは無視
   }
@@ -363,6 +399,60 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     setError(null);
   }, []);
 
+  // Google Picker を開いてファイルを選択
+  const openDrivePicker = useCallback((options?: OpenDrivePickerOptions): Promise<PickerResult | null> => {
+    return new Promise((resolve) => {
+      if (!accessToken) {
+        setError('認証が必要です');
+        resolve(null);
+        return;
+      }
+
+      if (!pickerInited.current) {
+        setError('Picker API が読み込まれていません');
+        resolve(null);
+        return;
+      }
+
+      const s = options?.settings ?? DEFAULT_PICKER_SETTINGS;
+
+      const view = new google.picker.DocsView(google.picker.ViewId.DOCS);
+      view.setMimeTypes('text/markdown,text/x-markdown,text/plain');
+      view.setMode(google.picker.DocsViewMode.LIST);
+      view.setOwnedByMe(s.ownedByMe);
+      if (s.starred) {
+        view.setStarred(true);
+      }
+
+      // ビューポートに合わせたサイズ（モバイル対応）
+      const width = Math.min(window.innerWidth - 32, 1051);
+      const height = Math.min(window.innerHeight - 64, 650);
+
+      const builder = new google.picker.PickerBuilder()
+        .addView(view)
+        .setOAuthToken(accessToken)
+        .setDeveloperKey(API_KEY)
+        .setAppId(APP_ID)
+        .setSize(width, height)
+        .setCallback((data: google.picker.CallbackData) => {
+          if (data.action === google.picker.Action.PICKED && data.docs?.[0]) {
+            const doc = data.docs[0];
+            resolve({ id: doc.id, name: doc.name });
+          } else if (data.action === google.picker.Action.CANCEL) {
+            resolve(null);
+          }
+        })
+        .enableFeature(google.picker.Feature.SUPPORT_DRIVES);
+
+      if (options?.locale) {
+        builder.setLocale(options.locale);
+      }
+
+      const picker = builder.build();
+      picker.setVisible(true);
+    });
+  }, [accessToken]);
+
   return {
     isLoading: isLoading || !isTokenRestored,
     isApiLoaded,
@@ -378,5 +468,6 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     logout,
     fetchFileContent,
     clearResults,
+    openDrivePicker,
   };
 }
