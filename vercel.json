@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": null,
-  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ]",
+  "ignoreCommand": "if [ \"$VERCEL_GIT_COMMIT_REF\" = \"main\" ]; then exit 1; fi; echo \"$VERCEL_GIT_COMMIT_MESSAGE\" | grep -q '\\[preview\\]' && exit 1; exit 0",
   "rewrites": [
     {
       "source": "/(.*)",
