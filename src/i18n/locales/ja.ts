@@ -203,6 +203,17 @@ export const ja: Translations = {
     footer: 'Vite + React で構築',
   },
 
+  // Open (Drive「アプリで開く」)
+  open: {
+    loading: 'ファイルを開いています...',
+    signIn: 'このファイルを開くにはサインインしてください',
+    signInButton: 'Google でサインイン',
+    error: 'ファイルを開けませんでした',
+    invalidState: 'Google Drive からのリクエストが無効です',
+    retry: '再試行',
+    backToHome: 'ホームに戻る',
+  },
+
   // Common
   common: {
     justNow: 'たった今',

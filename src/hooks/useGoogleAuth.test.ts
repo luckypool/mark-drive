@@ -116,7 +116,7 @@ describe('useGoogleAuth', () => {
     storageMock = createLocalStorageMock();
     Object.defineProperty(window, 'localStorage', { value: storageMock, writable: true });
     // Pre-set scope version so token restoration doesn't get cleared
-    storageMock.setItem('googleDriveScopeVersion', '2');
+    storageMock.setItem('googleDriveScopeVersion', '3');
     setupEnvVars();
     setupGoogleApis();
     stubScriptLoading();
@@ -147,7 +147,7 @@ describe('useGoogleAuth', () => {
     it('should restore valid token from storage', async () => {
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'stored-token-value';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -163,7 +163,7 @@ describe('useGoogleAuth', () => {
     it('should not restore expired token', async () => {
       const pastExpiry = String(Date.now() - 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'old-token';
         if (key === 'googleDriveTokenExpiry') return pastExpiry;
         return null;
@@ -179,7 +179,7 @@ describe('useGoogleAuth', () => {
     it('should not restore token expiring within 5 minutes', async () => {
       const nearExpiry = String(Date.now() + 3 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'near-expired-token';
         if (key === 'googleDriveTokenExpiry') return nearExpiry;
         return null;
@@ -209,7 +209,7 @@ describe('useGoogleAuth', () => {
     it('should clear results for empty query', async () => {
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -229,7 +229,7 @@ describe('useGoogleAuth', () => {
     it('should return search results when authenticated', async () => {
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -252,7 +252,7 @@ describe('useGoogleAuth', () => {
 
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -275,7 +275,7 @@ describe('useGoogleAuth', () => {
     it('should load recent files when authenticated', async () => {
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -311,7 +311,7 @@ describe('useGoogleAuth', () => {
     it('should fetch file content when authenticated', async () => {
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -348,7 +348,7 @@ describe('useGoogleAuth', () => {
 
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -371,7 +371,7 @@ describe('useGoogleAuth', () => {
     it('should clear all state on logout', async () => {
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -397,7 +397,7 @@ describe('useGoogleAuth', () => {
     it('should revoke token via Google API', async () => {
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -419,7 +419,7 @@ describe('useGoogleAuth', () => {
     it('should clear stored token from localStorage', async () => {
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
@@ -471,7 +471,7 @@ describe('useGoogleAuth', () => {
     function authenticateHook() {
       const futureExpiry = String(Date.now() + 60 * 60 * 1000);
       storageMock.getItem.mockImplementation((key: string) => {
-        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveScopeVersion') return '3';
         if (key === 'googleDriveAccessToken') return 'valid-token';
         if (key === 'googleDriveTokenExpiry') return futureExpiry;
         return null;
