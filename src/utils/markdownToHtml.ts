@@ -78,39 +78,30 @@ function hljsToInlineStyles(html: string): string {
   );
 }
 
-// Check if a hex color is too light for readable text (luminance > 0.6)
-function isLightColor(hex: string): boolean {
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
-  // Relative luminance (ITU-R BT.709)
-  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return luminance > 0.6;
-}
-
-// Force dark fill on SVG text/tspan elements that have light colors
+// Force dark text in SVG by injecting CSS overrides
+// Mermaid sets text colors via CSS classes in <style> blocks,
+// so we inject !important rules to ensure readability in PDF
 function darkenSvgText(svg: string): string {
-  // Replace light fill attributes on text and tspan elements
-  let result = svg.replace(
-    /(<(?:text|tspan)\b[^>]*?)fill="(#[a-fA-F0-9]{6})"/g,
-    (match, before: string, color: string) => {
-      if (isLightColor(color)) {
-        return `${before}fill="#000000"`;
-      }
-      return match;
-    }
-  );
-  // Replace light fill in inline styles on text and tspan elements
-  result = result.replace(
-    /(<(?:text|tspan)\b[^>]*?style="[^"]*?)fill:\s*(#[a-fA-F0-9]{6})/g,
-    (match, before: string, color: string) => {
-      if (isLightColor(color)) {
-        return `${before}fill: #000000`;
-      }
-      return match;
-    }
-  );
-  return result;
+  const darkTextCss = `<style>
+text, tspan,
+.label, .nodeLabel, .edgeLabel,
+.classText, .classTitle,
+.statediagram-state .nodeLabel,
+.node .label, .cluster-label,
+.actor, .messageText, .labelText,
+.loopText, .noteText,
+.pieTitleText, .slice,
+.titleText, .sectionTitle,
+.taskText, .taskTextOutsideRight,
+.entityLabel, .relationshipLabel,
+.flowchart-label text,
+g.classGroup text,
+g.stateGroup text {
+  fill: #000000 !important;
+}
+</style>`;
+  // Insert CSS override after the opening <svg> tag
+  return svg.replace(/(<svg[^>]*>)/, `$1${darkTextCss}`);
 }
 
 // Get PDF-specific font sizes based on settings
