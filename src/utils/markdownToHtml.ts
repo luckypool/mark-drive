@@ -335,10 +335,20 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
           const { svg } = await mermaid.render(`mermaid-${block.index}`, block.code);
           // Darken text in SVG for PDF readability
           // Safe with 'neutral' theme since all backgrounds are light
-          const darkenedSvg = svg.replace(
-            '</style>',
-            'text, text tspan { fill: #1a1a1a !important; }</style>'
-          );
+          // - SVG text elements: text, tspan use 'fill'
+          // - stateDiagram/classDiagram use <foreignObject> with HTML elements that need 'color'
+          const darkTextCss = [
+            'text, text tspan { fill: #1a1a1a !important; }',
+            'foreignObject div, foreignObject span, foreignObject p { color: #1a1a1a !important; }',
+            '.nodeLabel, .edgeLabel, .label { color: #1a1a1a !important; }',
+          ].join(' ');
+          let darkenedSvg: string;
+          if (svg.includes('</style>')) {
+            darkenedSvg = svg.replace('</style>', `${darkTextCss}</style>`);
+          } else {
+            // If no <style> block exists, inject one after the opening <svg> tag
+            darkenedSvg = svg.replace(/(<svg[^>]*>)/, `$1<style>${darkTextCss}</style>`);
+          }
           // Wrap SVG in a container with proper styling
           const wrappedSvg = `<div style="margin:12px 0;text-align:center;overflow-x:auto;page-break-inside:avoid;">${darkenedSvg}</div>`;
           html = html.replace(`<<<MERMAID${block.index}>>>`, wrappedSvg);
