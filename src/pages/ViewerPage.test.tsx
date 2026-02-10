@@ -262,6 +262,20 @@ describe('ViewerPage', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 
+  it('clicking back button calls navigate(-1) when history exists', () => {
+    const originalLength = Object.getOwnPropertyDescriptor(window.history, 'length');
+    Object.defineProperty(window.history, 'length', { value: 3, writable: true, configurable: true });
+    renderWithProviders(<ViewerPage />);
+    const backButton = screen.getByTestId('icon-chevron-back').closest('button')!;
+    fireEvent.click(backButton);
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    if (originalLength) {
+      Object.defineProperty(window.history, 'length', originalLength);
+    } else {
+      Object.defineProperty(window.history, 'length', { value: 1, writable: true, configurable: true });
+    }
+  });
+
   it('renders markdown content when provided via location.state', () => {
     renderWithProviders(<ViewerPage />);
     const renderer = screen.getByTestId('markdown-renderer');
@@ -739,6 +753,26 @@ describe('ViewerPage - Back with unsaved changes', () => {
     expect(confirmSpy).toHaveBeenCalledWith('You have unsaved changes.');
     expect(mockNavigate).toHaveBeenCalledWith('/');
     confirmSpy.mockRestore();
+  });
+
+  it('navigates back with history when confirming unsaved changes', () => {
+    mockEditorState.hasUnsavedChanges = true;
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const originalLength = Object.getOwnPropertyDescriptor(window.history, 'length');
+    Object.defineProperty(window.history, 'length', { value: 3, writable: true, configurable: true });
+
+    renderWithProviders(<ViewerPage />);
+    const backButton = screen.getByTestId('icon-chevron-back').closest('button')!;
+    fireEvent.click(backButton);
+
+    expect(confirmSpy).toHaveBeenCalledWith('You have unsaved changes.');
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    confirmSpy.mockRestore();
+    if (originalLength) {
+      Object.defineProperty(window.history, 'length', originalLength);
+    } else {
+      Object.defineProperty(window.history, 'length', { value: 1, writable: true, configurable: true });
+    }
   });
 
   it('does not navigate when user cancels the confirm dialog', () => {
