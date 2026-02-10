@@ -255,11 +255,11 @@ describe('ViewerPage', () => {
     expect(backIcon.closest('button')).toBeTruthy();
   });
 
-  it('clicking back button calls navigate(-1)', () => {
+  it('clicking back button navigates to home when no history', () => {
     renderWithProviders(<ViewerPage />);
     const backButton = screen.getByTestId('icon-chevron-back').closest('button')!;
     fireEvent.click(backButton);
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 
   it('renders markdown content when provided via location.state', () => {
@@ -737,7 +737,7 @@ describe('ViewerPage - Back with unsaved changes', () => {
     fireEvent.click(backButton);
 
     expect(confirmSpy).toHaveBeenCalledWith('You have unsaved changes.');
-    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(mockNavigate).toHaveBeenCalledWith('/');
     confirmSpy.mockRestore();
   });
 
