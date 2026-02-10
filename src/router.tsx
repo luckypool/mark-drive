@@ -9,6 +9,7 @@ import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
 import LicensePage from './pages/LicensePage';
 import ThirdPartyLicensesPage from './pages/ThirdPartyLicensesPage';
+import OpenPage from './pages/OpenPage';
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'viewer', element: <ViewerPage /> },
+      { path: 'open', element: <OpenPage /> },
       { path: 'about', element: <AboutPage /> },
       { path: 'privacy', element: <PrivacyPage /> },
       { path: 'terms', element: <TermsPage /> },

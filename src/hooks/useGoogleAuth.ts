@@ -19,11 +19,11 @@ const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 const APP_ID = import.meta.env.VITE_GOOGLE_APP_ID || '';
 
-// Google API のスコープ（Picker で選択したファイルのみアクセス可能）
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+// Google API のスコープ（Picker で選択したファイルのみアクセス可能 + Drive「アプリで開く」対応）
+const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.install';
 
 // スコープバージョン（スコープ変更時にインクリメントして旧トークンを無効化）
-const SCOPE_VERSION = '2'; // v1: drive.readonly → v2: drive.file
+const SCOPE_VERSION = '3'; // v1: drive.readonly → v2: drive.file → v3: +drive.install
 
 // ストレージのキー
 const TOKEN_KEY = 'googleDriveAccessToken';

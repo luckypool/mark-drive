@@ -201,6 +201,17 @@ export const en = {
     footer: 'Built with Vite and React',
   },
 
+  // Open (Drive "Open with")
+  open: {
+    loading: 'Opening file...',
+    signIn: 'Sign in to open this file',
+    signInButton: 'Sign in with Google',
+    error: 'Failed to open file',
+    invalidState: 'Invalid request from Google Drive',
+    retry: 'Retry',
+    backToHome: 'Back to Home',
+  },
+
   // Common
   common: {
     justNow: 'Just now',
@@ -498,6 +509,15 @@ export type Translations = {
     viewTerms: string;
     viewPrivacy: string;
     footer: string;
+  };
+  open: {
+    loading: string;
+    signIn: string;
+    signInButton: string;
+    error: string;
+    invalidState: string;
+    retry: string;
+    backToHome: string;
   };
   common: {
     justNow: string;
