@@ -117,12 +117,14 @@ describe('markdownToHtml - HTML Content', () => {
     const html = await markdownToHtml('```js\nconst x = 1;\n```');
     expect(html).toContain('<pre');
     expect(html).toContain('<code');
-    expect(html).toContain('const x = 1;');
+    // With syntax highlighting, tokens may be wrapped in spans
+    expect(html).toContain('const');
+    expect(html).toContain('x =');
     expect(html).not.toContain('```');
   });
 
-  it('should escape HTML in code blocks', async () => {
-    const html = await markdownToHtml('```html\n<div>test</div>\n```');
+  it('should escape HTML in code blocks without language', async () => {
+    const html = await markdownToHtml('```\n<div>test</div>\n```');
     expect(html).toContain('&lt;div&gt;');
     expect(html).not.toContain('<div>test</div>');
   });
@@ -195,7 +197,7 @@ function hello() {
     expect(html).toContain('>Features</h2>');
     expect(html).toContain('>Feature 1</li>');
     expect(html).toContain('>Code Example</h3>');
-    expect(html).toContain('function hello()');
+    expect(html).toContain('function');
     expect(html).toContain('>Header 1</th>');
     expect(html).toContain('>Cell 1</td>');
   });
@@ -285,5 +287,96 @@ describe('markdownToHtml - Font size constraints', () => {
     for (const match of matches) {
       expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(10);
     }
+  });
+});
+
+describe('markdownToHtml - Syntax highlighting', () => {
+  it('should apply syntax highlighting to code blocks with language', async () => {
+    const html = await markdownToHtml('```javascript\nconst x = 1;\n```');
+    expect(html).toContain('<pre');
+    expect(html).toContain('<code');
+    // highlight.js should produce inline styles for keywords
+    expect(html).toContain('style="color:');
+  });
+
+  it('should fallback to escaped HTML for unknown languages', async () => {
+    const html = await markdownToHtml('```unknownlang123\nsome code\n```');
+    expect(html).toContain('<pre');
+    expect(html).toContain('some code');
+  });
+
+  it('should escape HTML in code blocks without highlighting', async () => {
+    const html = await markdownToHtml('```\n<script>alert("xss")</script>\n```');
+    expect(html).toContain('&lt;script&gt;');
+    expect(html).not.toContain('<script>alert');
+  });
+});
+
+describe('markdownToHtml - Nested blockquotes', () => {
+  it('should render nested blockquote (> >)', async () => {
+    const html = await markdownToHtml('> > Nested quote');
+    expect(html).toContain('<blockquote');
+    // Should have two blockquote elements (nested)
+    const blockquoteCount = (html.match(/<blockquote/g) || []).length;
+    expect(blockquoteCount).toBe(2);
+    expect(html).toContain('Nested quote');
+  });
+
+  it('should have font-size on blockquote', async () => {
+    const html = await markdownToHtml('> Simple quote');
+    expect(html).toContain('font-size:');
+    expect(html).toContain('<blockquote');
+  });
+
+  it('should render single-level blockquote correctly', async () => {
+    const html = await markdownToHtml('> Single level');
+    const blockquoteCount = (html.match(/<blockquote/g) || []).length;
+    expect(blockquoteCount).toBe(1);
+    expect(html).toContain('Single level');
+  });
+});
+
+describe('markdownToHtml - Nested lists', () => {
+  it('should render nested unordered list', async () => {
+    const html = await markdownToHtml('- Item 1\n  - Sub item 1\n  - Sub item 2\n- Item 2');
+    // Should have two <ul tags (outer + nested)
+    const ulCount = (html.match(/<ul /g) || []).length;
+    expect(ulCount).toBe(2);
+    expect(html).toContain('>Item 1</li>');
+    expect(html).toContain('>Sub item 1</li>');
+    expect(html).toContain('>Sub item 2</li>');
+    expect(html).toContain('>Item 2</li>');
+  });
+
+  it('should render nested ordered list', async () => {
+    const html = await markdownToHtml('1. First\n  1. Sub first\n2. Second');
+    const olCount = (html.match(/<ol /g) || []).length;
+    expect(olCount).toBe(2);
+    expect(html).toContain('>First</li>');
+    expect(html).toContain('>Sub first</li>');
+    expect(html).toContain('>Second</li>');
+  });
+
+  it('should have font-size on list items', async () => {
+    const html = await markdownToHtml('- Item 1\n- Item 2');
+    // Check that <li has font-size
+    expect(html).toMatch(/<li[^>]*font-size:\d+px/);
+  });
+
+  it('should have font-size on ul/ol tags', async () => {
+    const html = await markdownToHtml('- Item 1\n- Item 2');
+    expect(html).toMatch(/<ul[^>]*font-size:\d+px/);
+
+    const html2 = await markdownToHtml('1. Item 1\n2. Item 2');
+    expect(html2).toMatch(/<ol[^>]*font-size:\d+px/);
+  });
+
+  it('should render 3-level nested list', async () => {
+    const html = await markdownToHtml('- Level 1\n  - Level 2\n    - Level 3');
+    const ulCount = (html.match(/<ul /g) || []).length;
+    expect(ulCount).toBe(3);
+    expect(html).toContain('>Level 1</li>');
+    expect(html).toContain('>Level 2</li>');
+    expect(html).toContain('>Level 3</li>');
   });
 });
