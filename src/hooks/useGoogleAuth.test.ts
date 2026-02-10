@@ -50,8 +50,23 @@ function setupGoogleApis() {
       },
     },
     picker: {
-      PickerBuilder: vi.fn(),
-      DocsView: vi.fn(),
+      PickerBuilder: vi.fn(() => ({
+        addView: vi.fn().mockReturnThis(),
+        setOAuthToken: vi.fn().mockReturnThis(),
+        setDeveloperKey: vi.fn().mockReturnThis(),
+        setAppId: vi.fn().mockReturnThis(),
+        setSize: vi.fn().mockReturnThis(),
+        setCallback: vi.fn().mockReturnThis(),
+        enableFeature: vi.fn().mockReturnThis(),
+        setLocale: vi.fn().mockReturnThis(),
+        build: vi.fn(() => ({ setVisible: vi.fn() })),
+      })),
+      DocsView: vi.fn(() => ({
+        setMimeTypes: vi.fn(),
+        setMode: vi.fn(),
+        setOwnedByMe: vi.fn(),
+        setStarred: vi.fn(),
+      })),
       Action: { CANCEL: 'cancel', PICKED: 'picked' },
       ViewId: { DOCS: 'all' },
       DocsViewMode: { GRID: 'grid', LIST: 'list' },
@@ -447,6 +462,186 @@ describe('useGoogleAuth', () => {
 
       expect(result.current.results).toEqual([]);
       expect(result.current.error).toBeNull();
+    });
+  });
+
+  // --- openDrivePicker ---
+
+  describe('openDrivePicker', () => {
+    function authenticateHook() {
+      const futureExpiry = String(Date.now() + 60 * 60 * 1000);
+      storageMock.getItem.mockImplementation((key: string) => {
+        if (key === 'googleDriveScopeVersion') return '2';
+        if (key === 'googleDriveAccessToken') return 'valid-token';
+        if (key === 'googleDriveTokenExpiry') return futureExpiry;
+        return null;
+      });
+    }
+
+    it('should return null and set error when not authenticated', async () => {
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      let pickerResult: any;
+      await act(async () => {
+        pickerResult = await result.current.openDrivePicker();
+      });
+
+      expect(pickerResult).toBeNull();
+      expect(result.current.error).toBe('認証が必要です');
+    });
+
+    it('should build and show picker when authenticated', async () => {
+      authenticateHook();
+
+      const mockSetVisible = vi.fn();
+      const mockBuild = vi.fn(() => ({ setVisible: mockSetVisible }));
+      const mockSetLocale = vi.fn().mockReturnThis();
+
+      const mockBuilderInstance = {
+        addView: vi.fn().mockReturnThis(),
+        setOAuthToken: vi.fn().mockReturnThis(),
+        setDeveloperKey: vi.fn().mockReturnThis(),
+        setAppId: vi.fn().mockReturnThis(),
+        setSize: vi.fn().mockReturnThis(),
+        setCallback: vi.fn().mockReturnThis(),
+        enableFeature: vi.fn().mockReturnThis(),
+        setLocale: mockSetLocale,
+        build: mockBuild,
+      };
+
+      const mockDocsViewInstance = {
+        setMimeTypes: vi.fn(),
+        setMode: vi.fn(),
+        setOwnedByMe: vi.fn(),
+        setStarred: vi.fn(),
+      };
+
+      window.google.picker.PickerBuilder = function() { return mockBuilderInstance; } as any;
+      window.google.picker.DocsView = function() { return mockDocsViewInstance; } as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      await act(async () => {
+        result.current.openDrivePicker({ locale: 'ja' });
+      });
+
+      expect(mockBuild).toHaveBeenCalled();
+      expect(mockSetVisible).toHaveBeenCalledWith(true);
+      expect(mockSetLocale).toHaveBeenCalledWith('ja');
+    });
+
+    it('should resolve with file when PICKED action', async () => {
+      authenticateHook();
+
+      let pickerCallback: (data: any) => void;
+
+      const mockBuilderInstance = {
+        addView: vi.fn().mockReturnThis(),
+        setOAuthToken: vi.fn().mockReturnThis(),
+        setDeveloperKey: vi.fn().mockReturnThis(),
+        setAppId: vi.fn().mockReturnThis(),
+        setSize: vi.fn().mockReturnThis(),
+        setCallback: vi.fn((cb: any) => {
+          pickerCallback = cb;
+          return mockBuilderInstance;
+        }),
+        enableFeature: vi.fn().mockReturnThis(),
+        build: vi.fn(() => ({ setVisible: vi.fn() })),
+      };
+
+      window.google.picker.PickerBuilder = function() { return mockBuilderInstance; } as any;
+      window.google.picker.DocsView = function() { return { setMimeTypes: vi.fn(), setMode: vi.fn(), setOwnedByMe: vi.fn() }; } as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      let pickerResult: any;
+      await act(async () => {
+        const p = result.current.openDrivePicker();
+        setTimeout(() => {
+          pickerCallback!({
+            action: google.picker.Action.PICKED,
+            docs: [{ id: 'doc-1', name: 'picked.md' }],
+          });
+        }, 10);
+        pickerResult = await p;
+      });
+
+      expect(pickerResult).toEqual({ id: 'doc-1', name: 'picked.md' });
+    });
+
+    it('should resolve null when CANCEL action', async () => {
+      authenticateHook();
+
+      let pickerCallback: (data: any) => void;
+
+      const mockBuilderInstance = {
+        addView: vi.fn().mockReturnThis(),
+        setOAuthToken: vi.fn().mockReturnThis(),
+        setDeveloperKey: vi.fn().mockReturnThis(),
+        setAppId: vi.fn().mockReturnThis(),
+        setSize: vi.fn().mockReturnThis(),
+        setCallback: vi.fn((cb: any) => {
+          pickerCallback = cb;
+          return mockBuilderInstance;
+        }),
+        enableFeature: vi.fn().mockReturnThis(),
+        build: vi.fn(() => ({ setVisible: vi.fn() })),
+      };
+
+      window.google.picker.PickerBuilder = function() { return mockBuilderInstance; } as any;
+      window.google.picker.DocsView = function() { return { setMimeTypes: vi.fn(), setMode: vi.fn(), setOwnedByMe: vi.fn() }; } as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      let pickerResult: any;
+      await act(async () => {
+        const p = result.current.openDrivePicker();
+        setTimeout(() => {
+          pickerCallback!({ action: google.picker.Action.CANCEL });
+        }, 10);
+        pickerResult = await p;
+      });
+
+      expect(pickerResult).toBeNull();
+    });
+
+    it('should apply starred setting when enabled', async () => {
+      authenticateHook();
+
+      const mockSetStarred = vi.fn();
+      const mockDocsViewInstance = {
+        setMimeTypes: vi.fn(),
+        setMode: vi.fn(),
+        setOwnedByMe: vi.fn(),
+        setStarred: mockSetStarred,
+      };
+
+      window.google.picker.PickerBuilder = function() { return {
+        addView: vi.fn().mockReturnThis(),
+        setOAuthToken: vi.fn().mockReturnThis(),
+        setDeveloperKey: vi.fn().mockReturnThis(),
+        setAppId: vi.fn().mockReturnThis(),
+        setSize: vi.fn().mockReturnThis(),
+        setCallback: vi.fn().mockReturnThis(),
+        enableFeature: vi.fn().mockReturnThis(),
+        build: vi.fn(() => ({ setVisible: vi.fn() })),
+      }; } as any;
+      window.google.picker.DocsView = function() { return mockDocsViewInstance; } as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      await act(async () => {
+        result.current.openDrivePicker({
+          settings: { ownedByMe: false, starred: true },
+        });
+      });
+
+      expect(mockSetStarred).toHaveBeenCalledWith(true);
     });
   });
 

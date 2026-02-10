@@ -66,27 +66,32 @@ const mockAuthenticate = vi.fn();
 const mockLogout = vi.fn();
 const mockOpenPicker = vi.fn();
 const mockOpenDrivePicker = vi.fn();
+const mockUpdatePickerSettings = vi.fn();
+
+const mockAuthState = {
+  isLoading: false,
+  isApiLoaded: true,
+  isAuthenticated: false,
+  userInfo: null as any,
+  authenticate: mockAuthenticate,
+  logout: mockLogout,
+  openDrivePicker: mockOpenDrivePicker,
+};
+
+const mockPickerState = {
+  pickerSettings: { ownedByMe: false, starred: false },
+  updatePickerSettings: mockUpdatePickerSettings,
+};
 
 vi.mock('../hooks', () => ({
-  useGoogleAuth: () => ({
-    isLoading: false,
-    isApiLoaded: true,
-    isAuthenticated: false,
-    userInfo: null,
-    authenticate: mockAuthenticate,
-    logout: mockLogout,
-    openDrivePicker: mockOpenDrivePicker,
-  }),
+  useGoogleAuth: () => mockAuthState,
   useTheme: () => ({
     resolvedMode: 'light',
     mode: 'light',
     setTheme: vi.fn(),
     colors: {},
   }),
-  usePickerSettings: () => ({
-    pickerSettings: { ownedByMe: false, starred: false },
-    updatePickerSettings: vi.fn(),
-  }),
+  usePickerSettings: () => mockPickerState,
   useLanguage: () => ({
     t: {
       home: {
@@ -210,6 +215,27 @@ beforeEach(() => {
   cleanup();
   mockNavigate.mockClear();
   mockAuthenticate.mockClear();
+  mockOpenDrivePicker.mockClear();
+  mockOpenPicker.mockClear();
+  mockLogout.mockClear();
+  mockUpdatePickerSettings.mockClear();
+
+  // Reset auth state to defaults
+  Object.assign(mockAuthState, {
+    isLoading: false,
+    isApiLoaded: true,
+    isAuthenticated: false,
+    userInfo: null,
+    authenticate: mockAuthenticate,
+    logout: mockLogout,
+    openDrivePicker: mockOpenDrivePicker,
+  });
+
+  // Reset picker settings
+  Object.assign(mockPickerState, {
+    pickerSettings: { ownedByMe: false, starred: false },
+    updatePickerSettings: mockUpdatePickerSettings,
+  });
 
   window.matchMedia = vi.fn(() => ({
     matches: true,
@@ -311,5 +337,178 @@ describe('HomePage - techTitle line break', () => {
       (h) => h.textContent?.includes('Your data') && h.textContent?.includes('stays with you'),
     );
     expect(techHeading).toBeTruthy();
+  });
+});
+
+// ---------- Authenticated state ----------
+
+describe('HomePage (authenticated)', () => {
+  beforeEach(() => {
+    mockAuthState.isAuthenticated = true;
+    mockAuthState.userInfo = { email: 'test@example.com', name: 'Test User', picture: '' };
+  });
+
+  it('renders FAB button when authenticated', () => {
+    renderWithProviders(<HomePage />);
+    expect(screen.getByTestId('fab')).toBeTruthy();
+  });
+
+  it('FAB click calls openDrivePicker and navigates on result', async () => {
+    mockOpenDrivePicker.mockResolvedValueOnce({ id: 'file-1', name: 'test.md' });
+    renderWithProviders(<HomePage />);
+
+    fireEvent.click(screen.getByTestId('fab'));
+
+    await vi.waitFor(() => {
+      expect(mockOpenDrivePicker).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/viewer?')
+      );
+    });
+  });
+
+  it('FAB click does not navigate when picker is cancelled', async () => {
+    mockOpenDrivePicker.mockResolvedValueOnce(null);
+    renderWithProviders(<HomePage />);
+
+    fireEvent.click(screen.getByTestId('fab'));
+
+    await vi.waitFor(() => {
+      expect(mockOpenDrivePicker).toHaveBeenCalled();
+    });
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('Cmd+K shortcut calls openDrivePicker', async () => {
+    mockOpenDrivePicker.mockResolvedValueOnce(null);
+    renderWithProviders(<HomePage />);
+
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+
+    await vi.waitFor(() => {
+      expect(mockOpenDrivePicker).toHaveBeenCalled();
+    });
+  });
+
+  it('does not show FAB when not authenticated', () => {
+    mockAuthState.isAuthenticated = false;
+    renderWithProviders(<HomePage />);
+    expect(screen.queryByTestId('fab')).toBeNull();
+  });
+});
+
+describe('HomePage - Menu & Picker settings', () => {
+  beforeEach(() => {
+    mockAuthState.isAuthenticated = true;
+    mockAuthState.userInfo = { email: 'test@example.com', name: 'Test User', picture: '' };
+  });
+
+  it('opens menu when hamburger is clicked', () => {
+    renderWithProviders(<HomePage />);
+    const menuIcon = screen.getByTestId('icon-menu');
+    const menuButton = menuIcon.closest('button')!;
+    fireEvent.click(menuButton);
+
+    // Menu should now be visible with picker settings
+    expect(screen.getByText('Picker')).toBeTruthy();
+    expect(screen.getByText('Owned by me')).toBeTruthy();
+    expect(screen.getByText('Starred')).toBeTruthy();
+  });
+
+  it('shows ON/OFF toggles for picker settings', () => {
+    renderWithProviders(<HomePage />);
+    // Open menu
+    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
+
+    const onButtons = screen.getAllByText('ON');
+    const offButtons = screen.getAllByText('OFF');
+    expect(onButtons.length).toBe(2); // ownedByMe and starred
+    expect(offButtons.length).toBe(2);
+  });
+
+  it('calls updatePickerSettings when toggling ownedByMe', () => {
+    renderWithProviders(<HomePage />);
+    // Open menu
+    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
+
+    // Find the ON button for ownedByMe (first ON button)
+    const onButtons = screen.getAllByText('ON');
+    fireEvent.click(onButtons[0].closest('button')!);
+
+    expect(mockUpdatePickerSettings).toHaveBeenCalledWith({ ownedByMe: true });
+  });
+
+  it('calls updatePickerSettings when toggling starred', () => {
+    renderWithProviders(<HomePage />);
+    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
+
+    const onButtons = screen.getAllByText('ON');
+    fireEvent.click(onButtons[1].closest('button')!);
+
+    expect(mockUpdatePickerSettings).toHaveBeenCalledWith({ starred: true });
+  });
+
+  it('calls logout when sign out is clicked', () => {
+    renderWithProviders(<HomePage />);
+    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
+
+    const signOutText = screen.getByText('Sign Out');
+    fireEvent.click(signOutText.closest('button')!);
+
+    expect(mockLogout).toHaveBeenCalled();
+  });
+});
+
+describe('HomePage - Recent files', () => {
+  beforeEach(() => {
+    mockAuthState.isAuthenticated = true;
+    mockAuthState.userInfo = { email: 'test@example.com', name: 'Test User', picture: '' };
+  });
+
+  it('shows recent files from history', async () => {
+    const { getFileHistory } = await import('../services');
+    vi.mocked(getFileHistory).mockResolvedValueOnce([
+      { id: 'f1', name: 'readme.md', source: 'google-drive', selectedAt: new Date().toISOString() },
+    ]);
+
+    renderWithProviders(<HomePage />);
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('readme.md')).toBeTruthy();
+    });
+  });
+
+  it('filters out local files from recent list', async () => {
+    const { getFileHistory } = await import('../services');
+    vi.mocked(getFileHistory).mockResolvedValueOnce([
+      { id: 'f1', name: 'local.md', source: 'local', selectedAt: new Date().toISOString() },
+      { id: 'f2', name: 'drive.md', source: 'google-drive', selectedAt: new Date().toISOString() },
+    ]);
+
+    renderWithProviders(<HomePage />);
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('drive.md')).toBeTruthy();
+    });
+    expect(screen.queryByText('local.md')).toBeNull();
+  });
+
+  it('navigates when clicking a history item', async () => {
+    const { getFileHistory } = await import('../services');
+    vi.mocked(getFileHistory).mockResolvedValueOnce([
+      { id: 'f1', name: 'readme.md', source: 'google-drive', selectedAt: new Date().toISOString() },
+    ]);
+
+    renderWithProviders(<HomePage />);
+
+    await vi.waitFor(() => {
+      expect(screen.getByText('readme.md')).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByText('readme.md'));
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      expect.stringContaining('/viewer?')
+    );
   });
 });
