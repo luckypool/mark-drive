@@ -135,6 +135,8 @@ export const ja: Translations = {
     recentTitle: '最近更新されたファイル',
     recentHint: '更新日順で表示しています',
     noRecentFiles: 'Markdownファイルが見つかりません',
+    pickFile: 'Google Driveから選択',
+    pickFileHint: 'Google DriveからMarkdownファイルを選んでください',
   },
 
   // About Screen
@@ -238,6 +240,11 @@ export const ja: Translations = {
     title: 'メニュー',
     account: 'アカウント',
     display: '表示設定',
+    picker: 'Google Drive',
+    pickerOwnedByMe: '自分のファイルのみ',
+    pickerStarred: 'スター付きのみ',
+    on: 'ON',
+    off: 'OFF',
   },
 
   // File Info

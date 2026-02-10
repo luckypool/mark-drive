@@ -397,18 +397,6 @@ describe('ViewerPage - File info dialog', () => {
     expect(screen.getByText('Font Family')).toBeTruthy();
   });
 
-  it('dialog shows theme section', () => {
-    renderWithProviders(<ViewerPage />);
-    const titleButton = screen.getByText('test.md').closest('button')!;
-    fireEvent.click(titleButton);
-    expect(screen.getByText('Theme')).toBeTruthy();
-    expect(screen.getByText('Light')).toBeTruthy();
-    expect(screen.getByText('Dark')).toBeTruthy();
-    // 'System' appears in font family too, so check for at least one
-    const systemTexts = screen.getAllByText('System');
-    expect(systemTexts.length).toBeGreaterThanOrEqual(1);
-  });
-
   it('dialog shows PDF export button', () => {
     renderWithProviders(<ViewerPage />);
     const titleButton = screen.getByText('test.md').closest('button')!;
@@ -800,9 +788,7 @@ describe('ViewerPage - Font settings in dialog', () => {
   it('shows font family options (System, Serif, Sans-Serif)', () => {
     renderWithProviders(<ViewerPage />);
     openDialog();
-    // 'System' appears in both font family options and theme settings
-    const systemTexts = screen.getAllByText('System');
-    expect(systemTexts.length).toBeGreaterThanOrEqual(2); // font family + theme
+    expect(screen.getByText('System')).toBeTruthy();
     expect(screen.getByText('Serif')).toBeTruthy();
     expect(screen.getByText('Sans-Serif')).toBeTruthy();
   });
@@ -821,49 +807,6 @@ describe('ViewerPage - Font settings in dialog', () => {
     const sansButton = screen.getByText('Sans-Serif').closest('button')!;
     fireEvent.click(sansButton);
     expect(mockSetFontFamily).toHaveBeenCalledWith('sans-serif');
-  });
-});
-
-describe('ViewerPage - Theme settings in dialog', () => {
-  function openDialog() {
-    const titleButton = screen.getByText('test.md').closest('button')!;
-    fireEvent.click(titleButton);
-  }
-
-  it('clicking Light theme button calls setTheme with light', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    const lightButton = screen.getByText('Light').closest('button')!;
-    fireEvent.click(lightButton);
-    expect(mockSetTheme).toHaveBeenCalledWith('light');
-  });
-
-  it('clicking Dark theme button calls setTheme with dark', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    const darkButton = screen.getByText('Dark').closest('button')!;
-    fireEvent.click(darkButton);
-    expect(mockSetTheme).toHaveBeenCalledWith('dark');
-  });
-
-  it('clicking System theme button calls setTheme with system', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    // Find the System button in the theme section (not the font family section)
-    // Theme section has icons (sunny, moon, phone) so we find the one near the phone icon
-    const systemButtons = screen.getAllByText('System');
-    // The last 'System' text is in the theme section
-    const themeSystemButton = systemButtons[systemButtons.length - 1].closest('button')!;
-    fireEvent.click(themeSystemButton);
-    expect(mockSetTheme).toHaveBeenCalledWith('system');
-  });
-
-  it('shows theme icons (sunny, moon, phone)', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    expect(screen.getByTestId('icon-sunny')).toBeTruthy();
-    expect(screen.getByTestId('icon-moon')).toBeTruthy();
-    expect(screen.getByTestId('icon-phone')).toBeTruthy();
   });
 });
 

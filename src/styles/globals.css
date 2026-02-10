@@ -48,3 +48,19 @@ h1, h2, h3, h4, h5, h6, p {
 button, input, textarea, select {
   font-family: inherit;
 }
+
+/* Google Picker モバイル対応 */
+@media (max-width: 767px) {
+  .picker-dialog {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    max-width: calc(100vw - 16px) !important;
+    max-height: calc(100dvh - 32px) !important;
+  }
+
+  .picker-dialog-content {
+    max-width: calc(100vw - 16px) !important;
+    max-height: calc(100dvh - 32px) !important;
+  }
+}

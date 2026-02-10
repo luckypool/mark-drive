@@ -19,9 +19,6 @@ import {
   IoDownloadOutline,
   IoCheckmarkCircle,
   IoAlertCircle,
-  IoSunnyOutline,
-  IoMoonOutline,
-  IoPhonePortraitOutline,
 } from 'react-icons/io5';
 import { Button } from '../components/ui';
 import { MarkdownRenderer } from '../components/markdown';
@@ -39,7 +36,7 @@ type ViewerParams = {
 };
 
 export default function ViewerPage() {
-  const { mode: themeMode, resolvedMode, setTheme } = useTheme();
+  const { resolvedMode } = useTheme();
   const { t } = useLanguage();
   const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
 
@@ -621,102 +618,6 @@ export default function ViewerPage() {
                     </button>
                   ))}
                 </div>
-              </div>
-            </div>
-
-            {/* Theme */}
-            <div className={styles.dialogSection}>
-              <span className={styles.dialogSectionTitle}>
-                {t.settings.theme}
-              </span>
-              <div className={styles.dialogSettingOptions}>
-                <button
-                  className={`${styles.dialogOption} ${styles.dialogOptionWide}`}
-                  style={{
-                    backgroundColor: themeMode === 'light'
-                      ? 'var(--color-accent-muted)'
-                      : 'var(--color-bg-tertiary)',
-                  }}
-                  onClick={() => setTheme('light')}
-                  type="button"
-                >
-                  <IoSunnyOutline
-                    size={18}
-                    style={{
-                      color: themeMode === 'light'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  />
-                  <span
-                    className={styles.dialogOptionText}
-                    style={{
-                      color: themeMode === 'light'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {t.settings.light}
-                  </span>
-                </button>
-                <button
-                  className={`${styles.dialogOption} ${styles.dialogOptionWide}`}
-                  style={{
-                    backgroundColor: themeMode === 'dark'
-                      ? 'var(--color-accent-muted)'
-                      : 'var(--color-bg-tertiary)',
-                  }}
-                  onClick={() => setTheme('dark')}
-                  type="button"
-                >
-                  <IoMoonOutline
-                    size={18}
-                    style={{
-                      color: themeMode === 'dark'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  />
-                  <span
-                    className={styles.dialogOptionText}
-                    style={{
-                      color: themeMode === 'dark'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {t.settings.dark}
-                  </span>
-                </button>
-                <button
-                  className={`${styles.dialogOption} ${styles.dialogOptionWide}`}
-                  style={{
-                    backgroundColor: themeMode === 'system'
-                      ? 'var(--color-accent-muted)'
-                      : 'var(--color-bg-tertiary)',
-                  }}
-                  onClick={() => setTheme('system')}
-                  type="button"
-                >
-                  <IoPhonePortraitOutline
-                    size={18}
-                    style={{
-                      color: themeMode === 'system'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  />
-                  <span
-                    className={styles.dialogOptionText}
-                    style={{
-                      color: themeMode === 'system'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {t.settings.system}
-                  </span>
-                </button>
               </div>
             </div>
 

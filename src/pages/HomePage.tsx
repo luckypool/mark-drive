@@ -6,7 +6,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router';
 import {
   IoMenu,
-  IoSearch,
   IoShieldCheckmarkOutline,
   IoCodeSlashOutline,
   IoGitNetworkOutline,
@@ -14,6 +13,7 @@ import {
   IoColorPaletteOutline,
   IoShareOutline,
   IoFolderOutline,
+  IoFolderOpenOutline,
   IoFlashOutline,
   IoDocumentTextOutline,
   IoLogInOutline,
@@ -25,14 +25,11 @@ import {
   IoPersonOutline,
   IoInformationCircleOutline,
   IoLogOutOutline,
-  IoSunnyOutline,
-  IoMoonOutline,
-  IoPhonePortraitOutline,
   IoLogoGithub,
 } from 'react-icons/io5';
 import { Button, LoadingSpinner, FAB, ThemeToggle, LanguageToggle, GoogleLogo } from '../components/ui';
 import { AddToHomeScreenBanner } from '../components/ui/AddToHomeScreenBanner';
-import { useGoogleAuth, useTheme, useLanguage } from '../hooks';
+import { useGoogleAuth, useTheme, useLanguage, usePickerSettings } from '../hooks';
 import { useFilePicker } from '../hooks';
 import { useFontSettings, FontSize, FontFamily } from '../contexts/FontSettingsContext';
 import { getFileHistory, clearFileHistory, addFileToHistory } from '../services';
@@ -41,8 +38,8 @@ import iconImage from '../../assets/images/icon.png';
 import styles from './HomePage.module.css';
 
 export default function HomePage() {
-  const { resolvedMode, mode: themeMode, setTheme } = useTheme();
-  const { t, language, setLanguage } = useLanguage();
+  const { resolvedMode } = useTheme();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = useState(0);
 
@@ -62,9 +59,11 @@ export default function HomePage() {
     userInfo,
     authenticate,
     logout,
+    openDrivePicker,
   } = useGoogleAuth();
 
   const { openPicker } = useFilePicker();
+  const { pickerSettings, updatePickerSettings } = usePickerSettings();
   const [recentFiles, setRecentFiles] = useState<FileHistoryItem[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -74,7 +73,7 @@ export default function HomePage() {
 
   const loadHistory = async () => {
     const history = await getFileHistory();
-    setRecentFiles(history);
+    setRecentFiles(history.filter((item) => item.source !== 'local'));
   };
 
   const handleLocalFile = useCallback(async () => {
@@ -96,24 +95,32 @@ export default function HomePage() {
     }
   }, [openPicker, navigate]);
 
-  const handleOpenSearch = useCallback(() => {
-    navigate('/search');
-  }, [navigate]);
+  const handleOpenDrivePicker = useCallback(async () => {
+    const result = await openDrivePicker({ settings: pickerSettings, locale: language });
+    if (result) {
+      const params = new URLSearchParams({
+        id: result.id,
+        name: result.name,
+        source: 'google-drive',
+      });
+      navigate(`/viewer?${params.toString()}`);
+    }
+  }, [openDrivePicker, pickerSettings, language, navigate]);
 
-  // Keyboard shortcut: Cmd+K to open search
+  // Keyboard shortcut: Cmd+K to open Drive Picker
   useEffect(() => {
     if (!isAuthenticated) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        handleOpenSearch();
+        handleOpenDrivePicker();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isAuthenticated, handleOpenSearch]);
+  }, [isAuthenticated, handleOpenDrivePicker]);
 
   const handleOpenHistoryFile = useCallback((item: FileHistoryItem) => {
     const params = new URLSearchParams({
@@ -236,20 +243,11 @@ export default function HomePage() {
             <IoMenu size={22} />
           </button>
 
-          <div
-            className={styles.headerSearchBar}
-            onClick={handleOpenSearch}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter') handleOpenSearch(); }}
-          >
-            <IoSearch size={18} className={styles.headerSearchIcon} />
-            <span className={styles.headerSearchText}>
-              {t.home.searchPlaceholder}
-            </span>
-            <span className={styles.kbd}>
-              <span className={styles.kbdText}>&#8984;K</span>
-            </span>
+          <div className={styles.headerSpacer} />
+
+          <div className={styles.headerActions}>
+            <LanguageToggle />
+            <ThemeToggle />
           </div>
         </div>
       )}
@@ -738,151 +736,47 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Theme */}
+            {/* Picker Settings */}
             <div className={styles.menuSection}>
               <span className={styles.menuSectionTitle}>
-                {t.settings.theme}
+                {t.menu.picker}
               </span>
-              <div className={styles.menuSettingOptions}>
-                <button
-                  className={`${styles.menuOption} ${styles.menuOptionWide}`}
-                  style={{
-                    backgroundColor: themeMode === 'light'
-                      ? 'var(--color-accent-muted)'
-                      : 'var(--color-bg-tertiary)',
-                  }}
-                  onClick={() => setTheme('light')}
-                  type="button"
-                >
-                  <IoSunnyOutline
-                    size={18}
-                    style={{
-                      color: themeMode === 'light'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  />
-                  <span
-                    className={styles.menuOptionText}
-                    style={{
-                      color: themeMode === 'light'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {t.settings.light}
-                  </span>
-                </button>
-                <button
-                  className={`${styles.menuOption} ${styles.menuOptionWide}`}
-                  style={{
-                    backgroundColor: themeMode === 'dark'
-                      ? 'var(--color-accent-muted)'
-                      : 'var(--color-bg-tertiary)',
-                  }}
-                  onClick={() => setTheme('dark')}
-                  type="button"
-                >
-                  <IoMoonOutline
-                    size={18}
-                    style={{
-                      color: themeMode === 'dark'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  />
-                  <span
-                    className={styles.menuOptionText}
-                    style={{
-                      color: themeMode === 'dark'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {t.settings.dark}
-                  </span>
-                </button>
-                <button
-                  className={`${styles.menuOption} ${styles.menuOptionWide}`}
-                  style={{
-                    backgroundColor: themeMode === 'system'
-                      ? 'var(--color-accent-muted)'
-                      : 'var(--color-bg-tertiary)',
-                  }}
-                  onClick={() => setTheme('system')}
-                  type="button"
-                >
-                  <IoPhonePortraitOutline
-                    size={18}
-                    style={{
-                      color: themeMode === 'system'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  />
-                  <span
-                    className={styles.menuOptionText}
-                    style={{
-                      color: themeMode === 'system'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {t.settings.system}
-                  </span>
-                </button>
-              </div>
-            </div>
 
-            {/* Language */}
-            <div className={styles.menuSection}>
-              <span className={styles.menuSectionTitle}>
-                {t.settings.language}
-              </span>
-              <div className={styles.menuSettingOptions}>
-                <button
-                  className={`${styles.menuOption} ${styles.menuOptionWide}`}
-                  style={{
-                    backgroundColor: language === 'en'
-                      ? 'var(--color-accent-muted)'
-                      : 'var(--color-bg-tertiary)',
-                  }}
-                  onClick={() => setLanguage('en')}
-                  type="button"
-                >
-                  <span
-                    className={styles.menuOptionText}
-                    style={{
-                      color: language === 'en'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  >
-                    English
-                  </span>
-                </button>
-                <button
-                  className={`${styles.menuOption} ${styles.menuOptionWide}`}
-                  style={{
-                    backgroundColor: language === 'ja'
-                      ? 'var(--color-accent-muted)'
-                      : 'var(--color-bg-tertiary)',
-                  }}
-                  onClick={() => setLanguage('ja')}
-                  type="button"
-                >
-                  <span
-                    className={styles.menuOptionText}
-                    style={{
-                      color: language === 'ja'
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text-secondary)',
-                    }}
-                  >
-                    日本語
-                  </span>
-                </button>
-              </div>
+              {/* Toggle Settings */}
+              {([
+                { key: 'ownedByMe' as const, label: t.menu.pickerOwnedByMe },
+                { key: 'starred' as const, label: t.menu.pickerStarred },
+              ]).map(({ key, label }) => (
+                <div key={key} className={styles.menuSettingRow}>
+                  <span className={styles.menuSettingLabel}>{label}</span>
+                  <div className={styles.menuSettingOptions}>
+                    {[false, true].map((val) => (
+                      <button
+                        key={String(val)}
+                        className={styles.menuOption}
+                        style={{
+                          backgroundColor: pickerSettings[key] === val
+                            ? 'var(--color-accent-muted)'
+                            : 'var(--color-bg-tertiary)',
+                        }}
+                        onClick={() => updatePickerSettings({ [key]: val })}
+                        type="button"
+                      >
+                        <span
+                          className={styles.menuOptionText}
+                          style={{
+                            color: pickerSettings[key] === val
+                              ? 'var(--color-accent)'
+                              : 'var(--color-text-secondary)',
+                          }}
+                        >
+                          {val ? t.menu.on : t.menu.off}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Actions */}
@@ -921,11 +815,11 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Search FAB */}
+      {/* Drive Picker FAB */}
       {isAuthenticated && (
         <FAB
-          onPress={handleOpenSearch}
-          icon={<IoSearch size={24} color="#ffffff" />}
+          onPress={handleOpenDrivePicker}
+          icon={<IoFolderOpenOutline size={24} color="#ffffff" />}
         />
       )}
 
