@@ -34,15 +34,15 @@ const defaultPdfFontSettings: PdfFontSettings = {
 function getPdfFontSizes(settings: PdfFontSettings) {
   const multiplier = fontSizeMultipliers[settings.fontSize];
   return {
-    base: Math.round(11 * multiplier),
-    h1: Math.round(18 * multiplier),
-    h2: Math.round(15 * multiplier),
-    h3: Math.round(13 * multiplier),
-    h4: Math.round(12 * multiplier),
-    h5: Math.round(11 * multiplier),
-    h6: Math.round(10 * multiplier),
-    code: Math.round(9 * multiplier),
-    table: Math.round(9 * multiplier),
+    base: Math.round(14 * multiplier),
+    h1: Math.round(24 * multiplier),
+    h2: Math.round(20 * multiplier),
+    h3: Math.round(17 * multiplier),
+    h4: Math.round(15 * multiplier),
+    h5: Math.round(14 * multiplier),
+    h6: Math.round(13 * multiplier),
+    code: Math.round(12 * multiplier),
+    table: Math.round(12 * multiplier),
   };
 }
 
@@ -65,7 +65,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
   // Extract other code blocks
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
     const index = codeBlocks.length;
-    const langLabel = lang ? `<div style="font-size:${sizes.code - 1}px;color:#666;margin-bottom:4px;">${lang}</div>` : '';
+    const langLabel = lang ? `<div style="font-size:${sizes.code - 1}px;color:#555;margin-bottom:4px;">${lang}</div>` : '';
     codeBlocks.push(
       `<pre style="background:#f5f5f5;padding:10px;border-radius:4px;overflow-wrap:break-word;white-space:pre-wrap;font-size:${sizes.code}px;page-break-inside:avoid;">${langLabel}<code>${escapeHtml(code.trimEnd())}</code></pre>`
     );
@@ -74,7 +74,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
 
   // Tables
   html = html.replace(
-    /^\|(.+)\|\s*\n\|[-:\s|]+\|\s*\n((?:\|.+\|\s*\n?)+)/gm,
+    /^\|(.+)\|[ \t]*\n\|[ \t]*[-:]+[-:| \t]*\|[ \t]*\n((?:\|.+\|[ \t]*\n?)+)/gm,
     (_, header, body) => {
       const headerCells = header
         .split('|')
@@ -111,23 +111,23 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
 
   // Headings (order matters: h6 to h1)
   // page-break-after: avoid prevents heading from being at bottom of page without content
-  html = html.replace(/^###### (.+)$/gm, `<h6 style="color:#000;margin:8px 0 4px;font-size:${sizes.h6}px;line-height:1.4;page-break-after:avoid;">$1</h6>`);
-  html = html.replace(/^##### (.+)$/gm, `<h5 style="color:#000;margin:8px 0 4px;font-size:${sizes.h5}px;line-height:1.4;page-break-after:avoid;">$1</h5>`);
-  html = html.replace(/^#### (.+)$/gm, `<h4 style="color:#000;margin:10px 0 5px;font-size:${sizes.h4}px;line-height:1.4;page-break-after:avoid;">$1</h4>`);
-  html = html.replace(/^### (.+)$/gm, `<h3 style="color:#000;margin:12px 0 6px;font-size:${sizes.h3}px;line-height:1.4;page-break-after:avoid;">$1</h3>`);
+  html = html.replace(/^###### (.+)$/gm, `<h6 style="color:#000;margin:10px 0 5px;font-size:${sizes.h6}px;line-height:1.5;page-break-after:avoid;">$1</h6>`);
+  html = html.replace(/^##### (.+)$/gm, `<h5 style="color:#000;margin:10px 0 5px;font-size:${sizes.h5}px;line-height:1.5;page-break-after:avoid;">$1</h5>`);
+  html = html.replace(/^#### (.+)$/gm, `<h4 style="color:#000;margin:12px 0 6px;font-size:${sizes.h4}px;line-height:1.5;page-break-after:avoid;">$1</h4>`);
+  html = html.replace(/^### (.+)$/gm, `<h3 style="color:#000;margin:14px 0 7px;font-size:${sizes.h3}px;line-height:1.5;page-break-after:avoid;">$1</h3>`);
   html = html.replace(
     /^## (.+)$/gm,
-    `<h2 style="color:#000;margin:14px 0 7px;font-size:${sizes.h2}px;line-height:1.4;border-bottom:1px solid #ddd;padding-bottom:3px;page-break-after:avoid;">$1</h2>`
+    `<h2 style="color:#000;margin:16px 0 8px;font-size:${sizes.h2}px;line-height:1.5;border-bottom:1px solid #ddd;padding-bottom:3px;page-break-after:avoid;">$1</h2>`
   );
   html = html.replace(
     /^# (.+)$/gm,
-    `<h1 style="color:#000;margin:16px 0 8px;font-size:${sizes.h1}px;line-height:1.4;border-bottom:2px solid #ddd;padding-bottom:4px;page-break-after:avoid;">$1</h1>`
+    `<h1 style="color:#000;margin:18px 0 9px;font-size:${sizes.h1}px;line-height:1.5;border-bottom:2px solid #ddd;padding-bottom:4px;page-break-after:avoid;">$1</h1>`
   );
 
   // Blockquotes (before list processing)
   html = html.replace(
     /^> (.+)$/gm,
-    '<blockquote style="border-left:3px solid #ddd;margin:8px 0;padding:6px 12px;color:#666;page-break-inside:avoid;">$1</blockquote>'
+    '<blockquote style="border-left:3px solid #ddd;margin:10px 0;padding:6px 12px;color:#444;page-break-inside:avoid;">$1</blockquote>'
   );
 
   // Horizontal rule (before list processing to avoid * conflicts)
@@ -154,7 +154,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         inOrderedList = false;
       }
       if (!inUnorderedList) {
-        processedLines.push('<ul style="margin:8px 0;padding-left:20px;list-style:none;">');
+        processedLines.push('<ul style="margin:10px 0;padding-left:20px;list-style:none;">');
         inUnorderedList = true;
       }
       const checked = taskMatch[1].toLowerCase() === 'x';
@@ -169,7 +169,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         inUnorderedList = false;
       }
       if (!inOrderedList) {
-        processedLines.push('<ol style="margin:8px 0;padding-left:20px;">');
+        processedLines.push('<ol style="margin:10px 0;padding-left:20px;">');
         inOrderedList = true;
       }
       processedLines.push(`<li>${orderedMatch[2]}</li>`);
@@ -180,7 +180,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         inOrderedList = false;
       }
       if (!inUnorderedList) {
-        processedLines.push('<ul style="margin:8px 0;padding-left:20px;">');
+        processedLines.push('<ul style="margin:10px 0;padding-left:20px;">');
         inUnorderedList = true;
       }
       processedLines.push(`<li>${unorderedMatch[1]}</li>`);
@@ -281,7 +281,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         trimmed.startsWith('<div')) {
       return trimmed;
     }
-    return `<p style="margin:0 0 8px;line-height:1.5;overflow-wrap:break-word;font-size:${sizes.base}px;">${trimmed.replace(/\n/g, '<br>')}</p>`;
+    return `<p style="margin:0 0 12px;line-height:1.7;overflow-wrap:break-word;font-size:${sizes.base}px;">${trimmed.replace(/\n/g, '<br>')}</p>`;
   }).filter(Boolean).join('\n');
 
   return html;

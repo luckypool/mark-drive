@@ -34,10 +34,10 @@ export function useShare(): UseShareReturn {
         };
         const htmlContent = await markdownToHtml(content, pdfFontSettings);
         const fontStack = fontFamilyStacks[fontSettings.fontFamily];
-        const baseFontSize = Math.round(11 * fontSizeMultipliers[fontSettings.fontSize]);
+        const baseFontSize = Math.round(14 * fontSizeMultipliers[fontSettings.fontSize]);
         const container = document.createElement('div');
         container.innerHTML = `
-          <div style="font-family:${fontStack};font-size:${baseFontSize}px;color:#1a1a1a;line-height:1.6;padding:16px;">
+          <div style="font-family:${fontStack};font-size:${baseFontSize}px;color:#111111;line-height:1.8;padding:16px;">
             ${htmlContent}
           </div>
         `;
@@ -87,10 +87,10 @@ export function useShare(): UseShareReturn {
         };
         const htmlContent = await markdownToHtml(content, pdfFontSettings);
         const fontStack = fontFamilyStacks[fontSettings.fontFamily];
-        const baseFontSize = Math.round(11 * fontSizeMultipliers[fontSettings.fontSize]);
+        const baseFontSize = Math.round(14 * fontSizeMultipliers[fontSettings.fontSize]);
         const container = document.createElement('div');
         container.innerHTML = `
-          <div style="font-family:${fontStack};font-size:${baseFontSize}px;color:#1a1a1a;line-height:1.6;padding:16px;">
+          <div style="font-family:${fontStack};font-size:${baseFontSize}px;color:#111111;line-height:1.8;padding:16px;">
             ${htmlContent}
           </div>
         `;

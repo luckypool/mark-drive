@@ -9,7 +9,7 @@ import { fontSizeMultipliers, fontFamilyStacks } from '../contexts/FontSettingsC
 import type { FontSize, FontFamily } from '../contexts/FontSettingsContext';
 
 // Replicate the PDF settings from useShare.ts
-const PDF_BASE_FONT_SIZE = 11;
+const PDF_BASE_FONT_SIZE = 14;
 
 function getPdfBaseFontSize(fontSize: FontSize): number {
   return Math.round(PDF_BASE_FONT_SIZE * fontSizeMultipliers[fontSize]);
@@ -18,15 +18,15 @@ function getPdfBaseFontSize(fontSize: FontSize): number {
 function getPdfFontSizes(fontSize: FontSize) {
   const multiplier = fontSizeMultipliers[fontSize];
   return {
-    base: Math.round(11 * multiplier),
-    h1: Math.round(18 * multiplier),
-    h2: Math.round(15 * multiplier),
-    h3: Math.round(13 * multiplier),
-    h4: Math.round(12 * multiplier),
-    h5: Math.round(11 * multiplier),
-    h6: Math.round(10 * multiplier),
-    code: Math.round(9 * multiplier),
-    table: Math.round(9 * multiplier),
+    base: Math.round(14 * multiplier),
+    h1: Math.round(24 * multiplier),
+    h2: Math.round(20 * multiplier),
+    h3: Math.round(17 * multiplier),
+    h4: Math.round(15 * multiplier),
+    h5: Math.round(14 * multiplier),
+    h6: Math.round(13 * multiplier),
+    code: Math.round(12 * multiplier),
+    table: Math.round(12 * multiplier),
   };
 }
 
@@ -43,20 +43,20 @@ const fontSizes: FontSize[] = ['small', 'medium', 'large'];
 const families: FontFamily[] = ['system', 'serif', 'sans-serif'];
 
 describe('Font Size Thresholds', () => {
-  it.each(fontSizes)('should have base font >= 9px for %s', (size) => {
-    expect(getPdfFontSizes(size).base).toBeGreaterThanOrEqual(9);
+  it.each(fontSizes)('should have base font >= 12px for %s', (size) => {
+    expect(getPdfFontSizes(size).base).toBeGreaterThanOrEqual(12);
   });
 
-  it.each(fontSizes)('should have code font >= 8px for %s', (size) => {
-    expect(getPdfFontSizes(size).code).toBeGreaterThanOrEqual(8);
+  it.each(fontSizes)('should have code font >= 10px for %s', (size) => {
+    expect(getPdfFontSizes(size).code).toBeGreaterThanOrEqual(10);
   });
 
-  it.each(fontSizes)('should have table font >= 8px for %s', (size) => {
-    expect(getPdfFontSizes(size).table).toBeGreaterThanOrEqual(8);
+  it.each(fontSizes)('should have table font >= 10px for %s', (size) => {
+    expect(getPdfFontSizes(size).table).toBeGreaterThanOrEqual(10);
   });
 
-  it.each(fontSizes)('should have h6 font >= 9px for %s', (size) => {
-    expect(getPdfFontSizes(size).h6).toBeGreaterThanOrEqual(9);
+  it.each(fontSizes)('should have h6 font >= 11px for %s', (size) => {
+    expect(getPdfFontSizes(size).h6).toBeGreaterThanOrEqual(11);
   });
 
   it.each(fontSizes)('should maintain heading hierarchy for %s', (size) => {

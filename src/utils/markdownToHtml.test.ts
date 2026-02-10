@@ -242,48 +242,48 @@ describe('markdownToHtml - PDF display quality', () => {
 describe('markdownToHtml - Font size constraints', () => {
   const smallFont: PdfFontSettings = { fontSize: 'small', fontFamily: 'system' };
 
-  it('should have base body text >= 9px for small font', async () => {
+  it('should have base body text >= 12px for small font', async () => {
     const html = await markdownToHtml('Body text paragraph.', smallFont);
     const matches = [...html.matchAll(/<p[^>]*font-size:(\d+)px/g)];
     expect(matches.length).toBeGreaterThan(0);
     for (const match of matches) {
-      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(9);
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(12);
     }
   });
 
-  it('should have code block text >= 8px for small font', async () => {
+  it('should have code block text >= 10px for small font', async () => {
     const html = await markdownToHtml('```js\ncode\n```', smallFont);
     const matches = [...html.matchAll(/<pre[^>]*font-size:(\d+)px/g)];
     expect(matches.length).toBeGreaterThan(0);
     for (const match of matches) {
-      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(8);
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(10);
     }
   });
 
-  it('should have table text >= 8px for small font', async () => {
+  it('should have table text >= 10px for small font', async () => {
     const html = await markdownToHtml('| A | B |\n|---|---|\n| 1 | 2 |', smallFont);
     const matches = [...html.matchAll(/<td[^>]*font-size:(\d+)px/g)];
     expect(matches.length).toBeGreaterThan(0);
     for (const match of matches) {
-      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(8);
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(10);
     }
   });
 
-  it('should have H6 heading >= 9px for small font', async () => {
+  it('should have H6 heading >= 11px for small font', async () => {
     const html = await markdownToHtml('###### Small heading', smallFont);
     const matches = [...html.matchAll(/<h6[^>]*font-size:(\d+)px/g)];
     expect(matches.length).toBeGreaterThan(0);
     for (const match of matches) {
-      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(9);
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(11);
     }
   });
 
-  it('should have inline code >= 8px for small font', async () => {
+  it('should have inline code >= 10px for small font', async () => {
     const html = await markdownToHtml('Use `snippet` here', smallFont);
     const matches = [...html.matchAll(/<code[^>]*font-size:(\d+)px/g)];
     expect(matches.length).toBeGreaterThan(0);
     for (const match of matches) {
-      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(8);
+      expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(10);
     }
   });
 });
