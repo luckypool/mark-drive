@@ -78,6 +78,41 @@ function hljsToInlineStyles(html: string): string {
   );
 }
 
+// Check if a hex color is too light for readable text (luminance > 0.6)
+function isLightColor(hex: string): boolean {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  // Relative luminance (ITU-R BT.709)
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luminance > 0.6;
+}
+
+// Force dark fill on SVG text/tspan elements that have light colors
+function darkenSvgText(svg: string): string {
+  // Replace light fill attributes on text and tspan elements
+  let result = svg.replace(
+    /(<(?:text|tspan)\b[^>]*?)fill="(#[a-fA-F0-9]{6})"/g,
+    (match, before: string, color: string) => {
+      if (isLightColor(color)) {
+        return `${before}fill="#000000"`;
+      }
+      return match;
+    }
+  );
+  // Replace light fill in inline styles on text and tspan elements
+  result = result.replace(
+    /(<(?:text|tspan)\b[^>]*?style="[^"]*?)fill:\s*(#[a-fA-F0-9]{6})/g,
+    (match, before: string, color: string) => {
+      if (isLightColor(color)) {
+        return `${before}fill: #000000`;
+      }
+      return match;
+    }
+  );
+  return result;
+}
+
 // Get PDF-specific font sizes based on settings
 function getPdfFontSizes(settings: PdfFontSettings) {
   const multiplier = fontSizeMultipliers[settings.fontSize];
@@ -328,14 +363,42 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         startOnLoad: false,
         theme: 'base',
         themeVariables: {
+          // Core - neutral colors to avoid purple/lavender derived colors
+          primaryColor: '#e8e8e8',
           primaryTextColor: '#000000',
-          secondaryTextColor: '#333333',
-          tertiaryTextColor: '#333333',
+          primaryBorderColor: '#666666',
+          secondaryColor: '#f0f0f0',
+          secondaryTextColor: '#000000',
+          secondaryBorderColor: '#666666',
+          tertiaryColor: '#f5f5f5',
+          tertiaryTextColor: '#000000',
+          tertiaryBorderColor: '#666666',
+          // General
           lineColor: '#444444',
           textColor: '#000000',
-          nodeTextColor: '#000000',
-          mainBkg: '#f0f0f0',
+          mainBkg: '#e8e8e8',
           nodeBorder: '#666666',
+          nodeTextColor: '#000000',
+          // Class diagram
+          classText: '#000000',
+          // State diagram
+          labelColor: '#000000',
+          altBackground: '#f0f0f0',
+          compositeTitleBackground: '#e8e8e8',
+          // Transitions and labels
+          transitionColor: '#444444',
+          transitionLabelColor: '#000000',
+          // Notes
+          noteBkgColor: '#fff5ad',
+          noteTextColor: '#000000',
+          noteBorderColor: '#aaaa33',
+          // Labels
+          labelTextColor: '#000000',
+          labelBoxBkgColor: '#e8e8e8',
+          labelBoxBorderColor: '#666666',
+          // Signal
+          signalColor: '#000000',
+          signalTextColor: '#000000',
         },
         securityLevel: 'loose',
       });
@@ -343,8 +406,10 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
       for (const block of mermaidBlocks) {
         try {
           const { svg } = await mermaid.render(`mermaid-${block.index}`, block.code);
+          // Post-process SVG: force dark text for PDF readability
+          const readableSvg = darkenSvgText(svg);
           // Wrap SVG in a container with proper styling
-          const wrappedSvg = `<div style="margin:12px 0;text-align:center;overflow-x:auto;page-break-inside:avoid;">${svg}</div>`;
+          const wrappedSvg = `<div style="margin:12px 0;text-align:center;overflow-x:auto;page-break-inside:avoid;">${readableSvg}</div>`;
           html = html.replace(`<<<MERMAID${block.index}>>>`, wrappedSvg);
         } catch (err) {
           console.error(`Mermaid render error for block ${block.index}:`, err);
