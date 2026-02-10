@@ -67,7 +67,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
     const index = codeBlocks.length;
     const langLabel = lang ? `<div style="font-size:${sizes.code - 1}px;color:#555;margin-bottom:4px;">${lang}</div>` : '';
     codeBlocks.push(
-      `<pre style="background:#f5f5f5;padding:10px;border-radius:4px;overflow-wrap:break-word;white-space:pre-wrap;font-size:${sizes.code}px;page-break-inside:avoid;">${langLabel}<code>${escapeHtml(code.trimEnd())}</code></pre>`
+      `<pre style="background:#f5f5f5;padding:10px;border-radius:4px;overflow-wrap:break-word;white-space:pre-wrap;font-size:${sizes.code}px;color:#333;page-break-inside:avoid;">${langLabel}<code style="color:#333;">${escapeHtml(code.trimEnd())}</code></pre>`
     );
     return `\n<<<CODEBLOCK${index}>>>\n`;
   });
@@ -83,7 +83,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
       const headerRow = headerCells
         .map(
           (c: string) =>
-            `<th style="border:1px solid #ddd;padding:6px;background:#f5f5f5;text-align:left;font-size:${sizes.table}px;word-break:break-word;">${c}</th>`
+            `<th style="border:1px solid #ddd;padding:6px;background:#f5f5f5;text-align:left;font-size:${sizes.table}px;color:#111;word-break:break-word;">${c}</th>`
         )
         .join('');
 
@@ -95,7 +95,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
             .split('|')
             .map((c: string) => c.trim())
             .filter(Boolean);
-          return `<tr>${cells.map((c: string) => `<td style="border:1px solid #ddd;padding:6px;font-size:${sizes.table}px;word-break:break-word;">${c}</td>`).join('')}</tr>`;
+          return `<tr>${cells.map((c: string) => `<td style="border:1px solid #ddd;padding:6px;font-size:${sizes.table}px;color:#111;word-break:break-word;">${c}</td>`).join('')}</tr>`;
         })
         .join('');
 
@@ -106,7 +106,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
   // Inline code (before other inline formatting)
   html = html.replace(
     /`([^`]+)`/g,
-    `<code style="background:#f0f0f0;padding:2px 5px;border-radius:3px;font-size:${sizes.code}px;">$1</code>`
+    `<code style="background:#f0f0f0;padding:2px 5px;border-radius:3px;font-size:${sizes.code}px;color:#333;">$1</code>`
   );
 
   // Headings (order matters: h6 to h1)
@@ -154,14 +154,14 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         inOrderedList = false;
       }
       if (!inUnorderedList) {
-        processedLines.push('<ul style="margin:10px 0;padding-left:20px;list-style:none;">');
+        processedLines.push('<ul style="margin:10px 0;padding-left:20px;list-style:none;color:#111;">');
         inUnorderedList = true;
       }
       const checked = taskMatch[1].toLowerCase() === 'x';
       const checkbox = checked
         ? '<input type="checkbox" checked disabled style="margin-right:6px;">'
         : '<input type="checkbox" disabled style="margin-right:6px;">';
-      processedLines.push(`<li style="list-style:none;">${checkbox}${taskMatch[2]}</li>`);
+      processedLines.push(`<li style="list-style:none;color:#111;">${checkbox}${taskMatch[2]}</li>`);
     } else if (orderedMatch) {
       // Ordered list item
       if (inUnorderedList) {
@@ -169,10 +169,10 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         inUnorderedList = false;
       }
       if (!inOrderedList) {
-        processedLines.push('<ol style="margin:10px 0;padding-left:20px;">');
+        processedLines.push('<ol style="margin:10px 0;padding-left:20px;color:#111;">');
         inOrderedList = true;
       }
-      processedLines.push(`<li>${orderedMatch[2]}</li>`);
+      processedLines.push(`<li style="color:#111;">${orderedMatch[2]}</li>`);
     } else if (unorderedMatch) {
       // Unordered list item
       if (inOrderedList) {
@@ -180,10 +180,10 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         inOrderedList = false;
       }
       if (!inUnorderedList) {
-        processedLines.push('<ul style="margin:10px 0;padding-left:20px;">');
+        processedLines.push('<ul style="margin:10px 0;padding-left:20px;color:#111;">');
         inUnorderedList = true;
       }
-      processedLines.push(`<li>${unorderedMatch[1]}</li>`);
+      processedLines.push(`<li style="color:#111;">${unorderedMatch[1]}</li>`);
     } else {
       // Close any open lists
       if (inOrderedList) {
@@ -252,7 +252,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         } catch (err) {
           console.error(`Mermaid render error for block ${block.index}:`, err);
           // Fallback to showing the code
-          const fallback = `<pre style="background:#fff3cd;padding:10px;border-radius:4px;border:1px solid #ffc107;font-size:10px;page-break-inside:avoid;"><code>${escapeHtml(block.code)}</code></pre>`;
+          const fallback = `<pre style="background:#fff3cd;padding:10px;border-radius:4px;border:1px solid #ffc107;font-size:10px;color:#333;page-break-inside:avoid;"><code style="color:#333;">${escapeHtml(block.code)}</code></pre>`;
           html = html.replace(`<<<MERMAID${block.index}>>>`, fallback);
         }
       }
@@ -260,7 +260,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
       console.error('Failed to load mermaid:', err);
       // Fallback all mermaid blocks to code
       for (const block of mermaidBlocks) {
-        const fallback = `<pre style="background:#f5f5f5;padding:10px;border-radius:4px;font-size:10px;page-break-inside:avoid;"><code>${escapeHtml(block.code)}</code></pre>`;
+        const fallback = `<pre style="background:#f5f5f5;padding:10px;border-radius:4px;font-size:10px;color:#333;page-break-inside:avoid;"><code style="color:#333;">${escapeHtml(block.code)}</code></pre>`;
         html = html.replace(`<<<MERMAID${block.index}>>>`, fallback);
       }
     }
@@ -281,7 +281,7 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
         trimmed.startsWith('<div')) {
       return trimmed;
     }
-    return `<p style="margin:0 0 12px;line-height:1.7;overflow-wrap:break-word;font-size:${sizes.base}px;">${trimmed.replace(/\n/g, '<br>')}</p>`;
+    return `<p style="margin:0 0 12px;line-height:1.7;overflow-wrap:break-word;font-size:${sizes.base}px;color:#111;">${trimmed.replace(/\n/g, '<br>')}</p>`;
   }).filter(Boolean).join('\n');
 
   return html;

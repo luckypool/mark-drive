@@ -49,9 +49,9 @@ describe('markdownToHtml - HTML Content', () => {
   it('should render unordered list with -', async () => {
     const html = await markdownToHtml('- Item 1\n- Item 2\n- Item 3');
     expect(html).toContain('<ul');
-    expect(html).toContain('<li>Item 1</li>');
-    expect(html).toContain('<li>Item 2</li>');
-    expect(html).toContain('<li>Item 3</li>');
+    expect(html).toContain('>Item 1</li>');
+    expect(html).toContain('>Item 2</li>');
+    expect(html).toContain('>Item 3</li>');
     expect(html).toContain('</ul>');
     expect(html).not.toContain('- Item');
   });
@@ -59,21 +59,21 @@ describe('markdownToHtml - HTML Content', () => {
   it('should render unordered list with *', async () => {
     const html = await markdownToHtml('* Apple\n* Banana\n* Cherry');
     expect(html).toContain('<ul');
-    expect(html).toContain('<li>Apple</li>');
+    expect(html).toContain('>Apple</li>');
     expect(html).not.toContain('* Apple');
   });
 
   it('should render unordered list with +', async () => {
     const html = await markdownToHtml('+ One\n+ Two');
     expect(html).toContain('<ul');
-    expect(html).toContain('<li>One</li>');
+    expect(html).toContain('>One</li>');
   });
 
   it('should render ordered list', async () => {
     const html = await markdownToHtml('1. First\n2. Second\n3. Third');
     expect(html).toContain('<ol');
-    expect(html).toContain('<li>First</li>');
-    expect(html).toContain('<li>Second</li>');
+    expect(html).toContain('>First</li>');
+    expect(html).toContain('>Second</li>');
     expect(html).not.toContain('1. First');
   });
 
@@ -116,7 +116,7 @@ describe('markdownToHtml - HTML Content', () => {
   it('should render code block', async () => {
     const html = await markdownToHtml('```js\nconst x = 1;\n```');
     expect(html).toContain('<pre');
-    expect(html).toContain('<code>');
+    expect(html).toContain('<code');
     expect(html).toContain('const x = 1;');
     expect(html).not.toContain('```');
   });
@@ -193,7 +193,7 @@ function hello() {
     expect(html).toContain('<strong>bold</strong>');
     expect(html).toContain('<em>italic</em>');
     expect(html).toContain('>Features</h2>');
-    expect(html).toContain('<li>Feature 1</li>');
+    expect(html).toContain('>Feature 1</li>');
     expect(html).toContain('>Code Example</h3>');
     expect(html).toContain('function hello()');
     expect(html).toContain('>Header 1</th>');
