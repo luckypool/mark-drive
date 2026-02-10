@@ -333,8 +333,14 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
       for (const block of mermaidBlocks) {
         try {
           const { svg } = await mermaid.render(`mermaid-${block.index}`, block.code);
+          // Darken text in SVG for PDF readability
+          // Safe with 'neutral' theme since all backgrounds are light
+          const darkenedSvg = svg.replace(
+            '</style>',
+            'text, text tspan { fill: #1a1a1a !important; }</style>'
+          );
           // Wrap SVG in a container with proper styling
-          const wrappedSvg = `<div style="margin:12px 0;text-align:center;overflow-x:auto;page-break-inside:avoid;">${svg}</div>`;
+          const wrappedSvg = `<div style="margin:12px 0;text-align:center;overflow-x:auto;page-break-inside:avoid;">${darkenedSvg}</div>`;
           html = html.replace(`<<<MERMAID${block.index}>>>`, wrappedSvg);
         } catch (err) {
           console.error(`Mermaid render error for block ${block.index}:`, err);
