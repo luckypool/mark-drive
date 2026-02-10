@@ -78,20 +78,6 @@ function hljsToInlineStyles(html: string): string {
   );
 }
 
-// Force dark text in SVG by injecting CSS overrides
-// Mermaid sets text colors via CSS classes in <style> blocks,
-// so we inject !important rules to ensure readability in PDF
-function darkenSvgText(svg: string): string {
-  // Only target SVG text elements - never rects, paths, circles, etc.
-  const darkTextCss = `<style>
-text, tspan {
-  fill: #000000 !important;
-}
-</style>`;
-  // Insert CSS override after the opening <svg> tag
-  return svg.replace(/(<svg[^>]*>)/, `$1${darkTextCss}`);
-}
-
 // Get PDF-specific font sizes based on settings
 function getPdfFontSizes(settings: PdfFontSettings) {
   const multiplier = fontSizeMultipliers[settings.fontSize];
@@ -340,55 +326,15 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
       const mermaid = (await import('mermaid')).default;
       mermaid.initialize({
         startOnLoad: false,
-        theme: 'base',
-        themeVariables: {
-          // Core - neutral colors to avoid purple/lavender derived colors
-          primaryColor: '#e8e8e8',
-          primaryTextColor: '#000000',
-          primaryBorderColor: '#666666',
-          secondaryColor: '#f0f0f0',
-          secondaryTextColor: '#000000',
-          secondaryBorderColor: '#666666',
-          tertiaryColor: '#f5f5f5',
-          tertiaryTextColor: '#000000',
-          tertiaryBorderColor: '#666666',
-          // General
-          lineColor: '#444444',
-          textColor: '#000000',
-          mainBkg: '#e8e8e8',
-          nodeBorder: '#666666',
-          nodeTextColor: '#000000',
-          // Class diagram
-          classText: '#000000',
-          // State diagram
-          labelColor: '#000000',
-          altBackground: '#f0f0f0',
-          compositeTitleBackground: '#e8e8e8',
-          // Transitions and labels
-          transitionColor: '#444444',
-          transitionLabelColor: '#000000',
-          // Notes
-          noteBkgColor: '#fff5ad',
-          noteTextColor: '#000000',
-          noteBorderColor: '#aaaa33',
-          // Labels
-          labelTextColor: '#000000',
-          labelBoxBkgColor: '#e8e8e8',
-          labelBoxBorderColor: '#666666',
-          // Signal
-          signalColor: '#000000',
-          signalTextColor: '#000000',
-        },
+        theme: 'neutral',
         securityLevel: 'loose',
       });
 
       for (const block of mermaidBlocks) {
         try {
           const { svg } = await mermaid.render(`mermaid-${block.index}`, block.code);
-          // Post-process SVG: force dark text for PDF readability
-          const readableSvg = darkenSvgText(svg);
           // Wrap SVG in a container with proper styling
-          const wrappedSvg = `<div style="margin:12px 0;text-align:center;overflow-x:auto;page-break-inside:avoid;">${readableSvg}</div>`;
+          const wrappedSvg = `<div style="margin:12px 0;text-align:center;overflow-x:auto;page-break-inside:avoid;">${svg}</div>`;
           html = html.replace(`<<<MERMAID${block.index}>>>`, wrappedSvg);
         } catch (err) {
           console.error(`Mermaid render error for block ${block.index}:`, err);
