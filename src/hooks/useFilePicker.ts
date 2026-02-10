@@ -41,7 +41,6 @@ async function openWithFileSystemAccess(): Promise<LocalFile | null> {
           description: 'Markdown files',
           accept: {
             'text/markdown': ['.md', '.markdown'],
-            'text/plain': ['.txt'],
           },
         },
       ],
@@ -75,7 +74,7 @@ function openWithInputElement(
 
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.md,.markdown,text/markdown,text/x-markdown,text/plain';
+  input.accept = '.md,.markdown,text/markdown,text/x-markdown';
   input.style.display = 'none';
   inputRef.current = input;
 

@@ -28,6 +28,7 @@ vi.mock('react-icons/io5', () => {
     IoColorPaletteOutline: stub('palette'),
     IoShareOutline: stub('share'),
     IoFolderOutline: stub('folder'),
+    IoFolderOpenOutline: stub('folder-open'),
     IoFlashOutline: stub('flash'),
     IoDocumentTextOutline: stub('doc-text'),
     IoLogInOutline: stub('log-in'),
@@ -39,9 +40,6 @@ vi.mock('react-icons/io5', () => {
     IoPersonOutline: stub('person'),
     IoInformationCircleOutline: stub('info'),
     IoLogOutOutline: stub('logout'),
-    IoSunnyOutline: stub('sunny'),
-    IoMoonOutline: stub('moon'),
-    IoPhonePortraitOutline: stub('phone'),
     IoLogoGithub: stub('github'),
   };
 });
@@ -67,6 +65,7 @@ vi.mock('../components/ui/AddToHomeScreenBanner', () => ({
 const mockAuthenticate = vi.fn();
 const mockLogout = vi.fn();
 const mockOpenPicker = vi.fn();
+const mockOpenDrivePicker = vi.fn();
 
 vi.mock('../hooks', () => ({
   useGoogleAuth: () => ({
@@ -76,12 +75,17 @@ vi.mock('../hooks', () => ({
     userInfo: null,
     authenticate: mockAuthenticate,
     logout: mockLogout,
+    openDrivePicker: mockOpenDrivePicker,
   }),
   useTheme: () => ({
     resolvedMode: 'light',
     mode: 'light',
     setTheme: vi.fn(),
     colors: {},
+  }),
+  usePickerSettings: () => ({
+    pickerSettings: { ownedByMe: false, starred: false },
+    updatePickerSettings: vi.fn(),
   }),
   useLanguage: () => ({
     t: {
@@ -151,6 +155,11 @@ vi.mock('../hooks', () => ({
       },
       menu: {
         display: 'Display',
+        picker: 'Picker',
+        pickerOwnedByMe: 'Owned by me',
+        pickerStarred: 'Starred',
+        on: 'ON',
+        off: 'OFF',
       },
       fontSettings: {
         fontSize: 'Font Size',
