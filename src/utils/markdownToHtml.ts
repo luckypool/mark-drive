@@ -82,21 +82,9 @@ function hljsToInlineStyles(html: string): string {
 // Mermaid sets text colors via CSS classes in <style> blocks,
 // so we inject !important rules to ensure readability in PDF
 function darkenSvgText(svg: string): string {
+  // Only target SVG text elements - never rects, paths, circles, etc.
   const darkTextCss = `<style>
-text, tspan,
-.label, .nodeLabel, .edgeLabel,
-.classText, .classTitle,
-.statediagram-state .nodeLabel,
-.node .label, .cluster-label,
-.actor, .messageText, .labelText,
-.loopText, .noteText,
-.pieTitleText, .slice,
-.titleText, .sectionTitle,
-.taskText, .taskTextOutsideRight,
-.entityLabel, .relationshipLabel,
-.flowchart-label text,
-g.classGroup text,
-g.stateGroup text {
+text, tspan {
   fill: #000000 !important;
 }
 </style>`;
