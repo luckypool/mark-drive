@@ -272,7 +272,11 @@ export default function ViewerPage() {
       const confirmed = window.confirm(t.viewer.unsavedChanges);
       if (!confirmed) return;
     }
-    navigate(-1);
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
   };
 
   const handleLinkPress = (url: string) => {
