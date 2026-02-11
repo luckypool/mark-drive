@@ -97,6 +97,31 @@
   background-color: var(--color-accent-muted);
 }
 
+.divider {
+  height: 1px;
+  background: var(--color-border-light);
+  margin: 8px 0;
+}
+
+.linkItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.linkItem:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
 @media (max-width: 360px) {
   .dropdown {
     position: fixed;

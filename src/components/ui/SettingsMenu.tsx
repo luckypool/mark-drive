@@ -3,7 +3,8 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { IoEllipsisHorizontal } from 'react-icons/io5';
+import { useNavigate } from 'react-router';
+import { IoEllipsisHorizontal, IoInformationCircleOutline } from 'react-icons/io5';
 import { useTheme } from '../../hooks/useTheme';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useFontSettings, type FontSize, type FontFamily } from '../../contexts/FontSettingsContext';
@@ -18,6 +19,7 @@ export function SettingsMenu({ variant = 'full' }: SettingsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  const navigate = useNavigate();
   const { mode, setTheme } = useTheme();
   const { t, language, setLanguage } = useLanguage();
   const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
@@ -156,6 +158,20 @@ export function SettingsMenu({ variant = 'full' }: SettingsMenuProps) {
               </div>
             </>
           )}
+
+          {/* About link */}
+          <div className={styles.divider} />
+          <button
+            className={styles.linkItem}
+            onClick={() => {
+              close();
+              navigate('/about');
+            }}
+            type="button"
+          >
+            <IoInformationCircleOutline size={16} />
+            {t.home.about}
+          </button>
         </div>
       )}
     </div>
