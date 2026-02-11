@@ -8,7 +8,7 @@ export const ja: Translations = {
   // Home Screen
   home: {
     welcomeLine1: 'Bring',
-    welcomeLine2: 'to Google Drive™.',
+    welcomeLine2: 'to Google Drive™',
     welcomeHighlight: 'Markdown Previews',
     subtitle: 'Markdownファイルをダウンロードせずに、ブラウザ上でそのまま確認。あなたの Google Drive™ をもっと便利にアップグレードします。',
     feature: {

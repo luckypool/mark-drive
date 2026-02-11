@@ -6,7 +6,7 @@ export const en = {
   // Home Screen
   home: {
     welcomeLine1: 'Bring',
-    welcomeLine2: 'to Google Drive™.',
+    welcomeLine2: 'to Google Drive™',
     welcomeHighlight: 'Markdown Previews',
     subtitle: 'Preview Markdown files directly in your browser without downloading. Upgrade your Google Drive™ experience instantly.',
     feature: {
