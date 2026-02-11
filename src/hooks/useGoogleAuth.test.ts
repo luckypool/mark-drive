@@ -7,6 +7,11 @@ import { useGoogleAuth } from './useGoogleAuth';
 
 // --- mocks ---
 
+const mockTrackEvent = vi.fn();
+vi.mock('../utils/analytics', () => ({
+  trackEvent: (...args: unknown[]) => mockTrackEvent(...args),
+}));
+
 vi.mock('../services/googleDrive', () => ({
   fetchUserInfo: vi.fn(async () => ({ email: 'test@example.com', name: 'Test User', picture: '' })),
   searchMarkdownFiles: vi.fn(async () => [
@@ -113,6 +118,7 @@ async function waitForInit() {
 describe('useGoogleAuth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockTrackEvent.mockClear();
     storageMock = createLocalStorageMock();
     Object.defineProperty(window, 'localStorage', { value: storageMock, writable: true });
     // Pre-set scope version so token restoration doesn't get cleared
@@ -189,6 +195,54 @@ describe('useGoogleAuth', () => {
       await waitForInit();
 
       expect(result.current.isAuthenticated).toBe(false);
+    });
+  });
+
+  // --- authenticate ---
+
+  describe('authenticate', () => {
+    it('should call trackEvent with login on successful auth', async () => {
+      // Capture the tokenClient so we can trigger the callback
+      const mockRequestAccessToken = vi.fn();
+      let tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      // Mock crypto.randomUUID and sessionStorage for state verification
+      const mockState = 'test-state-uuid';
+      vi.spyOn(crypto, 'randomUUID').mockReturnValue(mockState as `${string}-${string}-${string}-${string}-${string}`);
+      const sessionStorageMock = {
+        getItem: vi.fn((key: string) => key === 'oauth_state' ? mockState : null),
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+        clear: vi.fn(),
+        length: 0,
+        key: vi.fn(),
+      };
+      Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock, writable: true });
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      // Call authenticate
+      act(() => {
+        result.current.authenticate();
+      });
+
+      // Simulate Google OAuth returning a token
+      await act(async () => {
+        tokenClient.callback({
+          access_token: 'new-token-123',
+          expires_in: 3600,
+          state: mockState,
+        });
+        await new Promise(r => setTimeout(r, 50));
+      });
+
+      expect(result.current.isAuthenticated).toBe(true);
+      expect(mockTrackEvent).toHaveBeenCalledWith('login', { method: 'Google' });
     });
   });
 
