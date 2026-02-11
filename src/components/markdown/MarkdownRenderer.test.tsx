@@ -109,4 +109,41 @@ describe('MarkdownRenderer', () => {
     const img = screen.getByAltText('Alt text');
     expect(img.getAttribute('loading')).toBe('lazy');
   });
+
+  it('should render inline math with KaTeX', () => {
+    const { container } = render(<MarkdownRenderer content="The formula $E=mc^2$ is famous." />);
+    const katexSpan = container.querySelector('.katex');
+    expect(katexSpan).toBeTruthy();
+  });
+
+  it('should render block math with KaTeX', () => {
+    const { container } = render(<MarkdownRenderer content={'$$\n\\sum_{i=1}^{n} i\n$$'} />);
+    const katexDisplay = container.querySelector('.katex-display');
+    expect(katexDisplay).toBeTruthy();
+  });
+
+  it('should not crash on invalid math expressions', () => {
+    const { container } = render(<MarkdownRenderer content="$\\invalidcommandxyz$" />);
+    // Should render without crashing — KaTeX shows error text
+    expect(container.querySelector('.markdown-content')).toBeTruthy();
+  });
+
+  it('should include KaTeX styles in generated CSS', () => {
+    const { container } = render(<MarkdownRenderer content="test" />);
+    const styleTag = container.querySelector('style');
+    expect(styleTag!.innerHTML).toContain('.katex-display');
+    expect(styleTag!.innerHTML).toContain('.katex-error');
+  });
+
+  it('should include dark mode KaTeX color override when theme is dark', () => {
+    const { container } = render(<MarkdownRenderer content="test" themeMode="dark" />);
+    const styleTag = container.querySelector('style');
+    expect(styleTag!.innerHTML).toContain('.katex .katex-html');
+  });
+
+  it('should not include dark mode KaTeX color override when theme is light', () => {
+    const { container } = render(<MarkdownRenderer content="test" themeMode="light" />);
+    const styleTag = container.querySelector('style');
+    expect(styleTag!.innerHTML).not.toContain('.katex .katex-html');
+  });
 });

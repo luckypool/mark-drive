@@ -2,7 +2,7 @@
  * Tests for markdownToHtml function
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { markdownToHtml, PdfFontSettings } from './markdownToHtml';
 
 describe('markdownToHtml - HTML Content', () => {
@@ -378,5 +378,99 @@ describe('markdownToHtml - Nested lists', () => {
     expect(html).toContain('>Level 1</li>');
     expect(html).toContain('>Level 2</li>');
     expect(html).toContain('>Level 3</li>');
+  });
+});
+
+describe('markdownToHtml - Math (KaTeX)', () => {
+  it('should render inline math with $...$', async () => {
+    const html = await markdownToHtml('The formula $E=mc^2$ is famous.');
+    expect(html).toContain('katex');
+    expect(html).not.toContain('$E=mc^2$');
+  });
+
+  it('should render block math with $$...$$', async () => {
+    const html = await markdownToHtml('$$\n\\sum_{i=1}^{n} i\n$$');
+    expect(html).toContain('katex');
+    expect(html).not.toContain('$$');
+  });
+
+  it('should render inline math with \\(...\\)', async () => {
+    const html = await markdownToHtml('The formula \\(E=mc^2\\) is famous.');
+    expect(html).toContain('katex');
+    expect(html).not.toContain('\\(');
+  });
+
+  it('should render block math with \\[...\\]', async () => {
+    const html = await markdownToHtml('\\[\n\\sum_{i=1}^{n} i\n\\]');
+    expect(html).toContain('katex');
+    expect(html).not.toContain('\\[');
+  });
+
+  it('should not treat $ inside code blocks as math', async () => {
+    const html = await markdownToHtml('```\nconst price = $100;\n```');
+    // Should be in a code block, not rendered as math
+    expect(html).toContain('<pre');
+    expect(html).toContain('<code');
+  });
+
+  it('should not treat $ inside inline code as math', async () => {
+    const html = await markdownToHtml('Use `$variable` in shell');
+    expect(html).toContain('<code');
+    expect(html).toContain('$variable');
+  });
+
+  it('should handle invalid math expressions gracefully', async () => {
+    const html = await markdownToHtml('$\\invalidcommandxyz$');
+    // Should not throw, should contain some fallback
+    expect(html).toBeTruthy();
+  });
+
+  it('should render multiple math expressions in one document', async () => {
+    const input = 'Inline $a^2$ and block:\n\n$$b^2$$';
+    const html = await markdownToHtml(input);
+    const katexCount = (html.match(/katex/g) || []).length;
+    expect(katexCount).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe('markdownToHtml - Math error fallback', () => {
+  it('should fallback to code display when katex.renderToString throws for block $$', async () => {
+    const katex = await import('katex');
+    const spy = vi.spyOn(katex.default, 'renderToString').mockImplementation(() => { throw new Error('mock error'); });
+    const html = await markdownToHtml('$$x^2$$');
+    expect(html).toContain('<pre');
+    expect(html).toContain('x^2');
+    expect(html).toContain('color:#ef4444');
+    spy.mockRestore();
+  });
+
+  it('should fallback to code display when katex.renderToString throws for block \\[\\]', async () => {
+    const katex = await import('katex');
+    const spy = vi.spyOn(katex.default, 'renderToString').mockImplementation(() => { throw new Error('mock error'); });
+    const html = await markdownToHtml('\\[x^2\\]');
+    expect(html).toContain('<pre');
+    expect(html).toContain('x^2');
+    expect(html).toContain('color:#ef4444');
+    spy.mockRestore();
+  });
+
+  it('should fallback to inline code when katex.renderToString throws for inline $', async () => {
+    const katex = await import('katex');
+    const spy = vi.spyOn(katex.default, 'renderToString').mockImplementation(() => { throw new Error('mock error'); });
+    const html = await markdownToHtml('formula $x^2$ here');
+    expect(html).toContain('<code');
+    expect(html).toContain('x^2');
+    expect(html).toContain('color:#ef4444');
+    spy.mockRestore();
+  });
+
+  it('should fallback to inline code when katex.renderToString throws for \\(\\)', async () => {
+    const katex = await import('katex');
+    const spy = vi.spyOn(katex.default, 'renderToString').mockImplementation(() => { throw new Error('mock error'); });
+    const html = await markdownToHtml('formula \\(x^2\\) here');
+    expect(html).toContain('<code');
+    expect(html).toContain('x^2');
+    expect(html).toContain('color:#ef4444');
+    spy.mockRestore();
   });
 });

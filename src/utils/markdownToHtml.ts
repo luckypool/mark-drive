@@ -2,6 +2,7 @@
  * Markdown to HTML converter for PDF export
  */
 
+import katex from 'katex';
 import type { FontSize, FontFamily } from '../contexts/FontSettingsContext';
 import { fontSizeMultipliers, fontFamilyStacks } from '../contexts/FontSettingsContext';
 
@@ -116,6 +117,51 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
     const mod = await import('highlight.js');
     hljs = (mod as { default: HLJSApi }).default || (mod as unknown as HLJSApi);
   } catch { /* fallback to no highlighting */ }
+
+  // Extract math blocks before code blocks (to prevent $ inside code from being treated as math)
+  const mathBlocks: string[] = [];
+
+  // Block math: $$...$$ and \[...\]
+  html = html.replace(/\$\$([\s\S]*?)\$\$/g, (_, expr) => {
+    const index = mathBlocks.length;
+    try {
+      mathBlocks.push(katex.renderToString(expr.trim(), { displayMode: true, throwOnError: false, output: 'html' }));
+    } catch {
+      mathBlocks.push(`<pre style="color:#ef4444;font-family:monospace;font-size:12px;"><code>${escapeHtml(expr.trim())}</code></pre>`);
+    }
+    return `\n<<<MATHBLOCK${index}>>>\n`;
+  });
+
+  html = html.replace(/\\\[([\s\S]*?)\\\]/g, (_, expr) => {
+    const index = mathBlocks.length;
+    try {
+      mathBlocks.push(katex.renderToString(expr.trim(), { displayMode: true, throwOnError: false, output: 'html' }));
+    } catch {
+      mathBlocks.push(`<pre style="color:#ef4444;font-family:monospace;font-size:12px;"><code>${escapeHtml(expr.trim())}</code></pre>`);
+    }
+    return `\n<<<MATHBLOCK${index}>>>\n`;
+  });
+
+  // Inline math: $...$ (not $$) and \(...\)
+  html = html.replace(/(?<!\$)\$(?!\$)([^\n$]+?)\$(?!\$)/g, (_, expr) => {
+    const index = mathBlocks.length;
+    try {
+      mathBlocks.push(katex.renderToString(expr.trim(), { displayMode: false, throwOnError: false, output: 'html' }));
+    } catch {
+      mathBlocks.push(`<code style="color:#ef4444;">${escapeHtml(expr.trim())}</code>`);
+    }
+    return `<<<MATHBLOCK${index}>>>`;
+  });
+
+  html = html.replace(/\\\((.+?)\\\)/g, (_, expr) => {
+    const index = mathBlocks.length;
+    try {
+      mathBlocks.push(katex.renderToString(expr.trim(), { displayMode: false, throwOnError: false, output: 'html' }));
+    } catch {
+      mathBlocks.push(`<code style="color:#ef4444;">${escapeHtml(expr.trim())}</code>`);
+    }
+    return `<<<MATHBLOCK${index}>>>`;
+  });
 
   // Extract other code blocks with syntax highlighting
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
@@ -318,6 +364,11 @@ export async function markdownToHtml(content: string, fontSettings?: PdfFontSett
   // Restore code blocks
   codeBlocks.forEach((block, index) => {
     html = html.replace(`<<<CODEBLOCK${index}>>>`, block);
+  });
+
+  // Restore math blocks
+  mathBlocks.forEach((block, index) => {
+    html = html.replace(`<<<MATHBLOCK${index}>>>`, block);
   });
 
   // Render mermaid blocks
