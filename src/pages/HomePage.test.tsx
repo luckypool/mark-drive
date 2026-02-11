@@ -159,7 +159,7 @@ vi.mock('../hooks', () => ({
       },
       menu: {
         display: 'Display',
-        picker: 'Picker',
+        picker: 'Google Drive Search Settings',
         pickerOwnedByMe: 'Owned by me',
         pickerStarred: 'Starred',
         on: 'ON',
@@ -403,12 +403,12 @@ describe('HomePage - Picker settings', () => {
 
   const openAccordion = () => {
     // Click the accordion trigger to expand picker settings
-    fireEvent.click(screen.getByText('Picker').closest('button')!);
+    fireEvent.click(screen.getByText('Google Drive Search Settings').closest('button')!);
   };
 
   it('shows picker accordion trigger on authenticated home page', () => {
     renderWithProviders(<HomePage />);
-    expect(screen.getByText('Picker')).toBeTruthy();
+    expect(screen.getByText('Google Drive Search Settings')).toBeTruthy();
   });
 
   it('expands to show settings when accordion is clicked', () => {

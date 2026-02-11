@@ -253,7 +253,7 @@ export const ja: Translations = {
     title: 'メニュー',
     account: 'アカウント',
     display: '表示設定',
-    picker: 'Google Drive',
+    picker: 'Google Drive 検索設定',
     pickerOwnedByMe: '自分のファイルのみ',
     pickerStarred: 'スター付きのみ',
     on: 'ON',

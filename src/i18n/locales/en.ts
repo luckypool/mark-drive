@@ -251,7 +251,7 @@ export const en = {
     title: 'Menu',
     account: 'Account',
     display: 'Display Settings',
-    picker: 'Google Drive',
+    picker: 'Google Drive Search Settings',
     pickerOwnedByMe: 'My Files Only',
     pickerStarred: 'Starred Only',
     on: 'ON',
