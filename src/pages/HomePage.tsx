@@ -22,6 +22,7 @@ import {
   IoDocumentOutline,
   IoLogoGithub,
   IoSettingsOutline,
+  IoPlayOutline,
 } from 'react-icons/io5';
 import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo } from '../components/ui';
 import { AddToHomeScreenBanner } from '../components/ui/AddToHomeScreenBanner';
@@ -29,6 +30,7 @@ import { useGoogleAuth, useTheme, useLanguage, usePickerSettings } from '../hook
 import { useFilePicker } from '../hooks';
 import { getFileHistory, clearFileHistory, addFileToHistory } from '../services';
 import type { FileHistoryItem } from '../types';
+import sampleMd from '../../docs/markdrive-sample.md?raw';
 import iconImage from '../../assets/images/icon.png';
 import styles from './HomePage.module.css';
 
@@ -69,6 +71,17 @@ export default function HomePage() {
     const history = await getFileHistory();
     setRecentFiles(history.filter((item) => item.source !== 'local'));
   };
+
+  const handleTryNow = useCallback(() => {
+    navigate('/viewer', {
+      state: {
+        id: 'sample-markdrive',
+        name: 'markdrive-sample.md',
+        content: sampleMd,
+        source: 'local',
+      },
+    });
+  }, [navigate]);
 
   const handleLocalFile = useCallback(async () => {
     const file = await openPicker();
@@ -279,6 +292,14 @@ export default function HomePage() {
                   >
                     {t.home.signIn}
                   </Button>
+                  <button
+                    className={styles.tryNowLink}
+                    onClick={handleTryNow}
+                    type="button"
+                  >
+                    <IoPlayOutline size={16} />
+                    <span>{t.home.tryNow}</span>
+                  </button>
                 </div>
 
                 {/* Right: Preview image with crossfade animation */}
@@ -481,6 +502,14 @@ export default function HomePage() {
                 >
                   {t.home.openLocal}
                 </Button>
+                <button
+                  className={styles.tryNowLink}
+                  onClick={handleTryNow}
+                  type="button"
+                >
+                  <IoPlayOutline size={16} />
+                  <span>{t.home.tryNow}</span>
+                </button>
               </div>
 
               {/* Section 8: Footer */}

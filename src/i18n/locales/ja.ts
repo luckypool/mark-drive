@@ -88,6 +88,7 @@ export const ja: Translations = {
     or: 'または',
     openLocal: 'ローカルファイルを開く',
     searchDrive: 'Google Drive を検索',
+    tryNow: '今すぐ試す — サンプルをプレビュー',
     learnMore: 'MarkDriveについて詳しく',
     searchPlaceholder: 'Google Driveを検索...',
     recentFiles: '最近のファイル',

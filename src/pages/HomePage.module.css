@@ -629,6 +629,28 @@
   color: var(--color-accent);
 }
 
+/* Try Now Link */
+.tryNowLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  transition: opacity 150ms ease;
+}
+
+.tryNowLink:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
 /* Footer */
 .landingFooter {
   margin-top: 48px;
