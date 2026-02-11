@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { IoPersonOutline, IoLogOutOutline } from 'react-icons/io5';
+import { IoPersonOutline, IoLogOutOutline, IoLogInOutline } from 'react-icons/io5';
 import { useLanguage } from '../../hooks/useLanguage';
 import type { UserInfo } from '../../types/user';
 import styles from './UserMenu.module.css';
@@ -45,32 +45,15 @@ export function UserMenu({ isAuthenticated, userInfo, onSignIn, onSignOut }: Use
     return () => document.removeEventListener('keydown', handleKey);
   }, [isOpen, close]);
 
-  // Not authenticated: plain user icon as sign-in button
-  if (!isAuthenticated) {
-    return (
-      <button
-        className={styles.trigger}
-        onClick={onSignIn}
-        aria-label={t.home.signIn}
-        type="button"
-      >
-        <div className={styles.avatarPlaceholder}>
-          <IoPersonOutline size={16} />
-        </div>
-      </button>
-    );
-  }
-
-  // Authenticated: avatar with dropdown
   return (
     <div className={styles.wrapper} ref={wrapperRef}>
       <button
         className={styles.trigger}
         onClick={() => setIsOpen((prev) => !prev)}
-        aria-label={userInfo?.displayName ?? 'Account'}
+        aria-label={isAuthenticated ? (userInfo?.displayName ?? 'Account') : t.home.signIn}
         type="button"
       >
-        {userInfo?.photoUrl ? (
+        {isAuthenticated && userInfo?.photoUrl ? (
           <img
             src={userInfo.photoUrl}
             alt={userInfo.displayName}
@@ -85,23 +68,39 @@ export function UserMenu({ isAuthenticated, userInfo, onSignIn, onSignOut }: Use
 
       {isOpen && (
         <div className={styles.dropdown}>
-          {userInfo && (
-            <div className={styles.userSection}>
-              <span className={styles.userName}>{userInfo.displayName}</span>
-              <span className={styles.userEmail}>{userInfo.email}</span>
-            </div>
+          {isAuthenticated ? (
+            <>
+              {userInfo && (
+                <div className={styles.userSection}>
+                  <span className={styles.userName}>{userInfo.displayName}</span>
+                  <span className={styles.userEmail}>{userInfo.email}</span>
+                </div>
+              )}
+              <button
+                className={`${styles.menuItem} ${styles.menuItemDanger}`}
+                onClick={() => {
+                  close();
+                  onSignOut();
+                }}
+                type="button"
+              >
+                <IoLogOutOutline size={18} />
+                {t.home.signOut}
+              </button>
+            </>
+          ) : (
+            <button
+              className={styles.menuItem}
+              onClick={() => {
+                close();
+                onSignIn();
+              }}
+              type="button"
+            >
+              <IoLogInOutline size={18} />
+              {t.home.signIn}
+            </button>
           )}
-          <button
-            className={`${styles.menuItem} ${styles.menuItemDanger}`}
-            onClick={() => {
-              close();
-              onSignOut();
-            }}
-            type="button"
-          >
-            <IoLogOutOutline size={18} />
-            {t.home.signOut}
-          </button>
         </div>
       )}
     </div>
