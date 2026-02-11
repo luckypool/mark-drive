@@ -4,6 +4,7 @@ export { LoadingSpinner } from './LoadingSpinner';
 export { Card } from './Card';
 export { FAB } from './FAB';
 export { SettingsMenu } from './SettingsMenu';
+export { UserMenu } from './UserMenu';
 export { FontSettingsPanel } from './FontSettingsPanel';
 export { Tooltip } from './Tooltip';
 export { GoogleLogo } from './GoogleLogo';

@@ -22,12 +22,10 @@ import {
   IoChevronForward,
   IoChevronDown,
   IoDocumentOutline,
-  IoPersonOutline,
   IoInformationCircleOutline,
-  IoLogOutOutline,
   IoLogoGithub,
 } from 'react-icons/io5';
-import { Button, LoadingSpinner, FAB, SettingsMenu, GoogleLogo } from '../components/ui';
+import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo } from '../components/ui';
 import { AddToHomeScreenBanner } from '../components/ui/AddToHomeScreenBanner';
 import { useGoogleAuth, useTheme, useLanguage, usePickerSettings } from '../hooks';
 import { useFilePicker } from '../hooks';
@@ -200,6 +198,12 @@ export default function HomePage() {
             <span className={styles.headerAppName}>MarkDrive</span>
           </div>
           <div className={styles.headerActions}>
+            <UserMenu
+              isAuthenticated={false}
+              userInfo={null}
+              onSignIn={authenticate}
+              onSignOut={logout}
+            />
             <SettingsMenu variant="full" />
           </div>
         </div>
@@ -219,6 +223,12 @@ export default function HomePage() {
           <div className={styles.headerSpacer} />
 
           <div className={styles.headerActions}>
+            <UserMenu
+              isAuthenticated={true}
+              userInfo={userInfo}
+              onSignIn={authenticate}
+              onSignOut={handleLogout}
+            />
             <SettingsMenu variant="full" />
           </div>
         </div>
@@ -609,31 +619,6 @@ export default function HomePage() {
       {/* Slide-in Menu */}
       <div className={`${styles.slideMenu} ${isMenuOpen ? styles.slideMenuOpen : ''}`}>
         <div className={styles.slideMenuContent}>
-          {/* User Info */}
-          {userInfo && (
-            <div className={styles.menuUserSection}>
-              {userInfo.photoUrl ? (
-                <img
-                  src={userInfo.photoUrl}
-                  alt={userInfo.displayName}
-                  className={styles.menuAvatarImage}
-                />
-              ) : (
-                <div className={styles.menuAvatar}>
-                  <IoPersonOutline size={28} />
-                </div>
-              )}
-              <div className={styles.menuUserInfo}>
-                <span className={styles.menuUserName}>
-                  {userInfo.displayName}
-                </span>
-                <span className={styles.menuUserEmail}>
-                  {userInfo.email}
-                </span>
-              </div>
-            </div>
-          )}
-
           <div className={styles.menuScrollView}>
             {/* Picker Settings */}
             <div className={styles.menuSection}>
@@ -699,17 +684,6 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* Sign Out */}
-            <div className={styles.menuSectionBordered}>
-              <button
-                className={styles.menuItem}
-                onClick={handleLogout}
-                type="button"
-              >
-                <IoLogOutOutline size={20} className={styles.menuItemDanger} />
-                <span className={`${styles.menuItemText} ${styles.menuItemDanger}`}>{t.home.signOut}</span>
-              </button>
-            </div>
           </div>
         </div>
       </div>

@@ -54,6 +54,7 @@ vi.mock('../components/ui', () => ({
   LoadingSpinner: () => <div data-testid="loading-spinner" />,
   FAB: ({ onPress, icon }: any) => <button data-testid="fab" onClick={onPress}>{icon}</button>,
   SettingsMenu: () => <div data-testid="settings-menu" />,
+  UserMenu: ({ isAuthenticated }: any) => <div data-testid="user-menu" data-authenticated={isAuthenticated} />,
   GoogleLogo: ({ size }: any) => <span data-testid="google-logo" />,
 }));
 
