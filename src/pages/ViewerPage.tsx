@@ -19,12 +19,13 @@ import {
   IoDownloadOutline,
   IoCheckmarkCircle,
   IoAlertCircle,
+  IoLinkOutline,
 } from 'react-icons/io5';
-import { Button, SettingsMenu } from '../components/ui';
+import { Button, SettingsMenu, GoogleLogo } from '../components/ui';
 import { MarkdownRenderer } from '../components/markdown';
 import { useGoogleAuth, useShare, useTheme, useLanguage, useMarkdownEditor, getFileHandle } from '../hooks';
 import { CodeMirrorEditor } from '../components/editor/CodeMirrorEditor';
-import { addFileToHistory } from '../services';
+import { addFileToHistory, fetchFileInfo } from '../services';
 import { trackEvent } from '../utils/analytics';
 import styles from './ViewerPage.module.css';
 
@@ -52,19 +53,26 @@ export default function ViewerPage() {
         result[key] = value;
       }
     }
+    // Default source to google-drive when not provided (shared link)
+    if (!result.source) {
+      result.source = 'google-drive';
+    }
     return result as unknown as ViewerParams;
   }, [searchParams, location.state]);
 
-  const { fetchFileContent, isLoading: isAuthLoading, accessToken } = useGoogleAuth();
+  const { fetchFileContent, isLoading: isAuthLoading, accessToken, authenticate } = useGoogleAuth();
   const { shareContent, isProcessing } = useShare();
 
   const [content, setContent] = useState<string | null>(params.content || null);
+  const [fileName, setFileName] = useState<string>(params.name || '');
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [needsAuth, setNeedsAuth] = useState(false);
 
   const fileHandle = useMemo(() => getFileHandle(params.id), [params.id]);
 
   const editor = useMarkdownEditor({
     initialContent: content,
-    fileName: params.name,
+    fileName,
     fileHandle,
     onContentSaved: (newContent) => setContent(newContent),
   });
@@ -77,6 +85,19 @@ export default function ViewerPage() {
   const [headerOpacityValue, setHeaderOpacityValue] = useState(1);
   const hideHeaderTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Fetch file name when not provided (shared link)
+  useEffect(() => {
+    if (!params.name && params.id && params.source === 'google-drive' && accessToken) {
+      fetchFileInfo(accessToken, params.id).then((info) => {
+        if (info?.name) {
+          setFileName(info.name);
+        } else {
+          setFileName(`${params.id}.md`);
+        }
+      });
+    }
+  }, [params.name, params.id, params.source, accessToken]);
+
   const loadFileContent = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -85,11 +106,6 @@ export default function ViewerPage() {
       const fileContent = await fetchFileContent(params.id);
       if (fileContent) {
         setContent(fileContent);
-        await addFileToHistory({
-          id: params.id,
-          name: params.name,
-          source: 'google-drive',
-        });
       } else {
         setError(t.viewer.loadFailed);
       }
@@ -98,7 +114,18 @@ export default function ViewerPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [fetchFileContent, params.id, params.name, t.viewer.loadFailed, t.viewer.errorOccurred]);
+  }, [fetchFileContent, params.id, t.viewer.loadFailed, t.viewer.errorOccurred]);
+
+  // Add to file history when content and fileName are both available
+  useEffect(() => {
+    if (content && fileName && params.source === 'google-drive') {
+      addFileToHistory({
+        id: params.id,
+        name: fileName,
+        source: 'google-drive',
+      });
+    }
+  }, [content, fileName, params.id, params.source]);
 
   useEffect(() => {
     if (params.source === 'google-drive' && !params.content) {
@@ -106,13 +133,13 @@ export default function ViewerPage() {
         return;
       }
       if (!accessToken) {
-        setError(t.viewer.authRequired);
+        setNeedsAuth(true);
         setIsLoading(false);
         return;
       }
       loadFileContent();
     }
-  }, [params.id, params.source, params.content, isAuthLoading, accessToken, t.viewer.authRequired, loadFileContent]);
+  }, [params.id, params.source, params.content, isAuthLoading, accessToken, loadFileContent]);
 
   // Fullscreen mode handlers
   const enterFullscreen = useCallback(async () => {
@@ -259,11 +286,18 @@ export default function ViewerPage() {
   }, [editor.hasUnsavedChanges]);
 
   const handleDownloadPdf = async () => {
-    if (content && params.name) {
+    if (content && fileName) {
       setShowFileInfo(false);
       trackEvent('export_pdf');
-      await shareContent(content, params.name);
+      await shareContent(content, fileName);
     }
+  };
+
+  const handleCopyLink = () => {
+    const url = `${window.location.origin}/view?id=${encodeURIComponent(params.id)}`;
+    navigator.clipboard.writeText(url);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
   };
 
   const handleBack = () => {
@@ -313,7 +347,7 @@ export default function ViewerPage() {
             type="button"
           >
             <span className={styles.fileName}>
-              {params.name}
+              {fileName || t.viewer.loading}
             </span>
             {editor.hasUnsavedChanges && (
               <span className={styles.unsavedDot} />
@@ -399,6 +433,18 @@ export default function ViewerPage() {
         <div className={styles.loadingContainer}>
           <div className={styles.spinner} />
           <span className={styles.loadingText}>{t.viewer.loading}</span>
+        </div>
+      ) : needsAuth ? (
+        <div className={styles.authPromptContainer}>
+          <span className={styles.authPromptText}>{t.viewer.signInToView}</span>
+          <button
+            className={styles.authButton}
+            onClick={authenticate}
+            type="button"
+          >
+            <GoogleLogo size={18} />
+            {t.viewer.signInButton}
+          </button>
         </div>
       ) : error ? (
         <div className={styles.errorContainer}>
@@ -515,7 +561,7 @@ export default function ViewerPage() {
                   <IoDocumentOutline size={20} className={styles.fileInfoIcon} />
                 )}
                 <span className={styles.fileInfoName}>
-                  {params.name}
+                  {fileName}
                 </span>
               </div>
               <div className={styles.fileInfoRow}>
@@ -527,6 +573,20 @@ export default function ViewerPage() {
                 </span>
               </div>
             </div>
+
+            {/* Copy Link */}
+            {params.source === 'google-drive' && (
+              <div className={`${styles.dialogSection} ${styles.dialogSectionWithBorder}`}>
+                <Button
+                  onPress={handleCopyLink}
+                  variant="outline"
+                  icon={<IoLinkOutline size={20} />}
+                  style={{ width: '100%' }}
+                >
+                  {linkCopied ? t.fileInfo.linkCopied : t.fileInfo.copyLink}
+                </Button>
+              </div>
+            )}
 
             {/* PDF Export */}
             <div className={`${styles.dialogSection} ${styles.pdfSection}`}>

@@ -15,10 +15,13 @@ const mockLocationState = {
 };
 
 const mockFetchFileContent = vi.fn();
+const mockAuthenticate = vi.fn();
 const mockAuthState = {
   fetchFileContent: mockFetchFileContent,
   isLoading: false,
   accessToken: 'mock-token',
+  authenticate: mockAuthenticate,
+  isAuthenticated: true,
 };
 
 const mockSetTheme = vi.fn();
@@ -85,6 +88,7 @@ vi.mock('react-icons/io5', () => {
     IoDownloadOutline: stub('download'),
     IoCheckmarkCircle: stub('checkmark'),
     IoAlertCircle: stub('alert'),
+    IoLinkOutline: stub('link'),
     IoSunnyOutline: stub('sunny'),
     IoMoonOutline: stub('moon'),
     IoPhonePortraitOutline: stub('phone'),
@@ -99,6 +103,7 @@ vi.mock('../components/ui', () => ({
     </button>
   ),
   SettingsMenu: () => <div data-testid="settings-menu" />,
+  GoogleLogo: ({ size }: any) => <span data-testid="google-logo" data-size={size} />,
 }));
 
 vi.mock('../components/markdown', () => ({
@@ -119,6 +124,8 @@ vi.mock('../hooks', () => ({
         loadFailed: 'Failed to load file',
         errorOccurred: 'An error occurred',
         authRequired: 'Authentication required',
+        signInToView: 'Sign in to view this file',
+        signInButton: 'Sign in with Google',
         retry: 'Retry',
         edit: 'Edit',
         preview: 'Preview',
@@ -137,6 +144,8 @@ vi.mock('../hooks', () => ({
         googleDrive: 'Google Drive',
         local: 'Local',
         exportPdf: 'Export PDF',
+        copyLink: 'Copy Link',
+        linkCopied: 'Copied!',
       },
       settings: {
         theme: 'Theme',
@@ -170,8 +179,10 @@ vi.mock('../contexts/FontSettingsContext', () => ({
   useFontSettings: () => mockFontState,
 }));
 
+const mockFetchFileInfo = vi.fn();
 vi.mock('../services', () => ({
   addFileToHistory: vi.fn(),
+  fetchFileInfo: (...args: any[]) => mockFetchFileInfo(...args),
 }));
 
 // ---------- helpers ----------
@@ -186,6 +197,8 @@ function resetMockState() {
   mockAuthState.fetchFileContent = mockFetchFileContent;
   mockAuthState.isLoading = false;
   mockAuthState.accessToken = 'mock-token';
+  mockAuthState.authenticate = mockAuthenticate;
+  mockAuthState.isAuthenticated = true;
 
   mockThemeState.mode = 'light';
   mockThemeState.resolvedMode = 'light';
@@ -216,6 +229,8 @@ beforeEach(() => {
   resetMockState();
   mockNavigate.mockClear();
   mockFetchFileContent.mockClear();
+  mockAuthenticate.mockClear();
+  mockFetchFileInfo.mockClear();
   mockSetTheme.mockClear();
   mockShareContent.mockClear();
   mockToggleMode.mockClear();
@@ -552,14 +567,16 @@ describe('ViewerPage - Error state', () => {
     expect(screen.getByTestId('icon-alert-circle')).toBeTruthy();
   });
 
-  it('shows auth required error when no access token for Google Drive source', () => {
+  it('shows sign-in prompt when no access token for Google Drive source', () => {
     mockSearchParams.set('source', 'google-drive');
     mockLocationState.state = null;
     mockAuthState.accessToken = '';
+    mockAuthState.isAuthenticated = false;
 
     renderWithProviders(<ViewerPage />);
 
-    expect(screen.getByText('Authentication required')).toBeTruthy();
+    expect(screen.getByText('Sign in to view this file')).toBeTruthy();
+    expect(screen.getByText('Sign in with Google')).toBeTruthy();
   });
 
   it('retry button retries file content loading', async () => {
@@ -959,5 +976,144 @@ describe('ViewerPage - Google Drive file loading success', () => {
     await waitFor(() => {
       expect(mockFetchFileContent).toHaveBeenCalledWith('123');
     });
+  });
+});
+
+describe('ViewerPage - Shared link (source omitted)', () => {
+  it('defaults source to google-drive when not provided', async () => {
+    mockSearchParams.delete('source');
+    mockSearchParams.set('id', 'shared-file-id');
+    mockSearchParams.set('name', 'shared.md');
+    mockLocationState.state = null;
+    mockFetchFileContent.mockResolvedValue('# Shared');
+    mockAuthState.fetchFileContent = mockFetchFileContent;
+
+    renderWithProviders(<ViewerPage />);
+
+    // Should behave as google-drive source and fetch the file
+    await waitFor(() => {
+      expect(mockFetchFileContent).toHaveBeenCalledWith('shared-file-id');
+    });
+  });
+
+  it('fetches file name via fetchFileInfo when name is not provided', async () => {
+    mockSearchParams.delete('source');
+    mockSearchParams.delete('name');
+    mockSearchParams.set('id', 'file-abc');
+    mockLocationState.state = null;
+    mockFetchFileContent.mockResolvedValue('# Content');
+    mockAuthState.fetchFileContent = mockFetchFileContent;
+    mockFetchFileInfo.mockResolvedValue({ id: 'file-abc', name: 'fetched-name.md' });
+
+    renderWithProviders(<ViewerPage />);
+
+    await waitFor(() => {
+      expect(mockFetchFileInfo).toHaveBeenCalledWith('mock-token', 'file-abc');
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('fetched-name.md')).toBeTruthy();
+    });
+  });
+
+  it('uses fallback name when fetchFileInfo returns null', async () => {
+    mockSearchParams.delete('source');
+    mockSearchParams.delete('name');
+    mockSearchParams.set('id', 'file-xyz');
+    mockLocationState.state = null;
+    mockFetchFileContent.mockResolvedValue('# Content');
+    mockAuthState.fetchFileContent = mockFetchFileContent;
+    mockFetchFileInfo.mockResolvedValue(null);
+
+    renderWithProviders(<ViewerPage />);
+
+    await waitFor(() => {
+      expect(mockFetchFileInfo).toHaveBeenCalledWith('mock-token', 'file-xyz');
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('file-xyz.md')).toBeTruthy();
+    });
+  });
+});
+
+describe('ViewerPage - Sign-in prompt', () => {
+  it('shows sign-in button when unauthenticated for shared link', () => {
+    mockSearchParams.delete('source');
+    mockSearchParams.set('id', 'some-id');
+    mockSearchParams.set('name', 'test.md');
+    mockLocationState.state = null;
+    mockAuthState.accessToken = '';
+    mockAuthState.isAuthenticated = false;
+
+    renderWithProviders(<ViewerPage />);
+
+    expect(screen.getByText('Sign in to view this file')).toBeTruthy();
+    expect(screen.getByText('Sign in with Google')).toBeTruthy();
+    expect(screen.getByTestId('google-logo')).toBeTruthy();
+  });
+
+  it('clicking sign-in button calls authenticate', () => {
+    mockSearchParams.set('source', 'google-drive');
+    mockSearchParams.set('id', 'some-id');
+    mockSearchParams.set('name', 'test.md');
+    mockLocationState.state = null;
+    mockAuthState.accessToken = '';
+    mockAuthState.isAuthenticated = false;
+
+    renderWithProviders(<ViewerPage />);
+
+    const signInButton = screen.getByText('Sign in with Google').closest('button')!;
+    fireEvent.click(signInButton);
+
+    expect(mockAuthenticate).toHaveBeenCalled();
+  });
+});
+
+describe('ViewerPage - Copy Link button', () => {
+  it('shows Copy Link button for Google Drive files', () => {
+    mockSearchParams.set('source', 'google-drive');
+    mockLocationState.state = { content: '# Drive File' };
+
+    renderWithProviders(<ViewerPage />);
+    const titleButton = screen.getByText('test.md').closest('button')!;
+    fireEvent.click(titleButton);
+
+    expect(screen.getByText('Copy Link')).toBeTruthy();
+    expect(screen.getByTestId('icon-link')).toBeTruthy();
+  });
+
+  it('does not show Copy Link button for local files', () => {
+    mockSearchParams.set('source', 'local');
+    mockLocationState.state = { content: '# Local File' };
+
+    renderWithProviders(<ViewerPage />);
+    const titleButton = screen.getByText('test.md').closest('button')!;
+    fireEvent.click(titleButton);
+
+    expect(screen.queryByText('Copy Link')).toBeNull();
+  });
+
+  it('copies link to clipboard and shows Copied! text', async () => {
+    mockSearchParams.set('source', 'google-drive');
+    mockSearchParams.set('id', 'abc123');
+    mockLocationState.state = { content: '# Drive File' };
+
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, {
+      clipboard: { writeText: writeTextMock },
+    });
+
+    renderWithProviders(<ViewerPage />);
+    const titleButton = screen.getByText('test.md').closest('button')!;
+    fireEvent.click(titleButton);
+
+    const copyButton = screen.getByText('Copy Link').closest('button')!;
+    fireEvent.click(copyButton);
+
+    expect(writeTextMock).toHaveBeenCalledWith(
+      expect.stringContaining('/view?id=abc123')
+    );
+    expect(screen.getByText('Copied!')).toBeTruthy();
   });
 });

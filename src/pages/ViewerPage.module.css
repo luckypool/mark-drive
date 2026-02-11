@@ -470,3 +470,38 @@
 .pdfButton {
   width: 100%;
 }
+
+/* Auth Prompt (shared link sign-in) */
+.authPromptContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+}
+
+.authPromptText {
+  font-size: var(--font-size-base);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.authButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  background-color: #ffffff;
+  border: 1px solid #dadce0;
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: #3c4043;
+  font-family: 'Roboto', sans-serif;
+}
+
+.authButton:hover {
+  background-color: #f8f9fa;
+}
