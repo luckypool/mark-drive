@@ -519,17 +519,29 @@ export default function HomePage() {
             </div>
           ) : (
             <div className={styles.authenticatedContent}>
-              {/* Picker Settings (collapsible) */}
+              {/* Action Buttons */}
+              <div className={styles.actionRow}>
+                <button className={styles.actionButton} onClick={handleOpenDrivePicker} type="button">
+                  <IoLogoGoogle size={20} className={styles.actionButtonIcon} />
+                  <span>{t.home.searchDrive}</span>
+                </button>
+                <button className={styles.actionButton} onClick={handleLocalFile} type="button">
+                  <IoFolderOutline size={20} className={styles.actionButtonIcon} />
+                  <span>{t.home.openLocal}</span>
+                </button>
+              </div>
+
+              {/* Picker Settings (collapsible, secondary) */}
               <div className={styles.pickerAccordion}>
                 <button
                   className={styles.pickerAccordionTrigger}
                   onClick={() => setIsPickerSettingsOpen((prev) => !prev)}
                   type="button"
                 >
-                  <IoSettingsOutline size={16} className={styles.pickerAccordionIcon} />
+                  <IoSettingsOutline size={14} className={styles.pickerAccordionIcon} />
                   <span className={styles.pickerAccordionLabel}>{t.menu.picker}</span>
                   <IoChevronDown
-                    size={14}
+                    size={12}
                     className={`${styles.pickerAccordionChevron}${isPickerSettingsOpen ? ` ${styles.pickerAccordionChevronOpen}` : ''}`}
                   />
                 </button>
@@ -558,12 +570,6 @@ export default function HomePage() {
                   </div>
                 )}
               </div>
-
-              {/* Open Local File */}
-              <button className={styles.homeLocalFile} onClick={handleLocalFile} type="button">
-                <IoFolderOutline size={18} />
-                <span>{t.home.openLocal}</span>
-              </button>
 
               {/* Recent Files */}
               {recentFiles.length > 0 && (

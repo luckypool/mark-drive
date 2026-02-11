@@ -85,6 +85,7 @@ export const en = {
     signIn: 'Sign in with Google',
     or: 'or',
     openLocal: 'Open Local File',
+    searchDrive: 'Search Google Drive',
     learnMore: 'Learn more about MarkDrive',
     searchPlaceholder: 'Search Google Drive...',
     recentFiles: 'Recent Files',
@@ -423,6 +424,7 @@ export type Translations = {
     signIn: string;
     or: string;
     openLocal: string;
+    searchDrive: string;
     learnMore: string;
     searchPlaceholder: string;
     recentFiles: string;

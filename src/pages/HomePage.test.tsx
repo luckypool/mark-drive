@@ -102,6 +102,7 @@ vi.mock('../hooks', () => ({
         signIn: 'Sign in with Google',
         or: 'or',
         openLocal: 'Open Local File',
+        searchDrive: 'Search Google Drive',
         searchPlaceholder: 'Search files...',
         recentFiles: 'Recent Files',
         clear: 'Clear',
