@@ -15,6 +15,7 @@ vi.mock('react-router', () => ({
 }));
 
 vi.mock('../../assets/images/icon.png', () => ({ default: 'icon.png' }));
+vi.mock('../../docs/markdrive-sample.md?raw', () => ({ default: '# Sample Markdown\n\nThis is a sample.' }));
 
 vi.mock('react-icons/io5', () => {
   const stub = (name: string) => (props: any) => <span data-testid={`icon-${name}`} {...props} />;
@@ -40,6 +41,7 @@ vi.mock('react-icons/io5', () => {
     IoLogOutOutline: stub('logout'),
     IoLogoGithub: stub('github'),
     IoSettingsOutline: stub('settings'),
+    IoPlayOutline: stub('play'),
   };
 });
 
@@ -103,6 +105,7 @@ vi.mock('../hooks', () => ({
         or: 'or',
         openLocal: 'Open Local File',
         searchDrive: 'Search Google Drive',
+        tryNow: 'Try Now — Preview a Sample',
         searchPlaceholder: 'Search files...',
         recentFiles: 'Recent Files',
         clear: 'Clear',
@@ -282,6 +285,26 @@ describe('HomePage (unauthenticated)', () => {
   it('renders how it works section title', () => {
     renderWithProviders(<HomePage />);
     expect(screen.getByText('How It Works')).toBeTruthy();
+  });
+
+  it('renders Try Now buttons', () => {
+    renderWithProviders(<HomePage />);
+    const tryNowButtons = screen.getAllByText('Try Now — Preview a Sample');
+    expect(tryNowButtons.length).toBe(2);
+  });
+
+  it('navigates to viewer with sample content on Try Now click', () => {
+    renderWithProviders(<HomePage />);
+    const tryNowButtons = screen.getAllByText('Try Now — Preview a Sample');
+    fireEvent.click(tryNowButtons[0]);
+    expect(mockNavigate).toHaveBeenCalledWith('/viewer', {
+      state: {
+        id: 'sample-markdrive',
+        name: 'markdrive-sample.md',
+        content: '# Sample Markdown\n\nThis is a sample.',
+        source: 'local',
+      },
+    });
   });
 });
 
