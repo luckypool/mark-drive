@@ -611,12 +611,6 @@ export default function HomePage() {
 
               {recentFiles.length === 0 && (
                 <div className={styles.emptyState}>
-                  <IoSearchOutline size={48} />
-                  <span className={styles.emptyStateText}>
-                    {t.home.searchPlaceholder}
-                  </span>
-
-                  {/* Privacy Notice */}
                   <div className={styles.privacyNotice}>
                     <IoShieldCheckmarkOutline size={20} className={styles.privacyNoticeIcon} />
                     <div className={styles.privacyContent}>
