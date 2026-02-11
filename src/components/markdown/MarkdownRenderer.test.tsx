@@ -134,4 +134,16 @@ describe('MarkdownRenderer', () => {
     expect(styleTag!.innerHTML).toContain('.katex-display');
     expect(styleTag!.innerHTML).toContain('.katex-error');
   });
+
+  it('should include dark mode KaTeX color override when theme is dark', () => {
+    const { container } = render(<MarkdownRenderer content="test" themeMode="dark" />);
+    const styleTag = container.querySelector('style');
+    expect(styleTag!.innerHTML).toContain('.katex .katex-html');
+  });
+
+  it('should not include dark mode KaTeX color override when theme is light', () => {
+    const { container } = render(<MarkdownRenderer content="test" themeMode="light" />);
+    const styleTag = container.querySelector('style');
+    expect(styleTag!.innerHTML).not.toContain('.katex .katex-html');
+  });
 });
