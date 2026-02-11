@@ -39,6 +39,7 @@ vi.mock('react-icons/io5', () => {
     IoPersonOutline: stub('person'),
     IoLogOutOutline: stub('logout'),
     IoLogoGithub: stub('github'),
+    IoSettingsOutline: stub('settings'),
   };
 });
 
@@ -400,23 +401,38 @@ describe('HomePage - Picker settings', () => {
     mockAuthState.userInfo = { email: 'test@example.com', name: 'Test User', picture: '' };
   });
 
-  it('shows picker settings on authenticated home page', () => {
+  const openAccordion = () => {
+    // Click the accordion trigger to expand picker settings
+    fireEvent.click(screen.getByText('Picker').closest('button')!);
+  };
+
+  it('shows picker accordion trigger on authenticated home page', () => {
     renderWithProviders(<HomePage />);
     expect(screen.getByText('Picker')).toBeTruthy();
+  });
+
+  it('expands to show settings when accordion is clicked', () => {
+    renderWithProviders(<HomePage />);
+    // Settings hidden by default
+    expect(screen.queryByText('Owned by me')).toBeNull();
+    // Open accordion
+    openAccordion();
     expect(screen.getByText('Owned by me')).toBeTruthy();
     expect(screen.getByText('Starred')).toBeTruthy();
   });
 
   it('shows ON/OFF toggles for picker settings', () => {
     renderWithProviders(<HomePage />);
+    openAccordion();
     const onButtons = screen.getAllByText('ON');
     const offButtons = screen.getAllByText('OFF');
-    expect(onButtons.length).toBe(2); // ownedByMe and starred
+    expect(onButtons.length).toBe(2);
     expect(offButtons.length).toBe(2);
   });
 
   it('calls updatePickerSettings when toggling ownedByMe', () => {
     renderWithProviders(<HomePage />);
+    openAccordion();
     const onButtons = screen.getAllByText('ON');
     fireEvent.click(onButtons[0].closest('button')!);
     expect(mockUpdatePickerSettings).toHaveBeenCalledWith({ ownedByMe: true });
@@ -424,6 +440,7 @@ describe('HomePage - Picker settings', () => {
 
   it('calls updatePickerSettings when toggling starred', () => {
     renderWithProviders(<HomePage />);
+    openAccordion();
     const onButtons = screen.getAllByText('ON');
     fireEvent.click(onButtons[1].closest('button')!);
     expect(mockUpdatePickerSettings).toHaveBeenCalledWith({ starred: true });

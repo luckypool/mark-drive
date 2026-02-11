@@ -22,6 +22,7 @@ import {
   IoChevronDown,
   IoDocumentOutline,
   IoLogoGithub,
+  IoSettingsOutline,
 } from 'react-icons/io5';
 import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo } from '../components/ui';
 import { AddToHomeScreenBanner } from '../components/ui/AddToHomeScreenBanner';
@@ -59,6 +60,7 @@ export default function HomePage() {
   const { openPicker } = useFilePicker();
   const { pickerSettings, updatePickerSettings } = usePickerSettings();
   const [recentFiles, setRecentFiles] = useState<FileHistoryItem[]>([]);
+  const [isPickerSettingsOpen, setIsPickerSettingsOpen] = useState(false);
 
   useEffect(() => {
     loadHistory();
@@ -517,6 +519,52 @@ export default function HomePage() {
             </div>
           ) : (
             <div className={styles.authenticatedContent}>
+              {/* Picker Settings (collapsible) */}
+              <div className={styles.pickerAccordion}>
+                <button
+                  className={styles.pickerAccordionTrigger}
+                  onClick={() => setIsPickerSettingsOpen((prev) => !prev)}
+                  type="button"
+                >
+                  <IoSettingsOutline size={16} className={styles.pickerAccordionIcon} />
+                  <span className={styles.pickerAccordionLabel}>{t.menu.picker}</span>
+                  <IoChevronDown
+                    size={14}
+                    className={`${styles.pickerAccordionChevron}${isPickerSettingsOpen ? ` ${styles.pickerAccordionChevronOpen}` : ''}`}
+                  />
+                </button>
+                {isPickerSettingsOpen && (
+                  <div className={styles.pickerAccordionBody}>
+                    {([
+                      { key: 'ownedByMe' as const, label: t.menu.pickerOwnedByMe },
+                      { key: 'starred' as const, label: t.menu.pickerStarred },
+                    ]).map(({ key, label }) => (
+                      <div key={key} className={styles.homeSettingRow}>
+                        <span className={styles.homeSettingName}>{label}</span>
+                        <div className={styles.homeSettingOptions}>
+                          {[false, true].map((val) => (
+                            <button
+                              key={String(val)}
+                              className={`${styles.homeSettingOption}${pickerSettings[key] === val ? ` ${styles.homeSettingOptionActive}` : ''}`}
+                              onClick={() => updatePickerSettings({ [key]: val })}
+                              type="button"
+                            >
+                              {val ? t.menu.on : t.menu.off}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Open Local File */}
+              <button className={styles.homeLocalFile} onClick={handleLocalFile} type="button">
+                <IoFolderOutline size={18} />
+                <span>{t.home.openLocal}</span>
+              </button>
+
               {/* Recent Files */}
               {recentFiles.length > 0 && (
                 <div className={styles.recentSection}>
@@ -582,38 +630,6 @@ export default function HomePage() {
                   </div>
                 </div>
               )}
-
-              {/* Picker Settings & Local File */}
-              <div className={styles.homeSettings}>
-                <div className={styles.homeSettingsSection}>
-                  <span className={styles.homeSettingsLabel}>{t.menu.picker}</span>
-                  {([
-                    { key: 'ownedByMe' as const, label: t.menu.pickerOwnedByMe },
-                    { key: 'starred' as const, label: t.menu.pickerStarred },
-                  ]).map(({ key, label }) => (
-                    <div key={key} className={styles.homeSettingRow}>
-                      <span className={styles.homeSettingName}>{label}</span>
-                      <div className={styles.homeSettingOptions}>
-                        {[false, true].map((val) => (
-                          <button
-                            key={String(val)}
-                            className={`${styles.homeSettingOption}${pickerSettings[key] === val ? ` ${styles.homeSettingOptionActive}` : ''}`}
-                            onClick={() => updatePickerSettings({ [key]: val })}
-                            type="button"
-                          >
-                            {val ? t.menu.on : t.menu.off}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className={styles.homeSettingsDivider} />
-                <button className={styles.homeLocalFile} onClick={handleLocalFile} type="button">
-                  <IoFolderOutline size={18} />
-                  <span>{t.home.openLocal}</span>
-                </button>
-              </div>
             </div>
           )}
         </div>
