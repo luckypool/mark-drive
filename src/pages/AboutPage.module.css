@@ -186,6 +186,25 @@
   opacity: 0.8;
 }
 
+/* Support Button */
+.supportButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  border: 1px solid #ffdd00;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: #ffdd00;
+  cursor: pointer;
+  color: #000000;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.supportButton:hover {
+  opacity: 0.8;
+}
+
 /* Footer */
 .footer {
   margin-top: 48px;

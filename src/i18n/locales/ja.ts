@@ -203,6 +203,9 @@ export const ja: Translations = {
     viewThirdPartyLicenses: 'サードパーティライセンスを見る',
     viewTerms: '利用規約',
     viewPrivacy: 'プライバシーポリシー',
+    supportTitle: 'MarkDriveを応援',
+    supportDesc: 'MarkDriveが役に立ったら、コーヒーをおごってください！',
+    supportButton: 'Buy Me a Coffee',
     footer: 'Vite + React で構築',
   },
 

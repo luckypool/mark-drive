@@ -32,6 +32,7 @@ vi.mock('react-icons/io5', () => ({
   IoLibraryOutline: (props: any) => <span {...props} />,
   IoShieldCheckmarkOutline: (props: any) => <span {...props} />,
   IoLockClosedOutline: (props: any) => <span {...props} />,
+  IoCafeOutline: (props: any) => <span data-testid="icon-cafe" {...props} />,
 }));
 
 const mockT = {
@@ -78,6 +79,9 @@ const mockT = {
     viewThirdPartyLicenses: 'Third-Party Licenses',
     viewTerms: 'Terms of Service',
     viewPrivacy: 'Privacy Policy',
+    supportTitle: 'Support MarkDrive',
+    supportDesc: 'If you find MarkDrive useful, consider buying me a coffee!',
+    supportButton: 'Buy Me a Coffee',
     footer: 'Made with love',
   },
 };
