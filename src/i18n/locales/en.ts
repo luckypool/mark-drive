@@ -6,12 +6,12 @@ export const en = {
   // Home Screen
   home: {
     welcomeLine1: 'Bring',
-    welcomeLine2: 'to Google Drive.',
+    welcomeLine2: 'to Google Drive™',
     welcomeHighlight: 'Markdown Previews',
-    subtitle: 'Preview Markdown files directly in your browser without downloading. Upgrade your Google Drive experience instantly.',
+    subtitle: 'Preview Markdown files directly in your browser without downloading. Upgrade your Google Drive™ experience instantly.',
     feature: {
       drive: {
-        title: 'Google Drive Integration',
+        title: 'Google Drive™ Integration',
         desc: 'Search and preview Markdown files directly from Drive — no downloads needed',
       },
       rendering: {
@@ -76,7 +76,7 @@ export const en = {
     },
     closingCta: {
       title: 'Open your first Markdown file',
-      subtitle: 'Connect your Google Drive for free — or try with a local file.',
+      subtitle: 'Connect your Google Drive™ for free — or try with a local file.',
     },
     footer: {
       builtWith: 'Built with Vite and React',
@@ -146,11 +146,11 @@ export const en = {
     version: 'Version {version}',
     whatIs: 'What is MarkDrive?',
     description:
-      'MarkDrive is a web application that beautifully renders and edits Markdown files stored in your Google Drive or local device. It provides a seamless reading and editing experience with syntax highlighting, diagram support, and PDF export capabilities.',
+      'MarkDrive is a web application that beautifully renders and edits Markdown files stored in your Google Drive™ or local device. It provides a seamless reading and editing experience with syntax highlighting, diagram support, and PDF export capabilities.',
     features: 'Features',
     feature: {
       drive: {
-        title: 'Google Drive Integration',
+        title: 'Google Drive™ Integration',
         desc: 'Connect your Google account and search for Markdown files directly from your Drive. Quick access to your documents without downloading.',
       },
       syntax: {
@@ -311,6 +311,10 @@ export const en = {
           title: '7. Contact',
           body: 'For questions about these Terms of Service, please visit the project\'s GitHub repository.',
           url: 'https://github.com/luckypool/mark-drive/issues',
+        },
+        trademarks: {
+          title: '8. Trademarks',
+          body: 'Google Drive™ is a trademark of Google LLC. MarkDrive is not affiliated with, endorsed by, or sponsored by Google LLC.',
         },
       },
     },
@@ -588,6 +592,7 @@ export type Translations = {
         disclaimer: { title: string; body: string };
         changes: { title: string; body: string };
         contact: { title: string; body: string; url: string };
+        trademarks: { title: string; body: string };
       };
     };
     privacy: {

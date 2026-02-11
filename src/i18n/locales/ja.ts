@@ -8,12 +8,12 @@ export const ja: Translations = {
   // Home Screen
   home: {
     welcomeLine1: 'Bring',
-    welcomeLine2: 'to Google Drive.',
+    welcomeLine2: 'to Google Drive™',
     welcomeHighlight: 'Markdown Previews',
-    subtitle: 'Markdownファイルをダウンロードせずに、ブラウザ上でそのまま確認。あなたの Google Drive をもっと便利にアップグレードします。',
+    subtitle: 'Markdownファイルをダウンロードせずに、ブラウザ上でそのまま確認。あなたの Google Drive™ をもっと便利にアップグレードします。',
     feature: {
       drive: {
-        title: 'Google Drive連携',
+        title: 'Google Drive™連携',
         desc: 'Drive内のMarkdownファイルを検索・プレビュー。ダウンロード不要',
       },
       rendering: {
@@ -78,7 +78,7 @@ export const ja: Translations = {
     },
     closingCta: {
       title: '最初のMarkdownを開いてみよう',
-      subtitle: 'Google Driveに無料で接続 — またはローカルファイルで試す。',
+      subtitle: 'Google Drive™に無料で接続 — またはローカルファイルで試す。',
     },
     footer: {
       builtWith: 'Vite + React で構築',
@@ -148,11 +148,11 @@ export const ja: Translations = {
     version: 'バージョン {version}',
     whatIs: 'MarkDriveとは？',
     description:
-      'MarkDriveはGoogle Driveやローカルデバイスに保存されたMarkdownファイルを美しく表示・編集するWebアプリケーションです。シンタックスハイライト、図表サポート、PDF出力機能により、快適な閲覧・編集体験を提供します。',
+      'MarkDriveはGoogle Drive™やローカルデバイスに保存されたMarkdownファイルを美しく表示・編集するWebアプリケーションです。シンタックスハイライト、図表サポート、PDF出力機能により、快適な閲覧・編集体験を提供します。',
     features: '機能',
     feature: {
       drive: {
-        title: 'Google Drive連携',
+        title: 'Google Drive™連携',
         desc: 'Googleアカウントを接続して、DriveからMarkdownファイルを直接検索。ダウンロード不要でドキュメントにすばやくアクセス。',
       },
       syntax: {
@@ -313,6 +313,10 @@ export const ja: Translations = {
           title: '7. お問い合わせ',
           body: 'この利用規約に関するご質問は、プロジェクトのGitHubリポジトリをご覧ください。',
           url: 'https://github.com/luckypool/mark-drive/issues',
+        },
+        trademarks: {
+          title: '8. 商標について',
+          body: 'Google Drive™はGoogle LLCの商標です。MarkDriveはGoogle LLCとの提携、推奨、またはスポンサーシップを受けたものではありません。',
         },
       },
     },

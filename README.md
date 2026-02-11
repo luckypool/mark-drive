@@ -1,10 +1,10 @@
 # MarkDrive
 
 <a href="https://mark-drive.com/">
-  <img src="./public/screenshot.png" alt="MarkDrive — Beautiful Markdown for Google Drive" width="720">
+  <img src="./public/screenshot.png" alt="MarkDrive — Beautiful Markdown for Google Drive™" width="720">
 </a>
 
-**Google Drive の Markdown をブラウザで美しくプレビュー・編集。サーバーにデータは一切保存しません。**
+**Google Drive™ の Markdown をブラウザで美しくプレビュー・編集。サーバーにデータは一切保存しません。**
 
 [mark-drive.com](https://mark-drive.com/)
 
@@ -39,3 +39,7 @@ http://localhost:8081 を開いて使えます。
 ## コントリビュート
 
 [CONTRIBUTING.md](./CONTRIBUTING.md) を参照してください。
+
+---
+
+> Google Drive™ is a trademark of Google LLC.
