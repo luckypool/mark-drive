@@ -98,6 +98,7 @@ vi.mock('../components/ui', () => ({
       {!loading && children}
     </button>
   ),
+  SettingsMenu: () => <div data-testid="settings-menu" />,
 }));
 
 vi.mock('../components/markdown', () => ({
@@ -400,15 +401,6 @@ describe('ViewerPage - File info dialog', () => {
     // The dialog has an IoDocumentOutline for local source
     const documentIcons = screen.getAllByTestId('icon-document');
     expect(documentIcons.length).toBeGreaterThanOrEqual(1);
-  });
-
-  it('dialog shows display settings section', () => {
-    renderWithProviders(<ViewerPage />);
-    const titleButton = screen.getByText('test.md').closest('button')!;
-    fireEvent.click(titleButton);
-    expect(screen.getByText('Display')).toBeTruthy();
-    expect(screen.getByText('Font Size')).toBeTruthy();
-    expect(screen.getByText('Font Family')).toBeTruthy();
   });
 
   it('dialog shows PDF export button', () => {
