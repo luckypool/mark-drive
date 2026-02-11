@@ -113,6 +113,8 @@ export const en = {
     saveFailed: 'Failed to save',
     unsavedChanges: 'You have unsaved changes. Discard them?',
     save: 'Save',
+    signInToView: 'Sign in to view this file',
+    signInButton: 'Sign in with Google',
     reauthRequired: 'Please sign out and sign in again to enable editing',
     linesCount: '{lines} lines',
     charsCount: '{chars} chars',
@@ -271,6 +273,8 @@ export const en = {
     googleDrive: 'Google Drive',
     local: 'Local File',
     exportPdf: 'Export PDF',
+    copyLink: 'Copy Link',
+    linkCopied: 'Copied!',
   },
 
   // Add to Home Screen
@@ -459,6 +463,8 @@ export type Translations = {
     saveFailed: string;
     unsavedChanges: string;
     save: string;
+    signInToView: string;
+    signInButton: string;
     reauthRequired: string;
     linesCount: string;
     charsCount: string;
@@ -581,6 +587,8 @@ export type Translations = {
     googleDrive: string;
     local: string;
     exportPdf: string;
+    copyLink: string;
+    linkCopied: string;
   };
   addToHomeScreen: {
     title: string;

@@ -19,6 +19,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: 'viewer', element: <ViewerPage /> },
+      { path: 'view', element: <ViewerPage /> },
       { path: 'open', element: <OpenPage /> },
       { path: 'about', element: <AboutPage /> },
       { path: 'privacy', element: <PrivacyPage /> },

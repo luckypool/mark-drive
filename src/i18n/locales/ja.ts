@@ -115,6 +115,8 @@ export const ja: Translations = {
     saveFailed: '保存に失敗しました',
     unsavedChanges: '未保存の変更があります。破棄しますか？',
     save: '保存',
+    signInToView: 'このファイルを表示するにはサインインしてください',
+    signInButton: 'Google でサインイン',
     reauthRequired: '編集を有効にするには、サインアウトして再度サインインしてください',
     linesCount: '{lines} 行',
     charsCount: '{chars} 文字',
@@ -273,6 +275,8 @@ export const ja: Translations = {
     googleDrive: 'Google Drive',
     local: 'ローカルファイル',
     exportPdf: 'PDF出力',
+    copyLink: 'リンクをコピー',
+    linkCopied: 'コピーしました！',
   },
 
   // Add to Home Screen
