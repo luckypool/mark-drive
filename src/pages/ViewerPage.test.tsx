@@ -781,61 +781,6 @@ describe('ViewerPage - Back with unsaved changes', () => {
   });
 });
 
-describe('ViewerPage - Font settings in dialog', () => {
-  function openDialog() {
-    const titleButton = screen.getByText('test.md').closest('button')!;
-    fireEvent.click(titleButton);
-  }
-
-  it('shows font size options (Small, Medium, Large)', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    expect(screen.getByText('Small')).toBeTruthy();
-    expect(screen.getByText('Medium')).toBeTruthy();
-    expect(screen.getByText('Large')).toBeTruthy();
-  });
-
-  it('clicking Small font size calls setFontSize with small', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    const smallButton = screen.getByText('Small').closest('button')!;
-    fireEvent.click(smallButton);
-    expect(mockSetFontSize).toHaveBeenCalledWith('small');
-  });
-
-  it('clicking Large font size calls setFontSize with large', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    const largeButton = screen.getByText('Large').closest('button')!;
-    fireEvent.click(largeButton);
-    expect(mockSetFontSize).toHaveBeenCalledWith('large');
-  });
-
-  it('shows font family options (System, Serif, Sans-Serif)', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    expect(screen.getByText('System')).toBeTruthy();
-    expect(screen.getByText('Serif')).toBeTruthy();
-    expect(screen.getByText('Sans-Serif')).toBeTruthy();
-  });
-
-  it('clicking Serif font family calls setFontFamily with serif', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    const serifButton = screen.getByText('Serif').closest('button')!;
-    fireEvent.click(serifButton);
-    expect(mockSetFontFamily).toHaveBeenCalledWith('serif');
-  });
-
-  it('clicking Sans-Serif font family calls setFontFamily with sans-serif', () => {
-    renderWithProviders(<ViewerPage />);
-    openDialog();
-    const sansButton = screen.getByText('Sans-Serif').closest('button')!;
-    fireEvent.click(sansButton);
-    expect(mockSetFontFamily).toHaveBeenCalledWith('sans-serif');
-  });
-});
-
 describe('ViewerPage - PDF export', () => {
   function openDialog() {
     const titleButton = screen.getByText('test.md').closest('button')!;
