@@ -724,6 +724,13 @@
   color: var(--color-text-muted);
 }
 
+.footerTrademark {
+  font-size: var(--font-size-xs);
+  text-align: center;
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
 /* Authenticated Content */
 .authenticatedContent {
   flex: 1;

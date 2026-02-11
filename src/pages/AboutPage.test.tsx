@@ -35,6 +35,11 @@ vi.mock('react-icons/io5', () => ({
 }));
 
 const mockT = {
+  home: {
+    footer: {
+      trademark: 'Google Drive™ is a trademark of Google LLC.',
+    },
+  },
   about: {
     title: 'About',
     appName: 'MarkDrive',

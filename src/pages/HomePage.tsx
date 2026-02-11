@@ -547,6 +547,9 @@ export default function HomePage() {
                 <p className={styles.footerBuiltWith}>
                   {t.home.footer.builtWith}
                 </p>
+                <p className={styles.footerTrademark}>
+                  {t.home.footer.trademark}
+                </p>
               </div>
             </div>
           ) : (

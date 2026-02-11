@@ -83,6 +83,7 @@ export const ja: Translations = {
     footer: {
       builtWith: 'Vite + React で構築',
       viewOnGithub: 'GitHubで見る',
+      trademark: 'Google Drive™ is a trademark of Google LLC.',
     },
     signIn: 'Googleでサインイン',
     or: 'または',

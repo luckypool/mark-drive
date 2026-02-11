@@ -81,6 +81,7 @@ export const en = {
     footer: {
       builtWith: 'Built with Vite and React',
       viewOnGithub: 'View on GitHub',
+      trademark: 'Google Drive™ is a trademark of Google LLC.',
     },
     signIn: 'Sign in with Google',
     or: 'or',
@@ -425,6 +426,7 @@ export type Translations = {
     footer: {
       builtWith: string;
       viewOnGithub: string;
+      trademark: string;
     };
     signIn: string;
     or: string;

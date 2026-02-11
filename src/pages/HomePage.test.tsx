@@ -144,6 +144,7 @@ vi.mock('../hooks', () => ({
         footer: {
           viewOnGithub: 'View on GitHub',
           builtWith: 'Built with React',
+          trademark: 'Google Drive™ is a trademark of Google LLC.',
         },
       },
       search: {
