@@ -13,6 +13,7 @@ import {
   fetchFileContent as fetchDriveFileContent,
 } from '../services/googleDrive';
 import { storage } from '../services/storage';
+import { trackEvent } from '../utils/analytics';
 
 // 環境変数から設定を取得
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
@@ -286,6 +287,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         setAccessToken(response.access_token);
         await saveToken(response.access_token, response.expires_in || 3600);
         setIsAuthenticated(true);
+        trackEvent('login', { method: 'Google' });
         setError(null);
         const info = await fetchUserInfo(response.access_token);
         if (info) setUserInfo(info);

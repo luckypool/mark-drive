@@ -208,6 +208,11 @@ vi.mock('../services', () => ({
   addFileToHistory: vi.fn(),
 }));
 
+const mockTrackEvent = vi.fn();
+vi.mock('../utils/analytics', () => ({
+  trackEvent: (...args: unknown[]) => mockTrackEvent(...args),
+}));
+
 // ---------- helpers ----------
 
 function renderWithProviders(ui: React.ReactElement) {
@@ -222,6 +227,7 @@ beforeEach(() => {
   mockOpenPicker.mockClear();
   mockLogout.mockClear();
   mockUpdatePickerSettings.mockClear();
+  mockTrackEvent.mockClear();
 
   // Reset auth state to defaults
   Object.assign(mockAuthState, {
@@ -306,6 +312,13 @@ describe('HomePage (unauthenticated)', () => {
       },
     });
   });
+
+  it('tracks try_now_click event on Try Now click', () => {
+    renderWithProviders(<HomePage />);
+    const tryNowButtons = screen.getAllByText('Try Now — Preview a Sample');
+    fireEvent.click(tryNowButtons[0]);
+    expect(mockTrackEvent).toHaveBeenCalledWith('try_now_click');
+  });
 });
 
 describe('HomePage - Header brand', () => {
@@ -386,6 +399,30 @@ describe('HomePage (authenticated)', () => {
       expect(mockNavigate).toHaveBeenCalledWith(
         expect.stringContaining('/viewer?')
       );
+    });
+  });
+
+  it('tracks open_drive_file event on picker result', async () => {
+    mockOpenDrivePicker.mockResolvedValueOnce({ id: 'file-1', name: 'test.md' });
+    renderWithProviders(<HomePage />);
+
+    fireEvent.click(screen.getByTestId('fab'));
+
+    await vi.waitFor(() => {
+      expect(mockTrackEvent).toHaveBeenCalledWith('open_drive_file', { source: 'picker' });
+    });
+  });
+
+  it('tracks open_local_file event on local file open', async () => {
+    mockOpenPicker.mockResolvedValueOnce({ id: 'local-1', name: 'test.md', content: '# Test' });
+    renderWithProviders(<HomePage />);
+
+    // Click the "Open Local File" button
+    const localButtons = screen.getAllByText('Open Local File');
+    fireEvent.click(localButtons[0]);
+
+    await vi.waitFor(() => {
+      expect(mockTrackEvent).toHaveBeenCalledWith('open_local_file');
     });
   });
 
