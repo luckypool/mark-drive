@@ -12,7 +12,6 @@ import {
   IoColorPaletteOutline,
   IoShareOutline,
   IoFolderOutline,
-  IoFolderOpenOutline,
   IoFlashOutline,
   IoDocumentTextOutline,
   IoLogInOutline,
@@ -522,7 +521,7 @@ export default function HomePage() {
               {/* Action Buttons */}
               <div className={styles.actionRow}>
                 <button className={styles.actionButton} onClick={handleOpenDrivePicker} type="button">
-                  <IoLogoGoogle size={20} className={styles.actionButtonIcon} />
+                  <IoSearchOutline size={20} className={styles.actionButtonIcon} />
                   <span>{t.home.searchDrive}</span>
                 </button>
                 <button className={styles.actionButton} onClick={handleLocalFile} type="button">
@@ -639,7 +638,7 @@ export default function HomePage() {
       {isAuthenticated && (
         <FAB
           onPress={handleOpenDrivePicker}
-          icon={<IoFolderOpenOutline size={24} color="#ffffff" />}
+          icon={<IoSearchOutline size={24} color="#ffffff" />}
         />
       )}
 
