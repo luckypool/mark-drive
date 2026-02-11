@@ -7,6 +7,9 @@ import React, { useId, useRef, useEffect, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import moduleStyles from './MarkdownRenderer.module.css';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import mermaid from 'mermaid';
 
@@ -374,6 +377,27 @@ const generateWebStyles = (colors: ThemeColors, isDark: boolean, fontSettings: F
     font-family: monospace;
     font-size: ${fontSize.sm}px;
   }
+
+  /* KaTeX math rendering */
+  .markdown-content .katex-display {
+    margin: ${spacing.md}px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .markdown-content .katex {
+    font-size: 1.1em;
+  }
+
+  .markdown-content .katex-error {
+    color: #ef4444;
+    font-family: monospace;
+    font-size: ${fontSize.sm}px;
+    white-space: pre-wrap;
+  }
+
+  ${isDark ? `.markdown-content .katex .katex-html { color: ${colors.textPrimary}; }` : ''}
 `;
 };
 
@@ -482,7 +506,7 @@ export function MarkdownRenderer({ content, onLinkPress, themeMode: propThemeMod
     <div className={moduleStyles.container}>
       <style dangerouslySetInnerHTML={{ __html: webStyles }} />
       <div className="markdown-content">
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+        <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={components}>
           {content}
         </ReactMarkdown>
       </div>

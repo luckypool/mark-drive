@@ -6,6 +6,7 @@
 import { useState, useCallback } from 'react';
 import { markdownToHtml, PdfFontSettings } from '../utils/markdownToHtml';
 import { useFontSettings, fontFamilyStacks, fontSizeMultipliers } from '../contexts/FontSettingsContext';
+import katexCss from 'katex/dist/katex.min.css?inline';
 
 export interface UseShareReturn {
   shareContent: (content: string, fileName: string) => Promise<void>;
@@ -37,6 +38,7 @@ export function useShare(): UseShareReturn {
         const baseFontSize = Math.round(14 * fontSizeMultipliers[fontSettings.fontSize]);
         const container = document.createElement('div');
         container.innerHTML = `
+          <style>${katexCss}</style>
           <div style="font-family:${fontStack};font-size:${baseFontSize}px;color:#111111;line-height:1.8;padding:16px;">
             ${htmlContent}
           </div>
@@ -90,6 +92,7 @@ export function useShare(): UseShareReturn {
         const baseFontSize = Math.round(14 * fontSizeMultipliers[fontSettings.fontSize]);
         const container = document.createElement('div');
         container.innerHTML = `
+          <style>${katexCss}</style>
           <div style="font-family:${fontStack};font-size:${baseFontSize}px;color:#111111;line-height:1.8;padding:16px;">
             ${htmlContent}
           </div>
