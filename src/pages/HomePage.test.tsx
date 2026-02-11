@@ -19,7 +19,6 @@ vi.mock('../../assets/images/icon.png', () => ({ default: 'icon.png' }));
 vi.mock('react-icons/io5', () => {
   const stub = (name: string) => (props: any) => <span data-testid={`icon-${name}`} {...props} />;
   return {
-    IoMenu: stub('menu'),
     IoSearch: stub('search'),
     IoShieldCheckmarkOutline: stub('shield'),
     IoCodeSlashOutline: stub('code'),
@@ -38,7 +37,6 @@ vi.mock('react-icons/io5', () => {
     IoChevronDown: stub('chevron-down'),
     IoDocumentOutline: stub('doc'),
     IoPersonOutline: stub('person'),
-    IoInformationCircleOutline: stub('info'),
     IoLogOutOutline: stub('logout'),
     IoLogoGithub: stub('github'),
   };
@@ -396,19 +394,14 @@ describe('HomePage (authenticated)', () => {
   });
 });
 
-describe('HomePage - Menu & Picker settings', () => {
+describe('HomePage - Picker settings', () => {
   beforeEach(() => {
     mockAuthState.isAuthenticated = true;
     mockAuthState.userInfo = { email: 'test@example.com', name: 'Test User', picture: '' };
   });
 
-  it('opens menu when hamburger is clicked', () => {
+  it('shows picker settings on authenticated home page', () => {
     renderWithProviders(<HomePage />);
-    const menuIcon = screen.getByTestId('icon-menu');
-    const menuButton = menuIcon.closest('button')!;
-    fireEvent.click(menuButton);
-
-    // Menu should now be visible with picker settings
     expect(screen.getByText('Picker')).toBeTruthy();
     expect(screen.getByText('Owned by me')).toBeTruthy();
     expect(screen.getByText('Starred')).toBeTruthy();
@@ -416,9 +409,6 @@ describe('HomePage - Menu & Picker settings', () => {
 
   it('shows ON/OFF toggles for picker settings', () => {
     renderWithProviders(<HomePage />);
-    // Open menu
-    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
-
     const onButtons = screen.getAllByText('ON');
     const offButtons = screen.getAllByText('OFF');
     expect(onButtons.length).toBe(2); // ownedByMe and starred
@@ -427,34 +417,16 @@ describe('HomePage - Menu & Picker settings', () => {
 
   it('calls updatePickerSettings when toggling ownedByMe', () => {
     renderWithProviders(<HomePage />);
-    // Open menu
-    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
-
-    // Find the ON button for ownedByMe (first ON button)
     const onButtons = screen.getAllByText('ON');
     fireEvent.click(onButtons[0].closest('button')!);
-
     expect(mockUpdatePickerSettings).toHaveBeenCalledWith({ ownedByMe: true });
   });
 
   it('calls updatePickerSettings when toggling starred', () => {
     renderWithProviders(<HomePage />);
-    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
-
     const onButtons = screen.getAllByText('ON');
     fireEvent.click(onButtons[1].closest('button')!);
-
     expect(mockUpdatePickerSettings).toHaveBeenCalledWith({ starred: true });
-  });
-
-  it('calls logout when sign out is clicked', () => {
-    renderWithProviders(<HomePage />);
-    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
-
-    const signOutText = screen.getByText('Sign Out');
-    fireEvent.click(signOutText.closest('button')!);
-
-    expect(mockLogout).toHaveBeenCalled();
   });
 });
 

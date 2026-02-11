@@ -5,7 +5,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router';
 import {
-  IoMenu,
   IoShieldCheckmarkOutline,
   IoCodeSlashOutline,
   IoGitNetworkOutline,
@@ -22,7 +21,6 @@ import {
   IoChevronForward,
   IoChevronDown,
   IoDocumentOutline,
-  IoInformationCircleOutline,
   IoLogoGithub,
 } from 'react-icons/io5';
 import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo } from '../components/ui';
@@ -61,7 +59,6 @@ export default function HomePage() {
   const { openPicker } = useFilePicker();
   const { pickerSettings, updatePickerSettings } = usePickerSettings();
   const [recentFiles, setRecentFiles] = useState<FileHistoryItem[]>([]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     loadHistory();
@@ -73,7 +70,6 @@ export default function HomePage() {
   };
 
   const handleLocalFile = useCallback(async () => {
-    setIsMenuOpen(false);
     const file = await openPicker();
     if (file) {
       await addFileToHistory({
@@ -132,13 +128,7 @@ export default function HomePage() {
     setRecentFiles([]);
   }, []);
 
-  const handleOpenAbout = useCallback(() => {
-    setIsMenuOpen(false);
-    navigate('/about');
-  }, [navigate]);
-
   const handleLogout = useCallback(() => {
-    setIsMenuOpen(false);
     logout();
   }, [logout]);
 
@@ -212,16 +202,6 @@ export default function HomePage() {
       {/* Header - Only shown when authenticated */}
       {isAuthenticated && (
         <div className={styles.header}>
-          <button
-            className={styles.menuButton}
-            onClick={() => setIsMenuOpen(true)}
-            type="button"
-          >
-            <IoMenu size={22} />
-          </button>
-
-          <div className={styles.headerSpacer} />
-
           <div className={styles.headerActions}>
             <UserMenu
               isAuthenticated={true}
@@ -602,89 +582,40 @@ export default function HomePage() {
                   </div>
                 </div>
               )}
+
+              {/* Picker Settings & Local File */}
+              <div className={styles.homeSettings}>
+                <div className={styles.homeSettingsSection}>
+                  <span className={styles.homeSettingsLabel}>{t.menu.picker}</span>
+                  {([
+                    { key: 'ownedByMe' as const, label: t.menu.pickerOwnedByMe },
+                    { key: 'starred' as const, label: t.menu.pickerStarred },
+                  ]).map(({ key, label }) => (
+                    <div key={key} className={styles.homeSettingRow}>
+                      <span className={styles.homeSettingName}>{label}</span>
+                      <div className={styles.homeSettingOptions}>
+                        {[false, true].map((val) => (
+                          <button
+                            key={String(val)}
+                            className={`${styles.homeSettingOption}${pickerSettings[key] === val ? ` ${styles.homeSettingOptionActive}` : ''}`}
+                            onClick={() => updatePickerSettings({ [key]: val })}
+                            type="button"
+                          >
+                            {val ? t.menu.on : t.menu.off}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className={styles.homeSettingsDivider} />
+                <button className={styles.homeLocalFile} onClick={handleLocalFile} type="button">
+                  <IoFolderOutline size={18} />
+                  <span>{t.home.openLocal}</span>
+                </button>
+              </div>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Slide-in Menu Overlay */}
-      {isMenuOpen && (
-        <div
-          className={styles.menuOverlay}
-          onClick={() => setIsMenuOpen(false)}
-          role="presentation"
-        />
-      )}
-
-      {/* Slide-in Menu */}
-      <div className={`${styles.slideMenu} ${isMenuOpen ? styles.slideMenuOpen : ''}`}>
-        <div className={styles.slideMenuContent}>
-          <div className={styles.menuScrollView}>
-            {/* Picker Settings */}
-            <div className={styles.menuSection}>
-              <span className={styles.menuSectionTitle}>
-                {t.menu.picker}
-              </span>
-
-              {/* Toggle Settings */}
-              {([
-                { key: 'ownedByMe' as const, label: t.menu.pickerOwnedByMe },
-                { key: 'starred' as const, label: t.menu.pickerStarred },
-              ]).map(({ key, label }) => (
-                <div key={key} className={styles.menuSettingRow}>
-                  <span className={styles.menuSettingLabel}>{label}</span>
-                  <div className={styles.menuSettingOptions}>
-                    {[false, true].map((val) => (
-                      <button
-                        key={String(val)}
-                        className={styles.menuOption}
-                        style={{
-                          backgroundColor: pickerSettings[key] === val
-                            ? 'var(--color-accent-muted)'
-                            : 'var(--color-bg-tertiary)',
-                        }}
-                        onClick={() => updatePickerSettings({ [key]: val })}
-                        type="button"
-                      >
-                        <span
-                          className={styles.menuOptionText}
-                          style={{
-                            color: pickerSettings[key] === val
-                              ? 'var(--color-accent)'
-                              : 'var(--color-text-secondary)',
-                          }}
-                        >
-                          {val ? t.menu.on : t.menu.off}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Actions */}
-            <div className={styles.menuSectionBordered}>
-              <button
-                className={styles.menuItem}
-                onClick={handleLocalFile}
-                type="button"
-              >
-                <IoFolderOutline size={20} className={styles.menuItemIcon} />
-                <span className={styles.menuItemText}>{t.home.openLocal}</span>
-              </button>
-
-              <button
-                className={styles.menuItem}
-                onClick={handleOpenAbout}
-                type="button"
-              >
-                <IoInformationCircleOutline size={20} className={styles.menuItemIcon} />
-                <span className={styles.menuItemText}>{t.home.about}</span>
-              </button>
-            </div>
-
-          </div>
         </div>
       </div>
 
