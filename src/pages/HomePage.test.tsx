@@ -19,7 +19,6 @@ vi.mock('../../assets/images/icon.png', () => ({ default: 'icon.png' }));
 vi.mock('react-icons/io5', () => {
   const stub = (name: string) => (props: any) => <span data-testid={`icon-${name}`} {...props} />;
   return {
-    IoMenu: stub('menu'),
     IoSearch: stub('search'),
     IoShieldCheckmarkOutline: stub('shield'),
     IoCodeSlashOutline: stub('code'),
@@ -38,9 +37,9 @@ vi.mock('react-icons/io5', () => {
     IoChevronDown: stub('chevron-down'),
     IoDocumentOutline: stub('doc'),
     IoPersonOutline: stub('person'),
-    IoInformationCircleOutline: stub('info'),
     IoLogOutOutline: stub('logout'),
     IoLogoGithub: stub('github'),
+    IoSettingsOutline: stub('settings'),
   };
 });
 
@@ -53,8 +52,8 @@ vi.mock('../components/ui', () => ({
   ),
   LoadingSpinner: () => <div data-testid="loading-spinner" />,
   FAB: ({ onPress, icon }: any) => <button data-testid="fab" onClick={onPress}>{icon}</button>,
-  ThemeToggle: () => <div data-testid="theme-toggle" />,
-  LanguageToggle: () => <div data-testid="language-toggle" />,
+  SettingsMenu: () => <div data-testid="settings-menu" />,
+  UserMenu: ({ isAuthenticated }: any) => <div data-testid="user-menu" data-authenticated={isAuthenticated} />,
   GoogleLogo: ({ size }: any) => <span data-testid="google-logo" />,
 }));
 
@@ -103,6 +102,7 @@ vi.mock('../hooks', () => ({
         signIn: 'Sign in with Google',
         or: 'or',
         openLocal: 'Open Local File',
+        searchDrive: 'Search Google Drive',
         searchPlaceholder: 'Search files...',
         recentFiles: 'Recent Files',
         clear: 'Clear',
@@ -160,7 +160,7 @@ vi.mock('../hooks', () => ({
       },
       menu: {
         display: 'Display',
-        picker: 'Picker',
+        picker: 'Google Drive Search Settings',
         pickerOwnedByMe: 'Owned by me',
         pickerStarred: 'Starred',
         on: 'ON',
@@ -301,10 +301,9 @@ describe('HomePage - Header brand', () => {
     expect(matches.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('has theme toggle and language toggle in header', () => {
+  it('has settings menu in header', () => {
     renderWithProviders(<HomePage />);
-    expect(screen.getByTestId('theme-toggle')).toBeTruthy();
-    expect(screen.getByTestId('language-toggle')).toBeTruthy();
+    expect(screen.getByTestId('settings-menu')).toBeTruthy();
   });
 });
 
@@ -397,65 +396,55 @@ describe('HomePage (authenticated)', () => {
   });
 });
 
-describe('HomePage - Menu & Picker settings', () => {
+describe('HomePage - Picker settings', () => {
   beforeEach(() => {
     mockAuthState.isAuthenticated = true;
     mockAuthState.userInfo = { email: 'test@example.com', name: 'Test User', picture: '' };
   });
 
-  it('opens menu when hamburger is clicked', () => {
-    renderWithProviders(<HomePage />);
-    const menuIcon = screen.getByTestId('icon-menu');
-    const menuButton = menuIcon.closest('button')!;
-    fireEvent.click(menuButton);
+  const openAccordion = () => {
+    // Click the accordion trigger to expand picker settings
+    fireEvent.click(screen.getByText('Google Drive Search Settings').closest('button')!);
+  };
 
-    // Menu should now be visible with picker settings
-    expect(screen.getByText('Picker')).toBeTruthy();
+  it('shows picker accordion trigger on authenticated home page', () => {
+    renderWithProviders(<HomePage />);
+    expect(screen.getByText('Google Drive Search Settings')).toBeTruthy();
+  });
+
+  it('expands to show settings when accordion is clicked', () => {
+    renderWithProviders(<HomePage />);
+    // Settings hidden by default
+    expect(screen.queryByText('Owned by me')).toBeNull();
+    // Open accordion
+    openAccordion();
     expect(screen.getByText('Owned by me')).toBeTruthy();
     expect(screen.getByText('Starred')).toBeTruthy();
   });
 
   it('shows ON/OFF toggles for picker settings', () => {
     renderWithProviders(<HomePage />);
-    // Open menu
-    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
-
+    openAccordion();
     const onButtons = screen.getAllByText('ON');
     const offButtons = screen.getAllByText('OFF');
-    expect(onButtons.length).toBe(2); // ownedByMe and starred
+    expect(onButtons.length).toBe(2);
     expect(offButtons.length).toBe(2);
   });
 
   it('calls updatePickerSettings when toggling ownedByMe', () => {
     renderWithProviders(<HomePage />);
-    // Open menu
-    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
-
-    // Find the ON button for ownedByMe (first ON button)
+    openAccordion();
     const onButtons = screen.getAllByText('ON');
     fireEvent.click(onButtons[0].closest('button')!);
-
     expect(mockUpdatePickerSettings).toHaveBeenCalledWith({ ownedByMe: true });
   });
 
   it('calls updatePickerSettings when toggling starred', () => {
     renderWithProviders(<HomePage />);
-    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
-
+    openAccordion();
     const onButtons = screen.getAllByText('ON');
     fireEvent.click(onButtons[1].closest('button')!);
-
     expect(mockUpdatePickerSettings).toHaveBeenCalledWith({ starred: true });
-  });
-
-  it('calls logout when sign out is clicked', () => {
-    renderWithProviders(<HomePage />);
-    fireEvent.click(screen.getByTestId('icon-menu').closest('button')!);
-
-    const signOutText = screen.getByText('Sign Out');
-    fireEvent.click(signOutText.closest('button')!);
-
-    expect(mockLogout).toHaveBeenCalled();
   });
 });
 

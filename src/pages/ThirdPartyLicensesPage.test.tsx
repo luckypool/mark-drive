@@ -39,8 +39,7 @@ vi.mock('react-icons/io5', () => ({
 }));
 
 vi.mock('../components/ui', () => ({
-  ThemeToggle: () => <button data-testid="theme-toggle">ThemeToggle</button>,
-  LanguageToggle: () => <button data-testid="language-toggle">LanguageToggle</button>,
+  SettingsMenu: () => <div data-testid="settings-menu" />,
 }));
 
 const MOCK_LICENSE_FILE = `This file was generated with the generate-license-file npm package!

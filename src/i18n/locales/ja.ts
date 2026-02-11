@@ -87,6 +87,7 @@ export const ja: Translations = {
     signIn: 'Googleでサインイン',
     or: 'または',
     openLocal: 'ローカルファイルを開く',
+    searchDrive: 'Google Drive を検索',
     learnMore: 'MarkDriveについて詳しく',
     searchPlaceholder: 'Google Driveを検索...',
     recentFiles: '最近のファイル',
@@ -229,6 +230,8 @@ export const ja: Translations = {
     dark: 'ダーク',
     system: 'システム',
     language: '言語',
+    english: 'English',
+    japanese: '日本語',
   },
 
   // Font Settings
@@ -251,7 +254,7 @@ export const ja: Translations = {
     title: 'メニュー',
     account: 'アカウント',
     display: '表示設定',
-    picker: 'Google Drive',
+    picker: 'Google Drive 検索設定',
     pickerOwnedByMe: '自分のファイルのみ',
     pickerStarred: 'スター付きのみ',
     on: 'ON',

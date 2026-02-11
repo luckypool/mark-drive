@@ -20,10 +20,9 @@ import {
   IoCheckmarkCircle,
   IoAlertCircle,
 } from 'react-icons/io5';
-import { Button } from '../components/ui';
+import { Button, SettingsMenu } from '../components/ui';
 import { MarkdownRenderer } from '../components/markdown';
 import { useGoogleAuth, useShare, useTheme, useLanguage, useMarkdownEditor, getFileHandle } from '../hooks';
-import { useFontSettings, type FontSize, type FontFamily } from '../contexts/FontSettingsContext';
 import { CodeMirrorEditor } from '../components/editor/CodeMirrorEditor';
 import { addFileToHistory } from '../services';
 import styles from './ViewerPage.module.css';
@@ -38,8 +37,6 @@ type ViewerParams = {
 export default function ViewerPage() {
   const { resolvedMode } = useTheme();
   const { t } = useLanguage();
-  const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
-
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -290,30 +287,6 @@ export default function ViewerPage() {
     return { lines, chars };
   }, [editor.editContent]);
 
-  const fontSizeOptions: { value: FontSize; labelKey: 'small' | 'medium' | 'large' }[] = [
-    { value: 'small', labelKey: 'small' },
-    { value: 'medium', labelKey: 'medium' },
-    { value: 'large', labelKey: 'large' },
-  ];
-
-  const fontFamilyOptions: { value: FontFamily; labelKey: 'system' | 'serif' | 'sansSerif' }[] = [
-    { value: 'system', labelKey: 'system' },
-    { value: 'serif', labelKey: 'serif' },
-    { value: 'sans-serif', labelKey: 'sansSerif' },
-  ];
-
-  const fontSizeLabels: Record<'small' | 'medium' | 'large', string> = {
-    small: t.fontSettings.small,
-    medium: t.fontSettings.medium,
-    large: t.fontSettings.large,
-  };
-
-  const fontFamilyLabels: Record<'system' | 'serif' | 'sansSerif', string> = {
-    system: t.fontSettings.system,
-    serif: t.fontSettings.serif,
-    sansSerif: t.fontSettings.sansSerif,
-  };
-
   return (
     <div className={styles.container}>
       {/* Header */}
@@ -414,6 +387,7 @@ export default function ViewerPage() {
             >
               {isFullscreen ? <IoContractOutline size={24} /> : <IoExpandOutline size={24} />}
             </button>
+            <SettingsMenu variant="full" />
           </div>
         </div>
       )}
@@ -549,79 +523,6 @@ export default function ViewerPage() {
                 <span className={styles.fileInfoValue}>
                   {params.source === 'google-drive' ? t.fileInfo.googleDrive : t.fileInfo.local}
                 </span>
-              </div>
-            </div>
-
-            {/* Display Settings */}
-            <div className={styles.dialogSection}>
-              <span className={styles.dialogSectionTitle}>
-                {t.menu.display}
-              </span>
-
-              {/* Font Size */}
-              <div className={styles.dialogSettingRow}>
-                <span className={styles.dialogSettingLabel}>
-                  {t.fontSettings.fontSize}
-                </span>
-                <div className={styles.dialogSettingOptions}>
-                  {fontSizeOptions.map(option => (
-                    <button
-                      key={option.value}
-                      className={styles.dialogOption}
-                      style={{
-                        backgroundColor: fontSettings.fontSize === option.value
-                          ? 'var(--color-accent-muted)'
-                          : 'var(--color-bg-tertiary)',
-                      }}
-                      onClick={() => setFontSize(option.value)}
-                      type="button"
-                    >
-                      <span
-                        className={styles.dialogOptionText}
-                        style={{
-                          color: fontSettings.fontSize === option.value
-                            ? 'var(--color-accent)'
-                            : 'var(--color-text-secondary)',
-                        }}
-                      >
-                        {fontSizeLabels[option.labelKey]}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Font Family */}
-              <div className={styles.dialogSettingRow}>
-                <span className={styles.dialogSettingLabel}>
-                  {t.fontSettings.fontFamily}
-                </span>
-                <div className={styles.dialogSettingOptions}>
-                  {fontFamilyOptions.map(option => (
-                    <button
-                      key={option.value}
-                      className={styles.dialogOption}
-                      style={{
-                        backgroundColor: fontSettings.fontFamily === option.value
-                          ? 'var(--color-accent-muted)'
-                          : 'var(--color-bg-tertiary)',
-                      }}
-                      onClick={() => setFontFamily(option.value)}
-                      type="button"
-                    >
-                      <span
-                        className={styles.dialogOptionText}
-                        style={{
-                          color: fontSettings.fontFamily === option.value
-                            ? 'var(--color-accent)'
-                            : 'var(--color-text-secondary)',
-                        }}
-                      >
-                        {fontFamilyLabels[option.labelKey]}
-                      </span>
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
 

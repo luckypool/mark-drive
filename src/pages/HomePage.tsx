@@ -5,7 +5,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router';
 import {
-  IoMenu,
   IoShieldCheckmarkOutline,
   IoCodeSlashOutline,
   IoGitNetworkOutline,
@@ -13,7 +12,6 @@ import {
   IoColorPaletteOutline,
   IoShareOutline,
   IoFolderOutline,
-  IoFolderOpenOutline,
   IoFlashOutline,
   IoDocumentTextOutline,
   IoLogInOutline,
@@ -22,16 +20,13 @@ import {
   IoChevronForward,
   IoChevronDown,
   IoDocumentOutline,
-  IoPersonOutline,
-  IoInformationCircleOutline,
-  IoLogOutOutline,
   IoLogoGithub,
+  IoSettingsOutline,
 } from 'react-icons/io5';
-import { Button, LoadingSpinner, FAB, ThemeToggle, LanguageToggle, GoogleLogo } from '../components/ui';
+import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo } from '../components/ui';
 import { AddToHomeScreenBanner } from '../components/ui/AddToHomeScreenBanner';
 import { useGoogleAuth, useTheme, useLanguage, usePickerSettings } from '../hooks';
 import { useFilePicker } from '../hooks';
-import { useFontSettings, FontSize, FontFamily } from '../contexts/FontSettingsContext';
 import { getFileHistory, clearFileHistory, addFileToHistory } from '../services';
 import type { FileHistoryItem } from '../types';
 import iconImage from '../../assets/images/icon.png';
@@ -51,7 +46,6 @@ export default function HomePage() {
   }, []);
 
   const isDesktop = windowWidth >= 768;
-  const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
   const {
     isLoading,
     isApiLoaded,
@@ -65,7 +59,7 @@ export default function HomePage() {
   const { openPicker } = useFilePicker();
   const { pickerSettings, updatePickerSettings } = usePickerSettings();
   const [recentFiles, setRecentFiles] = useState<FileHistoryItem[]>([]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPickerSettingsOpen, setIsPickerSettingsOpen] = useState(false);
 
   useEffect(() => {
     loadHistory();
@@ -77,7 +71,6 @@ export default function HomePage() {
   };
 
   const handleLocalFile = useCallback(async () => {
-    setIsMenuOpen(false);
     const file = await openPicker();
     if (file) {
       await addFileToHistory({
@@ -136,13 +129,7 @@ export default function HomePage() {
     setRecentFiles([]);
   }, []);
 
-  const handleOpenAbout = useCallback(() => {
-    setIsMenuOpen(false);
-    navigate('/about');
-  }, [navigate]);
-
   const handleLogout = useCallback(() => {
-    setIsMenuOpen(false);
     logout();
   }, [logout]);
 
@@ -159,30 +146,6 @@ export default function HomePage() {
     if (hours < 24) return t.common.hoursAgo.replace('{hours}', String(hours));
     if (days < 7) return t.common.daysAgo.replace('{days}', String(days));
     return date.toLocaleDateString(language === 'ja' ? 'ja-JP' : 'en-US');
-  };
-
-  const fontSizeOptions: { value: FontSize; labelKey: 'small' | 'medium' | 'large' }[] = [
-    { value: 'small', labelKey: 'small' },
-    { value: 'medium', labelKey: 'medium' },
-    { value: 'large', labelKey: 'large' },
-  ];
-
-  const fontFamilyOptions: { value: FontFamily; labelKey: 'system' | 'serif' | 'sansSerif' }[] = [
-    { value: 'system', labelKey: 'system' },
-    { value: 'serif', labelKey: 'serif' },
-    { value: 'sans-serif', labelKey: 'sansSerif' },
-  ];
-
-  const fontSizeLabels: Record<'small' | 'medium' | 'large', string> = {
-    small: t.fontSettings.small,
-    medium: t.fontSettings.medium,
-    large: t.fontSettings.large,
-  };
-
-  const fontFamilyLabels: Record<'system' | 'serif' | 'sansSerif', string> = {
-    system: t.fontSettings.system,
-    serif: t.fontSettings.serif,
-    sansSerif: t.fontSettings.sansSerif,
   };
 
   type StepIconName = 'log-in-outline' | 'search-outline' | 'eye-outline';
@@ -226,8 +189,13 @@ export default function HomePage() {
             <span className={styles.headerAppName}>MarkDrive</span>
           </div>
           <div className={styles.headerActions}>
-            <LanguageToggle />
-            <ThemeToggle />
+            <UserMenu
+              isAuthenticated={false}
+              userInfo={null}
+              onSignIn={authenticate}
+              onSignOut={logout}
+            />
+            <SettingsMenu variant="full" />
           </div>
         </div>
       )}
@@ -235,19 +203,14 @@ export default function HomePage() {
       {/* Header - Only shown when authenticated */}
       {isAuthenticated && (
         <div className={styles.header}>
-          <button
-            className={styles.menuButton}
-            onClick={() => setIsMenuOpen(true)}
-            type="button"
-          >
-            <IoMenu size={22} />
-          </button>
-
-          <div className={styles.headerSpacer} />
-
           <div className={styles.headerActions}>
-            <LanguageToggle />
-            <ThemeToggle />
+            <UserMenu
+              isAuthenticated={true}
+              userInfo={userInfo}
+              onSignIn={authenticate}
+              onSignOut={handleLogout}
+            />
+            <SettingsMenu variant="full" />
           </div>
         </div>
       )}
@@ -555,6 +518,58 @@ export default function HomePage() {
             </div>
           ) : (
             <div className={styles.authenticatedContent}>
+              {/* Action Buttons */}
+              <div className={styles.actionRow}>
+                <button className={styles.actionButton} onClick={handleOpenDrivePicker} type="button">
+                  <IoSearchOutline size={20} className={styles.actionButtonIcon} />
+                  <span>{t.home.searchDrive}</span>
+                </button>
+                <button className={styles.actionButton} onClick={handleLocalFile} type="button">
+                  <IoFolderOutline size={20} className={styles.actionButtonIcon} />
+                  <span>{t.home.openLocal}</span>
+                </button>
+              </div>
+
+              {/* Picker Settings (collapsible, secondary) */}
+              <div className={styles.pickerAccordion}>
+                <button
+                  className={styles.pickerAccordionTrigger}
+                  onClick={() => setIsPickerSettingsOpen((prev) => !prev)}
+                  type="button"
+                >
+                  <IoSettingsOutline size={14} className={styles.pickerAccordionIcon} />
+                  <span className={styles.pickerAccordionLabel}>{t.menu.picker}</span>
+                  <IoChevronDown
+                    size={12}
+                    className={`${styles.pickerAccordionChevron}${isPickerSettingsOpen ? ` ${styles.pickerAccordionChevronOpen}` : ''}`}
+                  />
+                </button>
+                {isPickerSettingsOpen && (
+                  <div className={styles.pickerAccordionBody}>
+                    {([
+                      { key: 'ownedByMe' as const, label: t.menu.pickerOwnedByMe },
+                      { key: 'starred' as const, label: t.menu.pickerStarred },
+                    ]).map(({ key, label }) => (
+                      <div key={key} className={styles.homeSettingRow}>
+                        <span className={styles.homeSettingName}>{label}</span>
+                        <div className={styles.homeSettingOptions}>
+                          {[false, true].map((val) => (
+                            <button
+                              key={String(val)}
+                              className={`${styles.homeSettingOption}${pickerSettings[key] === val ? ` ${styles.homeSettingOptionActive}` : ''}`}
+                              onClick={() => updatePickerSettings({ [key]: val })}
+                              type="button"
+                            >
+                              {val ? t.menu.on : t.menu.off}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {/* Recent Files */}
               {recentFiles.length > 0 && (
                 <div className={styles.recentSection}>
@@ -601,12 +616,6 @@ export default function HomePage() {
 
               {recentFiles.length === 0 && (
                 <div className={styles.emptyState}>
-                  <IoSearchOutline size={48} />
-                  <span className={styles.emptyStateText}>
-                    {t.home.searchPlaceholder}
-                  </span>
-
-                  {/* Privacy Notice */}
                   <div className={styles.privacyNotice}>
                     <IoShieldCheckmarkOutline size={20} className={styles.privacyNoticeIcon} />
                     <div className={styles.privacyContent}>
@@ -625,201 +634,11 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Slide-in Menu Overlay */}
-      {isMenuOpen && (
-        <div
-          className={styles.menuOverlay}
-          onClick={() => setIsMenuOpen(false)}
-          role="presentation"
-        />
-      )}
-
-      {/* Slide-in Menu */}
-      <div className={`${styles.slideMenu} ${isMenuOpen ? styles.slideMenuOpen : ''}`}>
-        <div className={styles.slideMenuContent}>
-          {/* User Info */}
-          {userInfo && (
-            <div className={styles.menuUserSection}>
-              {userInfo.photoUrl ? (
-                <img
-                  src={userInfo.photoUrl}
-                  alt={userInfo.displayName}
-                  className={styles.menuAvatarImage}
-                />
-              ) : (
-                <div className={styles.menuAvatar}>
-                  <IoPersonOutline size={28} />
-                </div>
-              )}
-              <div className={styles.menuUserInfo}>
-                <span className={styles.menuUserName}>
-                  {userInfo.displayName}
-                </span>
-                <span className={styles.menuUserEmail}>
-                  {userInfo.email}
-                </span>
-              </div>
-            </div>
-          )}
-
-          <div className={styles.menuScrollView}>
-            {/* Display Settings */}
-            <div className={styles.menuSection}>
-              <span className={styles.menuSectionTitle}>
-                {t.menu.display}
-              </span>
-
-              {/* Font Size */}
-              <div className={styles.menuSettingRow}>
-                <span className={styles.menuSettingLabel}>
-                  {t.fontSettings.fontSize}
-                </span>
-                <div className={styles.menuSettingOptions}>
-                  {fontSizeOptions.map(option => (
-                    <button
-                      key={option.value}
-                      className={styles.menuOption}
-                      style={{
-                        backgroundColor: fontSettings.fontSize === option.value
-                          ? 'var(--color-accent-muted)'
-                          : 'var(--color-bg-tertiary)',
-                      }}
-                      onClick={() => setFontSize(option.value)}
-                      type="button"
-                    >
-                      <span
-                        className={styles.menuOptionText}
-                        style={{
-                          color: fontSettings.fontSize === option.value
-                            ? 'var(--color-accent)'
-                            : 'var(--color-text-secondary)',
-                        }}
-                      >
-                        {fontSizeLabels[option.labelKey]}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Font Family */}
-              <div className={styles.menuSettingRow}>
-                <span className={styles.menuSettingLabel}>
-                  {t.fontSettings.fontFamily}
-                </span>
-                <div className={styles.menuSettingOptions}>
-                  {fontFamilyOptions.map(option => (
-                    <button
-                      key={option.value}
-                      className={styles.menuOption}
-                      style={{
-                        backgroundColor: fontSettings.fontFamily === option.value
-                          ? 'var(--color-accent-muted)'
-                          : 'var(--color-bg-tertiary)',
-                      }}
-                      onClick={() => setFontFamily(option.value)}
-                      type="button"
-                    >
-                      <span
-                        className={styles.menuOptionText}
-                        style={{
-                          color: fontSettings.fontFamily === option.value
-                            ? 'var(--color-accent)'
-                            : 'var(--color-text-secondary)',
-                        }}
-                      >
-                        {fontFamilyLabels[option.labelKey]}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Picker Settings */}
-            <div className={styles.menuSection}>
-              <span className={styles.menuSectionTitle}>
-                {t.menu.picker}
-              </span>
-
-              {/* Toggle Settings */}
-              {([
-                { key: 'ownedByMe' as const, label: t.menu.pickerOwnedByMe },
-                { key: 'starred' as const, label: t.menu.pickerStarred },
-              ]).map(({ key, label }) => (
-                <div key={key} className={styles.menuSettingRow}>
-                  <span className={styles.menuSettingLabel}>{label}</span>
-                  <div className={styles.menuSettingOptions}>
-                    {[false, true].map((val) => (
-                      <button
-                        key={String(val)}
-                        className={styles.menuOption}
-                        style={{
-                          backgroundColor: pickerSettings[key] === val
-                            ? 'var(--color-accent-muted)'
-                            : 'var(--color-bg-tertiary)',
-                        }}
-                        onClick={() => updatePickerSettings({ [key]: val })}
-                        type="button"
-                      >
-                        <span
-                          className={styles.menuOptionText}
-                          style={{
-                            color: pickerSettings[key] === val
-                              ? 'var(--color-accent)'
-                              : 'var(--color-text-secondary)',
-                          }}
-                        >
-                          {val ? t.menu.on : t.menu.off}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Actions */}
-            <div className={styles.menuSectionBordered}>
-              <button
-                className={styles.menuItem}
-                onClick={handleLocalFile}
-                type="button"
-              >
-                <IoFolderOutline size={20} className={styles.menuItemIcon} />
-                <span className={styles.menuItemText}>{t.home.openLocal}</span>
-              </button>
-
-              <button
-                className={styles.menuItem}
-                onClick={handleOpenAbout}
-                type="button"
-              >
-                <IoInformationCircleOutline size={20} className={styles.menuItemIcon} />
-                <span className={styles.menuItemText}>{t.home.about}</span>
-              </button>
-            </div>
-
-            {/* Sign Out */}
-            <div className={styles.menuSectionBordered}>
-              <button
-                className={styles.menuItem}
-                onClick={handleLogout}
-                type="button"
-              >
-                <IoLogOutOutline size={20} className={styles.menuItemDanger} />
-                <span className={`${styles.menuItemText} ${styles.menuItemDanger}`}>{t.home.signOut}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Drive Picker FAB */}
       {isAuthenticated && (
         <FAB
           onPress={handleOpenDrivePicker}
-          icon={<IoFolderOpenOutline size={24} color="#ffffff" />}
+          icon={<IoSearchOutline size={24} color="#ffffff" />}
         />
       )}
 

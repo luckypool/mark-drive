@@ -105,6 +105,15 @@ VITE_GOOGLE_API_KEY=xxx
 VITE_GOOGLE_CLIENT_ID=xxx
 ```
 
+## テスト
+
+- **新規コンポーネント・フック・ユーティリティには必ずテストを追加する**
+- テストファイルは対象ファイルと同じディレクトリに `*.test.tsx` / `*.test.ts` として配置
+- テストフレームワーク: Vitest + @testing-library/react
+- jsdom 環境が必要な場合はファイル先頭に `/** @vitest-environment jsdom */` を記述
+- hooks や context の mock パターンは既存テストファイルを参考にする
+- `bun test` で全テスト通過、`bun run test:coverage` でカバレッジ確認
+
 ## 重要な注意事項
 
 1. **Web 専用**: Vite + React による Web アプリケーション

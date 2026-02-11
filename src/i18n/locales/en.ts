@@ -85,6 +85,7 @@ export const en = {
     signIn: 'Sign in with Google',
     or: 'or',
     openLocal: 'Open Local File',
+    searchDrive: 'Search Google Drive',
     learnMore: 'Learn more about MarkDrive',
     searchPlaceholder: 'Search Google Drive...',
     recentFiles: 'Recent Files',
@@ -227,6 +228,8 @@ export const en = {
     dark: 'Dark',
     system: 'System',
     language: 'Language',
+    english: 'English',
+    japanese: 'Japanese',
   },
 
   // Font Settings
@@ -249,7 +252,7 @@ export const en = {
     title: 'Menu',
     account: 'Account',
     display: 'Display Settings',
-    picker: 'Google Drive',
+    picker: 'Google Drive Search Settings',
     pickerOwnedByMe: 'My Files Only',
     pickerStarred: 'Starred Only',
     on: 'ON',
@@ -421,6 +424,7 @@ export type Translations = {
     signIn: string;
     or: string;
     openLocal: string;
+    searchDrive: string;
     learnMore: string;
     searchPlaceholder: string;
     recentFiles: string;
@@ -531,6 +535,8 @@ export type Translations = {
     dark: string;
     system: string;
     language: string;
+    english: string;
+    japanese: string;
   };
   fontSettings: {
     title: string;

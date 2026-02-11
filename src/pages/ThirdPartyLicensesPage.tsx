@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { IoArrowBack, IoChevronDown, IoChevronUp } from 'react-icons/io5';
 import { useLanguage } from '../hooks';
-import { ThemeToggle, LanguageToggle } from '../components/ui';
+import { SettingsMenu } from '../components/ui';
 import styles from './ThirdPartyLicensesPage.module.css';
 
 interface LicenseGroup {
@@ -116,8 +116,7 @@ export default function ThirdPartyLicensesPage() {
         </button>
         <span className={styles.headerTitle}>{t.about.thirdPartyLicenses}</span>
         <div className={styles.headerActions}>
-          <LanguageToggle />
-          <ThemeToggle />
+          <SettingsMenu variant="basic" />
         </div>
       </div>
 
