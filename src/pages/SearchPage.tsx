@@ -10,6 +10,7 @@ import {
 } from 'react-icons/io5';
 import { GoogleLogo } from '../components/ui';
 import { useGoogleAuth, useLanguage } from '../hooks';
+import { trackEvent } from '../utils/analytics';
 import styles from './SearchPage.module.css';
 
 export default function SearchPage() {
@@ -37,6 +38,7 @@ export default function SearchPage() {
   const handlePickFile = useCallback(async () => {
     const result = await openDrivePicker();
     if (result) {
+      trackEvent('open_drive_file', { source: 'picker' });
       const params = new URLSearchParams({
         id: result.id,
         name: result.name,

@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router';
 import { useGoogleAuth, useLanguage } from '../hooks';
 import { fetchFileInfo } from '../services/googleDrive';
 import { GoogleLogo } from '../components/ui';
+import { trackEvent } from '../utils/analytics';
 import styles from './OpenPage.module.css';
 
 interface DriveOpenState {
@@ -52,6 +53,7 @@ export default function OpenPage() {
     try {
       const info = await fetchFileInfo(accessToken, fileId);
       const name = info?.name ?? `${fileId}.md`;
+      trackEvent('open_drive_file', { source: 'open_with' });
       navigate(`/viewer?id=${encodeURIComponent(fileId)}&name=${encodeURIComponent(name)}&source=google-drive`, {
         replace: true,
       });

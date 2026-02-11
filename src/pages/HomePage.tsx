@@ -32,6 +32,7 @@ import { getFileHistory, clearFileHistory, addFileToHistory } from '../services'
 import type { FileHistoryItem } from '../types';
 import sampleMd from '../../docs/markdrive-sample.md?raw';
 import iconImage from '../../assets/images/icon.png';
+import { trackEvent } from '../utils/analytics';
 import styles from './HomePage.module.css';
 
 export default function HomePage() {
@@ -73,6 +74,7 @@ export default function HomePage() {
   };
 
   const handleTryNow = useCallback(() => {
+    trackEvent('try_now_click');
     navigate('/viewer', {
       state: {
         id: 'sample-markdrive',
@@ -91,6 +93,7 @@ export default function HomePage() {
         name: file.name,
         source: 'local',
       });
+      trackEvent('open_local_file');
       const params = new URLSearchParams({
         id: file.id,
         name: file.name,
@@ -104,6 +107,7 @@ export default function HomePage() {
   const handleOpenDrivePicker = useCallback(async () => {
     const result = await openDrivePicker({ settings: pickerSettings, locale: language });
     if (result) {
+      trackEvent('open_drive_file', { source: 'picker' });
       const params = new URLSearchParams({
         id: result.id,
         name: result.name,

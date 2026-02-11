@@ -338,7 +338,7 @@ export const ja: Translations = {
         },
         notCollect: {
           title: '3. 収集しない情報',
-          body: '以下の情報は収集、保存、送信しません。\n\nなお、サービス改善のためアナリティクスサービス（Google Analytics、Vercel Analytics、Vercel Speed Insights）を使用し、ページビュー、おおよその地域情報、デバイス・ブラウザの種類、Web Vitalsパフォーマンス指標などの匿名データを収集しています。Vercel AnalyticsおよびSpeed InsightsはCookieを使用せず、個人を特定する情報は収集しません。',
+          body: '以下の情報は収集、保存、送信しません。\n\nなお、サービス改善のためアナリティクスサービス（Google Analytics、Vercel Analytics、Vercel Speed Insights）を使用し、ページビュー、機能の利用状況（ログイン、ファイルを開く、PDF出力などの操作イベント）、おおよその地域情報、デバイス・ブラウザの種類、Web Vitalsパフォーマンス指標などの匿名データを収集しています。これらのイベントにはファイル名・ファイルID・個人情報は含まれません。Vercel AnalyticsおよびSpeed InsightsはCookieを使用せず、個人を特定する情報は収集しません。',
           items: [
             'Markdownファイルの内容',
             '個人情報やプロフィールデータ',
@@ -358,7 +358,7 @@ export const ja: Translations = {
           body: '本サービスは以下のサードパーティサービスと連携しています。\n\nGoogleおよびVercelがお客様のデータをどのように取り扱うかについては、それぞれのプライバシーポリシーをご確認ください。',
           items: [
             'Google Drive API: ファイルアクセスに使用。Googleでサインインすると、認証はGoogleのIdentity Servicesによって直接処理されます。',
-            'Google Analytics: 匿名のアクセス解析に使用。オプトアウトをご希望の場合は、Google Analytics オプトアウトアドオンをご利用ください。',
+            'Google Analytics: 匿名のアクセス解析（ページビュー・機能の利用状況）に使用。オプトアウトをご希望の場合は、Google Analytics オプトアウトアドオンをご利用ください。',
             'Vercel Analytics: 匿名のページビュー解析に使用。Cookieは使用せず、個人を特定する情報は収集しません。IPアドレスは国・地域の特定にのみ使用され、保存されません。',
             'Vercel Speed Insights: 匿名のパフォーマンス監視（Web Vitals）に使用。Cookieは使用せず、個人を特定する情報は収集しません。',
           ],

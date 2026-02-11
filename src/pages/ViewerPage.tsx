@@ -25,6 +25,7 @@ import { MarkdownRenderer } from '../components/markdown';
 import { useGoogleAuth, useShare, useTheme, useLanguage, useMarkdownEditor, getFileHandle } from '../hooks';
 import { CodeMirrorEditor } from '../components/editor/CodeMirrorEditor';
 import { addFileToHistory } from '../services';
+import { trackEvent } from '../utils/analytics';
 import styles from './ViewerPage.module.css';
 
 type ViewerParams = {
@@ -260,6 +261,7 @@ export default function ViewerPage() {
   const handleDownloadPdf = async () => {
     if (content && params.name) {
       setShowFileInfo(false);
+      trackEvent('export_pdf');
       await shareContent(content, params.name);
     }
   };
