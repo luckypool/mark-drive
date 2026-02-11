@@ -17,7 +17,7 @@ import {
   IoLockClosedOutline,
 } from 'react-icons/io5';
 import { useLanguage } from '../hooks';
-import { ThemeToggle, LanguageToggle } from '../components/ui';
+import { SettingsMenu } from '../components/ui';
 import iconImage from '../../assets/images/icon.png';
 import styles from './AboutPage.module.css';
 
@@ -42,8 +42,7 @@ export default function AboutPage() {
         </button>
         <span className={styles.headerTitle}>{t.about.title}</span>
         <div className={styles.headerActions}>
-          <LanguageToggle />
-          <ThemeToggle />
+          <SettingsMenu variant="basic" />
         </div>
       </div>
 

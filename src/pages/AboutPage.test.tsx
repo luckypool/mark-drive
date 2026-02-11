@@ -17,8 +17,7 @@ vi.mock('react-router', () => ({
 vi.mock('../../assets/images/icon.png', () => ({ default: 'icon.png' }));
 
 vi.mock('../components/ui', () => ({
-  ThemeToggle: () => <div data-testid="theme-toggle" />,
-  LanguageToggle: () => <div data-testid="language-toggle" />,
+  SettingsMenu: () => <div data-testid="settings-menu" />,
 }));
 
 vi.mock('react-icons/io5', () => ({
@@ -150,14 +149,9 @@ describe('AboutPage', () => {
 });
 
 describe('AboutPage - Header structure', () => {
-  it('header renders theme toggle', () => {
+  it('header renders settings menu', () => {
     renderWithProviders(<AboutPage />);
-    expect(screen.getByTestId('theme-toggle')).toBeTruthy();
-  });
-
-  it('header renders language toggle', () => {
-    renderWithProviders(<AboutPage />);
-    expect(screen.getByTestId('language-toggle')).toBeTruthy();
+    expect(screen.getByTestId('settings-menu')).toBeTruthy();
   });
 
   it('header renders back button and title in the same container', () => {

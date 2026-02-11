@@ -5,7 +5,7 @@
 import { useNavigate } from 'react-router';
 import { IoArrowBack, IoLogoGithub, IoOpenOutline } from 'react-icons/io5';
 import { useLanguage } from '../hooks';
-import { ThemeToggle, LanguageToggle } from '../components/ui';
+import { SettingsMenu } from '../components/ui';
 import styles from './PrivacyPage.module.css';
 
 export default function PrivacyPage() {
@@ -22,8 +22,7 @@ export default function PrivacyPage() {
         </button>
         <span className={styles.headerTitle}>{t.legal.privacy.title}</span>
         <div className={styles.headerActions}>
-          <LanguageToggle />
-          <ThemeToggle />
+          <SettingsMenu variant="basic" />
         </div>
       </div>
 

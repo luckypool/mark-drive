@@ -20,7 +20,7 @@ import {
   IoCheckmarkCircle,
   IoAlertCircle,
 } from 'react-icons/io5';
-import { Button } from '../components/ui';
+import { Button, SettingsMenu } from '../components/ui';
 import { MarkdownRenderer } from '../components/markdown';
 import { useGoogleAuth, useShare, useTheme, useLanguage, useMarkdownEditor, getFileHandle } from '../hooks';
 import { useFontSettings, type FontSize, type FontFamily } from '../contexts/FontSettingsContext';
@@ -414,6 +414,7 @@ export default function ViewerPage() {
             >
               {isFullscreen ? <IoContractOutline size={24} /> : <IoExpandOutline size={24} />}
             </button>
+            <SettingsMenu variant="basic" />
           </div>
         </div>
       )}

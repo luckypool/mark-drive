@@ -27,11 +27,10 @@ import {
   IoLogOutOutline,
   IoLogoGithub,
 } from 'react-icons/io5';
-import { Button, LoadingSpinner, FAB, ThemeToggle, LanguageToggle, GoogleLogo } from '../components/ui';
+import { Button, LoadingSpinner, FAB, SettingsMenu, GoogleLogo } from '../components/ui';
 import { AddToHomeScreenBanner } from '../components/ui/AddToHomeScreenBanner';
 import { useGoogleAuth, useTheme, useLanguage, usePickerSettings } from '../hooks';
 import { useFilePicker } from '../hooks';
-import { useFontSettings, FontSize, FontFamily } from '../contexts/FontSettingsContext';
 import { getFileHistory, clearFileHistory, addFileToHistory } from '../services';
 import type { FileHistoryItem } from '../types';
 import iconImage from '../../assets/images/icon.png';
@@ -51,7 +50,6 @@ export default function HomePage() {
   }, []);
 
   const isDesktop = windowWidth >= 768;
-  const { settings: fontSettings, setFontSize, setFontFamily } = useFontSettings();
   const {
     isLoading,
     isApiLoaded,
@@ -161,30 +159,6 @@ export default function HomePage() {
     return date.toLocaleDateString(language === 'ja' ? 'ja-JP' : 'en-US');
   };
 
-  const fontSizeOptions: { value: FontSize; labelKey: 'small' | 'medium' | 'large' }[] = [
-    { value: 'small', labelKey: 'small' },
-    { value: 'medium', labelKey: 'medium' },
-    { value: 'large', labelKey: 'large' },
-  ];
-
-  const fontFamilyOptions: { value: FontFamily; labelKey: 'system' | 'serif' | 'sansSerif' }[] = [
-    { value: 'system', labelKey: 'system' },
-    { value: 'serif', labelKey: 'serif' },
-    { value: 'sans-serif', labelKey: 'sansSerif' },
-  ];
-
-  const fontSizeLabels: Record<'small' | 'medium' | 'large', string> = {
-    small: t.fontSettings.small,
-    medium: t.fontSettings.medium,
-    large: t.fontSettings.large,
-  };
-
-  const fontFamilyLabels: Record<'system' | 'serif' | 'sansSerif', string> = {
-    system: t.fontSettings.system,
-    serif: t.fontSettings.serif,
-    sansSerif: t.fontSettings.sansSerif,
-  };
-
   type StepIconName = 'log-in-outline' | 'search-outline' | 'eye-outline';
   const stepIconMap: Record<StepIconName, React.ComponentType<{ size?: number }>> = {
     'log-in-outline': IoLogInOutline,
@@ -226,8 +200,7 @@ export default function HomePage() {
             <span className={styles.headerAppName}>MarkDrive</span>
           </div>
           <div className={styles.headerActions}>
-            <LanguageToggle />
-            <ThemeToggle />
+            <SettingsMenu variant="full" />
           </div>
         </div>
       )}
@@ -246,8 +219,7 @@ export default function HomePage() {
           <div className={styles.headerSpacer} />
 
           <div className={styles.headerActions}>
-            <LanguageToggle />
-            <ThemeToggle />
+            <SettingsMenu variant="full" />
           </div>
         </div>
       )}
@@ -663,79 +635,6 @@ export default function HomePage() {
           )}
 
           <div className={styles.menuScrollView}>
-            {/* Display Settings */}
-            <div className={styles.menuSection}>
-              <span className={styles.menuSectionTitle}>
-                {t.menu.display}
-              </span>
-
-              {/* Font Size */}
-              <div className={styles.menuSettingRow}>
-                <span className={styles.menuSettingLabel}>
-                  {t.fontSettings.fontSize}
-                </span>
-                <div className={styles.menuSettingOptions}>
-                  {fontSizeOptions.map(option => (
-                    <button
-                      key={option.value}
-                      className={styles.menuOption}
-                      style={{
-                        backgroundColor: fontSettings.fontSize === option.value
-                          ? 'var(--color-accent-muted)'
-                          : 'var(--color-bg-tertiary)',
-                      }}
-                      onClick={() => setFontSize(option.value)}
-                      type="button"
-                    >
-                      <span
-                        className={styles.menuOptionText}
-                        style={{
-                          color: fontSettings.fontSize === option.value
-                            ? 'var(--color-accent)'
-                            : 'var(--color-text-secondary)',
-                        }}
-                      >
-                        {fontSizeLabels[option.labelKey]}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Font Family */}
-              <div className={styles.menuSettingRow}>
-                <span className={styles.menuSettingLabel}>
-                  {t.fontSettings.fontFamily}
-                </span>
-                <div className={styles.menuSettingOptions}>
-                  {fontFamilyOptions.map(option => (
-                    <button
-                      key={option.value}
-                      className={styles.menuOption}
-                      style={{
-                        backgroundColor: fontSettings.fontFamily === option.value
-                          ? 'var(--color-accent-muted)'
-                          : 'var(--color-bg-tertiary)',
-                      }}
-                      onClick={() => setFontFamily(option.value)}
-                      type="button"
-                    >
-                      <span
-                        className={styles.menuOptionText}
-                        style={{
-                          color: fontSettings.fontFamily === option.value
-                            ? 'var(--color-accent)'
-                            : 'var(--color-text-secondary)',
-                        }}
-                      >
-                        {fontFamilyLabels[option.labelKey]}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
             {/* Picker Settings */}
             <div className={styles.menuSection}>
               <span className={styles.menuSectionTitle}>

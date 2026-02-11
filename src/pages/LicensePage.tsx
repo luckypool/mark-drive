@@ -5,7 +5,7 @@
 import { useNavigate } from 'react-router';
 import { IoArrowBack } from 'react-icons/io5';
 import { useLanguage } from '../hooks';
-import { ThemeToggle, LanguageToggle } from '../components/ui';
+import { SettingsMenu } from '../components/ui';
 import styles from './LicensePage.module.css';
 
 const LICENSE_TEXT = `MIT License
@@ -42,8 +42,7 @@ export default function LicensePage() {
         </button>
         <span className={styles.headerTitle}>{t.about.license}</span>
         <div className={styles.headerActions}>
-          <LanguageToggle />
-          <ThemeToggle />
+          <SettingsMenu variant="basic" />
         </div>
       </div>
 

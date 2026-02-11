@@ -229,6 +229,8 @@ export const ja: Translations = {
     dark: 'ダーク',
     system: 'システム',
     language: '言語',
+    english: 'English',
+    japanese: '日本語',
   },
 
   // Font Settings

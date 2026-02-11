@@ -53,8 +53,7 @@ vi.mock('../components/ui', () => ({
   ),
   LoadingSpinner: () => <div data-testid="loading-spinner" />,
   FAB: ({ onPress, icon }: any) => <button data-testid="fab" onClick={onPress}>{icon}</button>,
-  ThemeToggle: () => <div data-testid="theme-toggle" />,
-  LanguageToggle: () => <div data-testid="language-toggle" />,
+  SettingsMenu: () => <div data-testid="settings-menu" />,
   GoogleLogo: ({ size }: any) => <span data-testid="google-logo" />,
 }));
 
@@ -301,10 +300,9 @@ describe('HomePage - Header brand', () => {
     expect(matches.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('has theme toggle and language toggle in header', () => {
+  it('has settings menu in header', () => {
     renderWithProviders(<HomePage />);
-    expect(screen.getByTestId('theme-toggle')).toBeTruthy();
-    expect(screen.getByTestId('language-toggle')).toBeTruthy();
+    expect(screen.getByTestId('settings-menu')).toBeTruthy();
   });
 });
 

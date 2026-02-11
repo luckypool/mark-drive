@@ -227,6 +227,8 @@ export const en = {
     dark: 'Dark',
     system: 'System',
     language: 'Language',
+    english: 'English',
+    japanese: 'Japanese',
   },
 
   // Font Settings
@@ -531,6 +533,8 @@ export type Translations = {
     dark: string;
     system: string;
     language: string;
+    english: string;
+    japanese: string;
   };
   fontSettings: {
     title: string;
