@@ -15,6 +15,7 @@ import {
   IoLibraryOutline,
   IoShieldCheckmarkOutline,
   IoLockClosedOutline,
+  IoCafeOutline,
 } from 'react-icons/io5';
 import { useLanguage } from '../hooks';
 import { SettingsMenu } from '../components/ui';
@@ -134,6 +135,21 @@ export default function AboutPage() {
               <button className={styles.licenseButton} onClick={() => navigate('/privacy')}>
                 <IoLockClosedOutline size={18} />
                 <span>{t.about.viewPrivacy}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Support */}
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>{t.about.supportTitle}</h2>
+            <p className={styles.sectionText}>{t.about.supportDesc}</p>
+            <div className={styles.licenseButtons}>
+              <button
+                className={styles.supportButton}
+                onClick={() => window.open('https://buymeacoffee.com/luckypool', '_blank')}
+              >
+                <IoCafeOutline size={18} />
+                <span>{t.about.supportButton}</span>
               </button>
             </div>
           </div>

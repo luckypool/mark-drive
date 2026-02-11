@@ -201,6 +201,9 @@ export const en = {
     viewThirdPartyLicenses: 'View Third-Party Licenses',
     viewTerms: 'Terms of Service',
     viewPrivacy: 'Privacy Policy',
+    supportTitle: 'Support MarkDrive',
+    supportDesc: 'If you find MarkDrive useful, consider buying me a coffee!',
+    supportButton: 'Buy Me a Coffee',
     footer: 'Built with Vite and React',
   },
 
@@ -520,6 +523,9 @@ export type Translations = {
     viewThirdPartyLicenses: string;
     viewTerms: string;
     viewPrivacy: string;
+    supportTitle: string;
+    supportDesc: string;
+    supportButton: string;
     footer: string;
   };
   open: {

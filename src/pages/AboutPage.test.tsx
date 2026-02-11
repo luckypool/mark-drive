@@ -32,6 +32,7 @@ vi.mock('react-icons/io5', () => ({
   IoLibraryOutline: (props: any) => <span {...props} />,
   IoShieldCheckmarkOutline: (props: any) => <span {...props} />,
   IoLockClosedOutline: (props: any) => <span {...props} />,
+  IoCafeOutline: (props: any) => <span data-testid="icon-cafe" {...props} />,
 }));
 
 const mockT = {
@@ -78,6 +79,9 @@ const mockT = {
     viewThirdPartyLicenses: 'Third-Party Licenses',
     viewTerms: 'Terms of Service',
     viewPrivacy: 'Privacy Policy',
+    supportTitle: 'Support MarkDrive',
+    supportDesc: 'If you find MarkDrive useful, consider buying me a coffee!',
+    supportButton: 'Buy Me a Coffee',
     footer: 'Made with love',
   },
 };
@@ -150,6 +154,49 @@ describe('AboutPage', () => {
     const licenseButton = screen.getByText('View License').closest('button')!;
     fireEvent.click(licenseButton);
     expect(mockNavigate).toHaveBeenCalledWith('/license');
+  });
+
+  it('clicking third-party licenses button calls navigate("/third-party-licenses")', () => {
+    renderWithProviders(<AboutPage />);
+    const button = screen.getByText('Third-Party Licenses').closest('button')!;
+    fireEvent.click(button);
+    expect(mockNavigate).toHaveBeenCalledWith('/third-party-licenses');
+  });
+
+  it('clicking terms button calls navigate("/terms")', () => {
+    renderWithProviders(<AboutPage />);
+    const button = screen.getByText('Terms of Service').closest('button')!;
+    fireEvent.click(button);
+    expect(mockNavigate).toHaveBeenCalledWith('/terms');
+  });
+
+  it('clicking privacy button calls navigate("/privacy")', () => {
+    renderWithProviders(<AboutPage />);
+    const button = screen.getByText('Privacy Policy').closest('button')!;
+    fireEvent.click(button);
+    expect(mockNavigate).toHaveBeenCalledWith('/privacy');
+  });
+
+  it('renders support section', () => {
+    renderWithProviders(<AboutPage />);
+    expect(screen.getByText('Support MarkDrive')).toBeTruthy();
+    expect(screen.getByText('If you find MarkDrive useful, consider buying me a coffee!')).toBeTruthy();
+    expect(screen.getByText('Buy Me a Coffee')).toBeTruthy();
+  });
+
+  it('clicking support button opens Buy Me a Coffee in new tab', () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    renderWithProviders(<AboutPage />);
+    const button = screen.getByText('Buy Me a Coffee').closest('button')!;
+    fireEvent.click(button);
+    expect(openSpy).toHaveBeenCalledWith('https://buymeacoffee.com/luckypool', '_blank');
+    openSpy.mockRestore();
+  });
+
+  it('renders footer with trademark', () => {
+    renderWithProviders(<AboutPage />);
+    expect(screen.getByText('Made with love')).toBeTruthy();
+    expect(screen.getByText('Google Drive™ is a trademark of Google LLC.')).toBeTruthy();
   });
 });
 
