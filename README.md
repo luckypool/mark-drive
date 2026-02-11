@@ -1,7 +1,7 @@
 # MarkDrive
 
 <a href="https://mark-drive.com/">
-  <img src="./public/screenshot.png" alt="MarkDrive — Beautiful Markdown for Google Drive™" width="720">
+  <img src="./public/og-image.png" alt="MarkDrive — Beautiful Markdown for Google Drive™" width="720">
 </a>
 
 **Google Drive™ の Markdown をブラウザで美しくプレビュー・編集。サーバーにデータは一切保存しません。**
