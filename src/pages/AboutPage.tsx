@@ -141,6 +141,7 @@ export default function AboutPage() {
           {/* Footer */}
           <div className={styles.footer}>
             <span className={styles.footerText}>{t.about.footer}</span>
+            <span className={styles.footerTrademark}>{t.home.footer.trademark}</span>
           </div>
         </div>
       </div>
