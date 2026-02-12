@@ -20,7 +20,6 @@ import {
   IoChevronForward,
   IoChevronDown,
   IoDocumentOutline,
-  IoLogoGithub,
   IoSettingsOutline,
   IoPlayOutline,
 } from 'react-icons/io5';
@@ -535,14 +534,9 @@ export default function HomePage() {
                     {t.about.viewTerms}
                   </Link>
                   <span className={styles.footerLegalSeparator}>|</span>
-                  <button
-                    className={styles.footerGithubLink}
-                    onClick={() => window.open('https://github.com/luckypool/mark-drive', '_blank')}
-                    type="button"
-                  >
-                    <IoLogoGithub size={16} />
-                    <span>{t.home.footer.viewOnGithub}</span>
-                  </button>
+                  <Link to="/support" className={styles.footerLegalLink}>
+                    {t.about.viewSupport}
+                  </Link>
                 </div>
                 <p className={styles.footerBuiltWith}>
                   {t.home.footer.builtWith}

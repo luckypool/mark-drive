@@ -203,10 +203,47 @@ export const en = {
     viewThirdPartyLicenses: 'View Third-Party Licenses',
     viewTerms: 'Terms of Service',
     viewPrivacy: 'Privacy Policy',
+    viewSupport: 'Support',
     supportTitle: 'Support MarkDrive',
     supportDesc: 'If you find MarkDrive useful, consider buying me a coffee!',
     supportButton: 'Buy Me a Coffee',
     footer: 'Built with Vite and React',
+  },
+
+  // Support / Contact Page
+  support: {
+    title: 'Support',
+    intro: 'Thank you for using MarkDrive. If you need help or have feedback, please use one of the contact methods below.',
+    bugReport: {
+      title: 'Bug Reports & Feature Requests',
+      desc: 'If you encounter a bug or have a feature request, please open an issue on our GitHub repository. This helps us track and address problems efficiently.',
+      button: 'Open GitHub Issues',
+    },
+    contact: {
+      title: 'General Inquiries',
+      desc: 'For general questions, partnership inquiries, or other matters, please contact us via email.',
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      items: {
+        q1: {
+          question: 'How do I sign in to MarkDrive?',
+          answer: 'Click the "Sign in with Google" button on the home page. MarkDrive only requests read-only access to your Google Drive files.',
+        },
+        q2: {
+          question: 'Is my data stored on your servers?',
+          answer: 'No. MarkDrive operates entirely in your browser. Your files are fetched directly from Google Drive and never sent to any external server.',
+        },
+        q3: {
+          question: 'Can I edit Markdown files?',
+          answer: 'Yes. MarkDrive supports editing with a built-in CodeMirror editor. For local files, changes can be saved directly. For Google Drive files, you can download the edited version.',
+        },
+        q4: {
+          question: 'Which file formats are supported?',
+          answer: 'MarkDrive supports Markdown (.md) files with GFM (GitHub Flavored Markdown) syntax, including tables, task lists, code blocks with syntax highlighting, and Mermaid diagrams.',
+        },
+      },
+    },
   },
 
   // Open (Drive "Open with")
@@ -529,10 +566,33 @@ export type Translations = {
     viewThirdPartyLicenses: string;
     viewTerms: string;
     viewPrivacy: string;
+    viewSupport: string;
     supportTitle: string;
     supportDesc: string;
     supportButton: string;
     footer: string;
+  };
+  support: {
+    title: string;
+    intro: string;
+    bugReport: {
+      title: string;
+      desc: string;
+      button: string;
+    };
+    contact: {
+      title: string;
+      desc: string;
+    };
+    faq: {
+      title: string;
+      items: {
+        [key: string]: {
+          question: string;
+          answer: string;
+        };
+      };
+    };
   };
   open: {
     loading: string;
