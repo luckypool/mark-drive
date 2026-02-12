@@ -63,14 +63,13 @@ export default function SupportPage() {
             <div className={styles.section}>
               <h3 className={styles.sectionTitle}>{t.support.contact.title}</h3>
               <p className={styles.sectionBody}>{t.support.contact.desc}</p>
-              <button
+              <a
                 className={styles.actionButton}
-                onClick={() => window.open(`mailto:${CONTACT_EMAIL}`, '_blank')}
+                href={`mailto:${CONTACT_EMAIL}`}
               >
                 <IoMailOutline size={18} />
                 <span>{t.support.contact.button}</span>
-                <IoOpenOutline size={14} />
-              </button>
+              </a>
             </div>
 
             {/* FAQ */}
@@ -99,7 +98,6 @@ export default function SupportPage() {
               </div>
             </div>
 
-            <p className={styles.response}>{t.support.response}</p>
           </div>
         </div>
       </div>

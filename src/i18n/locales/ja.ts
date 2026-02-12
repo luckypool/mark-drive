@@ -246,7 +246,6 @@ export const ja: Translations = {
         },
       },
     },
-    response: '通常、数営業日以内にご返信いたします。',
   },
 
   // Open (Drive「アプリで開く」)

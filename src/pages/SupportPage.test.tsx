@@ -40,7 +40,6 @@ vi.mock('../hooks', () => ({
             },
           },
         },
-        response: 'We respond within a few days.',
       },
       settings: { theme: 'Theme', light: 'Light', dark: 'Dark', system: 'System', language: 'Language' },
     },
@@ -154,12 +153,11 @@ describe('SupportPage', () => {
     openSpy.mockRestore();
   });
 
-  it('should open mailto link when clicking contact button', async () => {
+  it('should render mailto link for contact button', async () => {
     const SupportPage = await loadComponent();
     renderWithProviders(<SupportPage />);
-    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
-    fireEvent.click(screen.getByText('Send Email'));
-    expect(openSpy).toHaveBeenCalledWith('mailto:founder@mark-drive.com', '_blank');
-    openSpy.mockRestore();
+    const link = screen.getByText('Send Email').closest('a');
+    expect(link).toBeTruthy();
+    expect(link!.getAttribute('href')).toBe('mailto:founder@mark-drive.com');
   });
 });

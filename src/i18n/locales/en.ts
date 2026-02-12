@@ -244,7 +244,6 @@ export const en = {
         },
       },
     },
-    response: 'We typically respond within a few business days.',
   },
 
   // Open (Drive "Open with")
@@ -594,7 +593,6 @@ export type Translations = {
         };
       };
     };
-    response: string;
   };
   open: {
     loading: string;
