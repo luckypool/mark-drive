@@ -211,6 +211,44 @@ export const ja: Translations = {
     footer: 'Vite + React で構築',
   },
 
+  // サポート・お問い合わせページ
+  support: {
+    title: 'サポート',
+    intro: 'MarkDriveをご利用いただきありがとうございます。ヘルプが必要な場合やフィードバックがある場合は、以下の方法でお問い合わせください。',
+    bugReport: {
+      title: 'バグ報告・機能リクエスト',
+      desc: 'バグを発見した場合や機能リクエストがある場合は、GitHubリポジトリでIssueを作成してください。問題の追跡と対応に役立ちます。',
+      button: 'GitHub Issuesを開く',
+    },
+    contact: {
+      title: 'お問い合わせ',
+      desc: '一般的なご質問、パートナーシップに関するお問い合わせ、その他の事項については、メールでお問い合わせください。',
+      button: 'メールを送る',
+    },
+    faq: {
+      title: 'よくある質問',
+      items: {
+        q1: {
+          question: 'MarkDriveにサインインするには？',
+          answer: 'ホーム画面の「Googleでサインイン」ボタンをクリックしてください。MarkDriveはGoogle Driveファイルへの読み取り専用アクセスのみを要求します。',
+        },
+        q2: {
+          question: 'データはサーバーに保存されますか？',
+          answer: 'いいえ。MarkDriveはブラウザ内で完全に動作します。ファイルはGoogle Driveから直接取得され、外部サーバーに送信されることはありません。',
+        },
+        q3: {
+          question: 'Markdownファイルを編集できますか？',
+          answer: 'はい。MarkDriveは内蔵のCodeMirrorエディタで編集をサポートしています。ローカルファイルは直接保存でき、Google Driveファイルは編集後にダウンロード保存できます。',
+        },
+        q4: {
+          question: '対応しているファイル形式は？',
+          answer: 'MarkDriveはGFM（GitHub Flavored Markdown）構文のMarkdown（.md）ファイルに対応しています。テーブル、タスクリスト、シンタックスハイライト付きコードブロック、Mermaid図表などをサポートしています。',
+        },
+      },
+    },
+    response: '通常、数営業日以内にご返信いたします。',
+  },
+
   // Open (Drive「アプリで開く」)
   open: {
     loading: 'ファイルを開いています...',
