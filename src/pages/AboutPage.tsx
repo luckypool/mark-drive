@@ -16,6 +16,7 @@ import {
   IoShieldCheckmarkOutline,
   IoLockClosedOutline,
   IoCafeOutline,
+  IoHelpCircleOutline,
 } from 'react-icons/io5';
 import { useLanguage } from '../hooks';
 import { SettingsMenu } from '../components/ui';
@@ -135,6 +136,10 @@ export default function AboutPage() {
               <button className={styles.licenseButton} onClick={() => navigate('/privacy')}>
                 <IoLockClosedOutline size={18} />
                 <span>{t.about.viewPrivacy}</span>
+              </button>
+              <button className={styles.licenseButton} onClick={() => navigate('/support')}>
+                <IoHelpCircleOutline size={18} />
+                <span>{t.about.viewSupport}</span>
               </button>
             </div>
           </div>

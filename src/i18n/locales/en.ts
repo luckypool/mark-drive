@@ -203,6 +203,7 @@ export const en = {
     viewThirdPartyLicenses: 'View Third-Party Licenses',
     viewTerms: 'Terms of Service',
     viewPrivacy: 'Privacy Policy',
+    viewSupport: 'Support',
     supportTitle: 'Support MarkDrive',
     supportDesc: 'If you find MarkDrive useful, consider buying me a coffee!',
     supportButton: 'Buy Me a Coffee',
@@ -565,6 +566,7 @@ export type Translations = {
     viewThirdPartyLicenses: string;
     viewTerms: string;
     viewPrivacy: string;
+    viewSupport: string;
     supportTitle: string;
     supportDesc: string;
     supportButton: string;
