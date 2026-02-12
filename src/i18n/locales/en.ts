@@ -221,7 +221,6 @@ export const en = {
     contact: {
       title: 'General Inquiries',
       desc: 'For general questions, partnership inquiries, or other matters, please contact us via email.',
-      button: 'Send Email',
     },
     faq: {
       title: 'Frequently Asked Questions',
@@ -582,7 +581,6 @@ export type Translations = {
     contact: {
       title: string;
       desc: string;
-      button: string;
     };
     faq: {
       title: string;

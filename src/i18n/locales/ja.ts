@@ -223,7 +223,6 @@ export const ja: Translations = {
     contact: {
       title: 'お問い合わせ',
       desc: '一般的なご質問、パートナーシップに関するお問い合わせ、その他の事項については、メールでお問い合わせください。',
-      button: 'メールを送る',
     },
     faq: {
       title: 'よくある質問',

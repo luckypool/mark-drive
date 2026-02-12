@@ -143,8 +143,12 @@
   color: var(--color-text-secondary);
 }
 
-.response {
+.emailAddress {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+  color: var(--color-text-primary);
   font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  margin-top: var(--spacing-md);
+  font-weight: var(--font-weight-medium);
 }

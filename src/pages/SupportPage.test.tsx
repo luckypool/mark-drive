@@ -25,7 +25,6 @@ vi.mock('../hooks', () => ({
         contact: {
           title: 'General Inquiries',
           desc: 'Contact us via email.',
-          button: 'Send Email',
         },
         faq: {
           title: 'FAQ',
@@ -117,7 +116,7 @@ describe('SupportPage', () => {
     const SupportPage = await loadComponent();
     renderWithProviders(<SupportPage />);
     expect(screen.getByText('General Inquiries')).toBeTruthy();
-    expect(screen.getByText('Send Email')).toBeTruthy();
+    expect(screen.getByText('founder@mark-drive.com')).toBeTruthy();
   });
 
   it('should render FAQ section with questions', async () => {
@@ -153,11 +152,9 @@ describe('SupportPage', () => {
     openSpy.mockRestore();
   });
 
-  it('should render mailto link for contact button', async () => {
+  it('should display contact email address', async () => {
     const SupportPage = await loadComponent();
     renderWithProviders(<SupportPage />);
-    const link = screen.getByText('Send Email').closest('a');
-    expect(link).toBeTruthy();
-    expect(link!.getAttribute('href')).toBe('mailto:founder@mark-drive.com');
+    expect(screen.getByText('founder@mark-drive.com')).toBeTruthy();
   });
 });

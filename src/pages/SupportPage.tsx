@@ -63,13 +63,10 @@ export default function SupportPage() {
             <div className={styles.section}>
               <h3 className={styles.sectionTitle}>{t.support.contact.title}</h3>
               <p className={styles.sectionBody}>{t.support.contact.desc}</p>
-              <a
-                className={styles.actionButton}
-                href={`mailto:${CONTACT_EMAIL}`}
-              >
-                <IoMailOutline size={18} />
-                <span>{t.support.contact.button}</span>
-              </a>
+              <p className={styles.emailAddress}>
+                <IoMailOutline size={16} />
+                <span>{CONTACT_EMAIL}</span>
+              </p>
             </div>
 
             {/* FAQ */}
