@@ -15,7 +15,8 @@ vi.mock('react-router', () => ({
 }));
 
 vi.mock('../../assets/images/icon.png', () => ({ default: 'icon.png' }));
-vi.mock('../../docs/markdrive-sample.md?raw', () => ({ default: '# Sample Markdown\n\nThis is a sample.' }));
+vi.mock('../../docs/markdrive-sample.md?raw', () => ({ default: '# サンプル Markdown\n\nこれはサンプルです。' }));
+vi.mock('../../docs/markdrive-sample.en.md?raw', () => ({ default: '# Sample Markdown\n\nThis is a sample.' }));
 
 vi.mock('react-icons/io5', () => {
   const stub = (name: string) => (props: any) => <span data-testid={`icon-${name}`} {...props} />;

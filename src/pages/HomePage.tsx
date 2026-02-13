@@ -30,6 +30,7 @@ import { useFilePicker } from '../hooks';
 import { getFileHistory, clearFileHistory, addFileToHistory } from '../services';
 import type { FileHistoryItem } from '../types';
 import sampleMd from '../../docs/markdrive-sample.md?raw';
+import sampleMdEn from '../../docs/markdrive-sample.en.md?raw';
 import iconImage from '../../assets/images/icon.png';
 import { trackEvent } from '../utils/analytics';
 import styles from './HomePage.module.css';
@@ -74,15 +75,16 @@ export default function HomePage() {
 
   const handleTryNow = useCallback(() => {
     trackEvent('try_now_click');
+    const sampleContent = language === 'ja' ? sampleMd : sampleMdEn;
     navigate('/viewer', {
       state: {
         id: 'sample-markdrive',
         name: 'markdrive-sample.md',
-        content: sampleMd,
+        content: sampleContent,
         source: 'local',
       },
     });
-  }, [navigate]);
+  }, [navigate, language]);
 
   const handleLocalFile = useCallback(async () => {
     const file = await openPicker();
