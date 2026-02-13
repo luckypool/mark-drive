@@ -85,6 +85,106 @@ const mockPickerState = {
   updatePickerSettings: mockUpdatePickerSettings,
 };
 
+const mockT = {
+  home: {
+    welcomeLine1: 'Your Markdown files,',
+    welcomeLine2: 'beautifully rendered ',
+    welcomeHighlight: 'in your browser.',
+    subtitle: 'Preview and edit Markdown from Google Drive',
+    tagline: 'No server, no upload, pure client-side.',
+    signIn: 'Sign in with Google',
+    or: 'or',
+    openLocal: 'Open Local File',
+    searchDrive: 'Search Google Drive',
+    tryNow: 'Try Now — Preview a Sample',
+    searchPlaceholder: 'Search files...',
+    recentFiles: 'Recent Files',
+    clear: 'Clear',
+    about: 'About',
+    signOut: 'Sign Out',
+    howItWorks: {
+      title: 'How It Works',
+      step1: { title: 'Sign In', desc: 'Authenticate with Google' },
+      step2: { title: 'Search', desc: 'Find your markdown files' },
+      step3: { title: 'Preview', desc: 'View beautifully rendered' },
+    },
+    featuresTitle: 'Features',
+    feature: {
+      drive: { title: 'Google Drive', desc: 'Direct integration' },
+      rendering: { title: 'Beautiful Rendering', desc: 'GFM support' },
+      pdf: { title: 'PDF Export', desc: 'Export to PDF' },
+      syntax: { title: 'Syntax Highlighting', desc: 'Code blocks' },
+      mermaid: { title: 'Mermaid Diagrams', desc: 'Diagram support' },
+      local: { title: 'Local Files', desc: 'Open local files' },
+    },
+    techTitle: 'Your data\nstays with you',
+    stats: {
+      clientSide: { value: '100%', label: 'Client-Side' },
+      serverStorage: { value: '0', label: 'Server Storage' },
+    },
+    benefitsTitle: 'Benefits',
+    benefit: {
+      privacy: { title: 'Privacy First', desc: 'Data stays local' },
+      instant: { title: 'Instant Preview', desc: 'No waiting' },
+      beautiful: { title: 'Beautiful Output', desc: 'Clean rendering' },
+    },
+    closingCta: {
+      title: 'Get Started',
+      subtitle: 'Start viewing your markdown files now.',
+    },
+    footer: {
+      viewOnGithub: 'View on GitHub',
+      builtWith: 'Built with React',
+      trademark: 'Google Drive™ is a trademark of Google LLC.',
+    },
+  },
+  search: {
+    privacyTitle: 'Privacy',
+    privacyDesc: 'Your data stays local.',
+  },
+  about: {
+    viewPrivacy: 'Privacy Policy',
+    viewTerms: 'Terms of Service',
+  },
+  settings: {
+    theme: 'Theme',
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
+    language: 'Language',
+  },
+  menu: {
+    display: 'Display',
+    picker: 'Google Drive Search Settings',
+    pickerOwnedByMe: 'Owned by me',
+    pickerStarred: 'Starred',
+    on: 'ON',
+    off: 'OFF',
+  },
+  fontSettings: {
+    fontSize: 'Font Size',
+    fontFamily: 'Font Family',
+    small: 'Small',
+    medium: 'Medium',
+    large: 'Large',
+    system: 'System',
+    serif: 'Serif',
+    sansSerif: 'Sans-Serif',
+  },
+  common: {
+    justNow: 'Just now',
+    minutesAgo: '{min} minutes ago',
+    hoursAgo: '{hours} hours ago',
+    daysAgo: '{days} days ago',
+  },
+};
+
+const mockLanguageState = {
+  t: mockT,
+  language: 'en' as string,
+  setLanguage: vi.fn(),
+};
+
 vi.mock('../hooks', () => ({
   useGoogleAuth: () => mockAuthState,
   useTheme: () => ({
@@ -94,103 +194,7 @@ vi.mock('../hooks', () => ({
     colors: {},
   }),
   usePickerSettings: () => mockPickerState,
-  useLanguage: () => ({
-    t: {
-      home: {
-        welcomeLine1: 'Your Markdown files,',
-        welcomeLine2: 'beautifully rendered ',
-        welcomeHighlight: 'in your browser.',
-        subtitle: 'Preview and edit Markdown from Google Drive',
-        tagline: 'No server, no upload, pure client-side.',
-        signIn: 'Sign in with Google',
-        or: 'or',
-        openLocal: 'Open Local File',
-        searchDrive: 'Search Google Drive',
-        tryNow: 'Try Now — Preview a Sample',
-        searchPlaceholder: 'Search files...',
-        recentFiles: 'Recent Files',
-        clear: 'Clear',
-        about: 'About',
-        signOut: 'Sign Out',
-        howItWorks: {
-          title: 'How It Works',
-          step1: { title: 'Sign In', desc: 'Authenticate with Google' },
-          step2: { title: 'Search', desc: 'Find your markdown files' },
-          step3: { title: 'Preview', desc: 'View beautifully rendered' },
-        },
-        featuresTitle: 'Features',
-        feature: {
-          drive: { title: 'Google Drive', desc: 'Direct integration' },
-          rendering: { title: 'Beautiful Rendering', desc: 'GFM support' },
-          pdf: { title: 'PDF Export', desc: 'Export to PDF' },
-          syntax: { title: 'Syntax Highlighting', desc: 'Code blocks' },
-          mermaid: { title: 'Mermaid Diagrams', desc: 'Diagram support' },
-          local: { title: 'Local Files', desc: 'Open local files' },
-        },
-        techTitle: 'Your data\nstays with you',
-        stats: {
-          clientSide: { value: '100%', label: 'Client-Side' },
-          serverStorage: { value: '0', label: 'Server Storage' },
-        },
-        benefitsTitle: 'Benefits',
-        benefit: {
-          privacy: { title: 'Privacy First', desc: 'Data stays local' },
-          instant: { title: 'Instant Preview', desc: 'No waiting' },
-          beautiful: { title: 'Beautiful Output', desc: 'Clean rendering' },
-        },
-        closingCta: {
-          title: 'Get Started',
-          subtitle: 'Start viewing your markdown files now.',
-        },
-        footer: {
-          viewOnGithub: 'View on GitHub',
-          builtWith: 'Built with React',
-          trademark: 'Google Drive™ is a trademark of Google LLC.',
-        },
-      },
-      search: {
-        privacyTitle: 'Privacy',
-        privacyDesc: 'Your data stays local.',
-      },
-      about: {
-        viewPrivacy: 'Privacy Policy',
-        viewTerms: 'Terms of Service',
-      },
-      settings: {
-        theme: 'Theme',
-        light: 'Light',
-        dark: 'Dark',
-        system: 'System',
-        language: 'Language',
-      },
-      menu: {
-        display: 'Display',
-        picker: 'Google Drive Search Settings',
-        pickerOwnedByMe: 'Owned by me',
-        pickerStarred: 'Starred',
-        on: 'ON',
-        off: 'OFF',
-      },
-      fontSettings: {
-        fontSize: 'Font Size',
-        fontFamily: 'Font Family',
-        small: 'Small',
-        medium: 'Medium',
-        large: 'Large',
-        system: 'System',
-        serif: 'Serif',
-        sansSerif: 'Sans-Serif',
-      },
-      common: {
-        justNow: 'Just now',
-        minutesAgo: '{min} minutes ago',
-        hoursAgo: '{hours} hours ago',
-        daysAgo: '{days} days ago',
-      },
-    },
-    language: 'en',
-    setLanguage: vi.fn(),
-  }),
+  useLanguage: () => mockLanguageState,
   useFilePicker: () => ({
     openPicker: mockOpenPicker,
   }),
@@ -248,6 +252,10 @@ beforeEach(() => {
     updatePickerSettings: mockUpdatePickerSettings,
   });
 
+  // Reset language state
+  mockLanguageState.language = 'en';
+  mockLanguageState.setLanguage = vi.fn();
+
   window.matchMedia = vi.fn(() => ({
     matches: true,
     media: '',
@@ -301,7 +309,7 @@ describe('HomePage (unauthenticated)', () => {
     expect(tryNowButtons.length).toBe(2);
   });
 
-  it('navigates to viewer with sample content on Try Now click', () => {
+  it('navigates to viewer with English sample on Try Now click (en locale)', () => {
     renderWithProviders(<HomePage />);
     const tryNowButtons = screen.getAllByText('Try Now — Preview a Sample');
     fireEvent.click(tryNowButtons[0]);
@@ -310,6 +318,21 @@ describe('HomePage (unauthenticated)', () => {
         id: 'sample-markdrive',
         name: 'markdrive-sample.md',
         content: '# Sample Markdown\n\nThis is a sample.',
+        source: 'local',
+      },
+    });
+  });
+
+  it('navigates to viewer with Japanese sample on Try Now click (ja locale)', () => {
+    mockLanguageState.language = 'ja';
+    renderWithProviders(<HomePage />);
+    const tryNowButtons = screen.getAllByText('Try Now — Preview a Sample');
+    fireEvent.click(tryNowButtons[0]);
+    expect(mockNavigate).toHaveBeenCalledWith('/viewer', {
+      state: {
+        id: 'sample-markdrive',
+        name: 'markdrive-sample.md',
+        content: '# サンプル Markdown\n\nこれはサンプルです。',
         source: 'local',
       },
     });
