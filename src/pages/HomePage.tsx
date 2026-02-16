@@ -26,6 +26,7 @@ import {
 import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo } from '../components/ui';
 import { AddToHomeScreenBanner } from '../components/ui/AddToHomeScreenBanner';
 import { useGoogleAuth, useTheme, useLanguage, usePickerSettings } from '../hooks';
+import type { SortOrder } from '../hooks';
 import { useFilePicker } from '../hooks';
 import { getFileHistory, clearFileHistory, addFileToHistory } from '../services';
 import type { FileHistoryItem } from '../types';
@@ -598,6 +599,25 @@ export default function HomePage() {
                         </div>
                       </div>
                     ))}
+                    <div className={styles.homeSettingRow}>
+                      <span className={styles.homeSettingName}>{t.menu.pickerSortOrder}</span>
+                      <select
+                        className={styles.homeSettingSelect}
+                        value={pickerSettings.sortOrder}
+                        onChange={(e) => updatePickerSettings({ sortOrder: e.target.value as SortOrder })}
+                      >
+                        {([
+                          { value: 'modifiedTime desc', label: t.menu.sortModifiedDesc },
+                          { value: 'modifiedTime', label: t.menu.sortModifiedAsc },
+                          { value: 'name', label: t.menu.sortNameAsc },
+                          { value: 'name desc', label: t.menu.sortNameDesc },
+                          { value: 'createdTime desc', label: t.menu.sortCreatedDesc },
+                          { value: 'createdTime', label: t.menu.sortCreatedAsc },
+                        ] as const).map(({ value, label }) => (
+                          <option key={value} value={value}>{label}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 )}
               </div>

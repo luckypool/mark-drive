@@ -49,7 +49,8 @@ export async function fetchUserInfo(
  */
 export async function searchMarkdownFiles(
   accessToken: string,
-  query: string
+  query: string,
+  orderBy: string = 'modifiedTime desc'
 ): Promise<DriveFile[]> {
   if (!query.trim()) {
     return [];
@@ -71,7 +72,7 @@ export async function searchMarkdownFiles(
         fields:
           'files(id,name,mimeType,modifiedTime,size,iconLink,webViewLink,owners)',
         pageSize: '20',
-        orderBy: 'modifiedTime desc',
+        orderBy,
       }),
     {
       headers: {
@@ -144,11 +145,12 @@ export async function fetchFileInfo(
 }
 
 /**
- * 最近更新されたMarkdownファイルを取得（更新日順）
+ * 最近更新されたMarkdownファイルを取得
  */
 export async function listRecentMarkdownFiles(
   accessToken: string,
-  maxResults: number = 20
+  maxResults: number = 20,
+  orderBy: string = 'modifiedTime desc'
 ): Promise<DriveFile[]> {
   // Markdown ファイルのみを取得するクエリを構築
   const mimeTypeQuery = MARKDOWN_MIME_TYPES.map(
@@ -165,7 +167,7 @@ export async function listRecentMarkdownFiles(
         fields:
           'files(id,name,mimeType,modifiedTime,size,iconLink,webViewLink,owners)',
         pageSize: String(maxResults),
-        orderBy: 'modifiedTime desc',
+        orderBy,
       }),
     {
       headers: {

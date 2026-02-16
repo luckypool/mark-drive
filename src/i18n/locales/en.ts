@@ -299,6 +299,13 @@ export const en = {
     picker: 'Google Drive Search Settings',
     pickerOwnedByMe: 'My Files Only',
     pickerStarred: 'Starred Only',
+    pickerSortOrder: 'Sort Order',
+    sortModifiedDesc: 'Modified (Newest)',
+    sortModifiedAsc: 'Modified (Oldest)',
+    sortNameAsc: 'Name (A→Z)',
+    sortNameDesc: 'Name (Z→A)',
+    sortCreatedDesc: 'Created (Newest)',
+    sortCreatedAsc: 'Created (Oldest)',
     on: 'ON',
     off: 'OFF',
   },
@@ -638,6 +645,13 @@ export type Translations = {
     picker: string;
     pickerOwnedByMe: string;
     pickerStarred: string;
+    pickerSortOrder: string;
+    sortModifiedDesc: string;
+    sortModifiedAsc: string;
+    sortNameAsc: string;
+    sortNameDesc: string;
+    sortCreatedDesc: string;
+    sortCreatedAsc: string;
     on: string;
     off: string;
   };

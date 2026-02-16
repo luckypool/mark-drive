@@ -1011,3 +1011,24 @@
   background-color: var(--color-accent-muted);
 }
 
+.homeSettingSelect {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.homeSettingSelect:hover {
+  border-color: var(--color-border-light);
+}
+
+.homeSettingSelect:focus {
+  border-color: var(--color-accent);
+}
+

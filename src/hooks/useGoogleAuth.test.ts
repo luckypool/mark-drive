@@ -691,7 +691,7 @@ describe('useGoogleAuth', () => {
 
       await act(async () => {
         result.current.openDrivePicker({
-          settings: { ownedByMe: false, starred: true },
+          settings: { ownedByMe: false, starred: true, sortOrder: 'modifiedTime desc' },
         });
       });
 

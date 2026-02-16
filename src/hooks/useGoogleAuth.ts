@@ -73,14 +73,24 @@ export interface PickerResult {
   name: string;
 }
 
+export type SortOrder =
+  | 'modifiedTime desc'
+  | 'modifiedTime'
+  | 'name'
+  | 'name desc'
+  | 'createdTime desc'
+  | 'createdTime';
+
 export interface PickerViewSettings {
   ownedByMe: boolean;
   starred: boolean;
+  sortOrder: SortOrder;
 }
 
 export const DEFAULT_PICKER_SETTINGS: PickerViewSettings = {
   ownedByMe: false,
   starred: false,
+  sortOrder: 'modifiedTime desc',
 };
 
 export interface OpenDrivePickerOptions {
@@ -97,8 +107,8 @@ export interface UseGoogleAuthReturn {
   results: DriveFile[];
   recentFiles: DriveFile[];
   userInfo: UserInfo | null;
-  search: (query: string) => Promise<void>;
-  loadRecentFiles: () => Promise<void>;
+  search: (query: string, orderBy?: string) => Promise<void>;
+  loadRecentFiles: (orderBy?: string) => Promise<void>;
   authenticate: () => void;
   logout: () => void;
   fetchFileContent: (fileId: string, signal?: AbortSignal) => Promise<string | null>;
@@ -313,7 +323,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   }, [accessToken]);
 
   // 検索
-  const search = useCallback(async (query: string) => {
+  const search = useCallback(async (query: string, orderBy?: string) => {
     if (!accessToken) {
       setError('Please authenticate first');
       return;
@@ -328,7 +338,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     setError(null);
 
     try {
-      const files = await searchMarkdownFiles(accessToken, query);
+      const files = await searchMarkdownFiles(accessToken, query, orderBy);
       setResults(files);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');
@@ -339,7 +349,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   }, [accessToken]);
 
   // 最近のファイルを取得
-  const loadRecentFiles = useCallback(async () => {
+  const loadRecentFiles = useCallback(async (orderBy?: string) => {
     if (!accessToken) {
       return;
     }
@@ -348,7 +358,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     setError(null);
 
     try {
-      const files = await listRecentMarkdownFiles(accessToken);
+      const files = await listRecentMarkdownFiles(accessToken, 20, orderBy);
       setRecentFiles(files);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load recent files');

@@ -3,7 +3,7 @@
  */
 
 export { useGoogleAuth } from './useGoogleAuth';
-export type { UseGoogleAuthReturn, PickerViewSettings, OpenDrivePickerOptions } from './useGoogleAuth';
+export type { UseGoogleAuthReturn, PickerViewSettings, OpenDrivePickerOptions, SortOrder } from './useGoogleAuth';
 export { DEFAULT_PICKER_SETTINGS } from './useGoogleAuth';
 
 export { usePickerSettings } from './usePickerSettings';
