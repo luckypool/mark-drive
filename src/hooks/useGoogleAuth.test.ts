@@ -60,6 +60,7 @@ function setupGoogleApis() {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn().mockReturnThis(),
         enableFeature: vi.fn().mockReturnThis(),
@@ -558,6 +559,7 @@ describe('useGoogleAuth', () => {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn().mockReturnThis(),
         enableFeature: vi.fn().mockReturnThis(),
@@ -597,6 +599,7 @@ describe('useGoogleAuth', () => {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn((cb: any) => {
           pickerCallback = cb;
@@ -637,6 +640,7 @@ describe('useGoogleAuth', () => {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn((cb: any) => {
           pickerCallback = cb;
@@ -680,6 +684,7 @@ describe('useGoogleAuth', () => {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn().mockReturnThis(),
         enableFeature: vi.fn().mockReturnThis(),
