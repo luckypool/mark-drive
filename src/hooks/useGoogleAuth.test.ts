@@ -83,6 +83,7 @@ function setupGoogleApis() {
     load: vi.fn((_api: string, cb: () => void) => cb()),
     client: {
       init: vi.fn(async () => {}),
+      setToken: vi.fn(),
     },
   };
 }
