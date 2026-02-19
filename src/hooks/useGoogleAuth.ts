@@ -51,6 +51,7 @@ declare global {
       load: (api: string, callback: () => void) => void;
       client: {
         init: (config: { apiKey: string; discoveryDocs: string[] }) => Promise<void>;
+        setToken: (token: { access_token: string }) => void;
       };
     };
   }
@@ -430,11 +431,18 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
       const width = Math.min(window.innerWidth - 32, 1051);
       const height = Math.min(window.innerHeight - 64, 650);
 
+      // Picker がサードパーティ Cookie に依存せず OAuth トークンで認証できるよう
+      // gapi.client にもトークンをセットする
+      if (window.gapi?.client) {
+        window.gapi.client.setToken({ access_token: accessToken });
+      }
+
       const builder = new google.picker.PickerBuilder()
         .addView(view)
         .setOAuthToken(accessToken)
         .setDeveloperKey(API_KEY)
         .setAppId(APP_ID)
+        .setOrigin(window.location.protocol + '//' + window.location.host)
         .setSize(width, height)
         .setCallback((data: google.picker.CallbackData) => {
           if (data.action === google.picker.Action.PICKED && data.docs?.[0]) {
