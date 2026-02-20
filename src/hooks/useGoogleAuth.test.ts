@@ -60,6 +60,7 @@ function setupGoogleApis() {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn().mockReturnThis(),
         enableFeature: vi.fn().mockReturnThis(),
@@ -83,6 +84,7 @@ function setupGoogleApis() {
     load: vi.fn((_api: string, cb: () => void) => cb()),
     client: {
       init: vi.fn(async () => {}),
+      setToken: vi.fn(),
     },
   };
 }
@@ -557,6 +559,7 @@ describe('useGoogleAuth', () => {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn().mockReturnThis(),
         enableFeature: vi.fn().mockReturnThis(),
@@ -596,6 +599,7 @@ describe('useGoogleAuth', () => {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn((cb: any) => {
           pickerCallback = cb;
@@ -636,6 +640,7 @@ describe('useGoogleAuth', () => {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn((cb: any) => {
           pickerCallback = cb;
@@ -663,6 +668,42 @@ describe('useGoogleAuth', () => {
       expect(pickerResult).toBeNull();
     });
 
+    it('should work without gapi.client (skip setToken)', async () => {
+      authenticateHook();
+
+      const mockBuilderInstance = {
+        addView: vi.fn().mockReturnThis(),
+        setOAuthToken: vi.fn().mockReturnThis(),
+        setDeveloperKey: vi.fn().mockReturnThis(),
+        setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
+        setSize: vi.fn().mockReturnThis(),
+        setCallback: vi.fn().mockReturnThis(),
+        enableFeature: vi.fn().mockReturnThis(),
+        build: vi.fn(() => ({ setVisible: vi.fn() })),
+      };
+
+      window.google.picker.PickerBuilder = function() { return mockBuilderInstance; } as any;
+      window.google.picker.DocsView = function() { return { setMimeTypes: vi.fn(), setMode: vi.fn(), setOwnedByMe: vi.fn() }; } as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      // 初期化完了後に gapi.client を未定義にして falsy ブランチをテスト
+      const originalClient = window.gapi.client;
+      (window.gapi as any).client = undefined;
+
+      await act(async () => {
+        result.current.openDrivePicker();
+      });
+
+      // picker は正常にビルドされることを確認
+      expect(mockBuilderInstance.build).toHaveBeenCalled();
+
+      // 元に戻す
+      window.gapi.client = originalClient;
+    });
+
     it('should apply starred setting when enabled', async () => {
       authenticateHook();
 
@@ -679,6 +720,7 @@ describe('useGoogleAuth', () => {
         setOAuthToken: vi.fn().mockReturnThis(),
         setDeveloperKey: vi.fn().mockReturnThis(),
         setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
         setSize: vi.fn().mockReturnThis(),
         setCallback: vi.fn().mockReturnThis(),
         enableFeature: vi.fn().mockReturnThis(),
