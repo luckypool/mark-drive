@@ -8,3 +8,4 @@ export { UserMenu } from './UserMenu';
 export { FontSettingsPanel } from './FontSettingsPanel';
 export { Tooltip } from './Tooltip';
 export { GoogleLogo } from './GoogleLogo';
+export { OAuthOverlay } from './OAuthOverlay';

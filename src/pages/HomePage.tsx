@@ -23,7 +23,7 @@ import {
   IoSettingsOutline,
   IoPlayOutline,
 } from 'react-icons/io5';
-import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo } from '../components/ui';
+import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo, OAuthOverlay } from '../components/ui';
 import { AddToHomeScreenBanner } from '../components/ui/AddToHomeScreenBanner';
 import { useGoogleAuth, useTheme, useLanguage, usePickerSettings } from '../hooks';
 import { useFilePicker } from '../hooks';
@@ -53,8 +53,11 @@ export default function HomePage() {
     isLoading,
     isApiLoaded,
     isAuthenticated,
+    isAuthenticating,
+    error: authError,
     userInfo,
     authenticate,
+    cancelAuth,
     logout,
     openDrivePicker,
   } = useGoogleAuth();
@@ -676,6 +679,15 @@ export default function HomePage() {
 
       {/* Add to Home Screen banner for iOS Safari */}
       <AddToHomeScreenBanner />
+
+      {/* OAuth 認証オーバーレイ */}
+      <OAuthOverlay
+        isAuthenticating={isAuthenticating}
+        error={authError}
+        onCancel={cancelAuth}
+        onRetry={authenticate}
+        onDismissError={cancelAuth}
+      />
     </div>
   );
 }

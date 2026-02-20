@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router';
 import { useGoogleAuth, useLanguage } from '../hooks';
 import { fetchFileInfo } from '../services/googleDrive';
-import { GoogleLogo } from '../components/ui';
+import { GoogleLogo, OAuthOverlay } from '../components/ui';
 import { trackEvent } from '../utils/analytics';
 import styles from './OpenPage.module.css';
 
@@ -34,7 +34,7 @@ function parseDriveState(raw: string | null): DriveOpenState | null {
 export default function OpenPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading: isAuthLoading, accessToken, authenticate } = useGoogleAuth();
+  const { isAuthenticated, isAuthenticating, isLoading: isAuthLoading, accessToken, error: authError, authenticate, cancelAuth } = useGoogleAuth();
   const { t } = useLanguage();
 
   const [error, setError] = useState<string | null>(null);
@@ -140,6 +140,13 @@ export default function OpenPage() {
             </button>
           </div>
         </div>
+        <OAuthOverlay
+          isAuthenticating={isAuthenticating}
+          error={authError}
+          onCancel={cancelAuth}
+          onRetry={authenticate}
+          onDismissError={cancelAuth}
+        />
       </div>
     );
   }
