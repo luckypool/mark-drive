@@ -35,4 +35,3 @@ jobs:
           override_commit: ${{ github.event.pull_request.head.sha || github.sha }}
           override_branch: ${{ github.head_ref || github.ref_name }}
           override_pr: ${{ github.event.pull_request.number }}
-          verbose: true
