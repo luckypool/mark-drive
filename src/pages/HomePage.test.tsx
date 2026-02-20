@@ -58,6 +58,7 @@ vi.mock('../components/ui', () => ({
   SettingsMenu: () => <div data-testid="settings-menu" />,
   UserMenu: ({ isAuthenticated }: any) => <div data-testid="user-menu" data-authenticated={isAuthenticated} />,
   GoogleLogo: ({ size }: any) => <span data-testid="google-logo" />,
+  OAuthOverlay: () => null,
 }));
 
 vi.mock('../components/ui/AddToHomeScreenBanner', () => ({

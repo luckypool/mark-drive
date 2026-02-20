@@ -20,6 +20,7 @@ vi.mock('react-icons/io5', () => ({
 
 vi.mock('../components/ui', () => ({
   GoogleLogo: ({ size }: any) => <span data-testid="google-logo" />,
+  OAuthOverlay: () => null,
 }));
 
 const mockAuthenticate = vi.fn();
