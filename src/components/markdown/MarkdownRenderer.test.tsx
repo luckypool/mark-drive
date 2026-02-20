@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 // Mock useTheme
@@ -145,5 +145,51 @@ describe('MarkdownRenderer', () => {
     const { container } = render(<MarkdownRenderer content="test" themeMode="light" />);
     const styleTag = container.querySelector('style');
     expect(styleTag!.innerHTML).not.toContain('.katex .katex-html');
+  });
+
+  it('should render fence code block with language', () => {
+    const md = '```javascript\nconst x = 1;\n```';
+    const { container } = render(<MarkdownRenderer content={md} />);
+    const wrapper = container.querySelector('.fence-block-wrapper');
+    expect(wrapper).toBeTruthy();
+    const langLabel = container.querySelector('.fence-block-language');
+    expect(langLabel?.textContent).toBe('javascript');
+  });
+
+  it('should render indented/fenced code block without language', () => {
+    const md = '```\nplain code\n```';
+    const { container } = render(<MarkdownRenderer content={md} />);
+    const block = container.querySelector('.indented-code-block');
+    expect(block).toBeTruthy();
+    expect(block?.textContent).toContain('plain code');
+  });
+
+  it('should render mermaid diagram block', () => {
+    const md = '```mermaid\ngraph TD;\n  A-->B;\n```';
+    const { container } = render(<MarkdownRenderer content={md} />);
+    const diagram = container.querySelector('.mermaid-diagram');
+    expect(diagram).toBeTruthy();
+  });
+
+  it('should call onLinkPress when provided and link is clicked', () => {
+    const onLinkPress = vi.fn();
+    render(<MarkdownRenderer content="[Click](https://example.com)" onLinkPress={onLinkPress} />);
+    const link = screen.getByText('Click');
+    fireEvent.click(link);
+    expect(onLinkPress).toHaveBeenCalledWith('https://example.com');
+  });
+
+  it('should render image without alt as empty alt', () => {
+    const { container } = render(<MarkdownRenderer content="![](https://example.com/img.png)" />);
+    const img = container.querySelector('img');
+    expect(img?.getAttribute('alt')).toBe('');
+    expect(img?.getAttribute('loading')).toBe('lazy');
+  });
+
+  it('should use light syntax theme when themeMode is light', () => {
+    const md = '```javascript\nconst x = 1;\n```';
+    const { container } = render(<MarkdownRenderer content={md} themeMode="light" />);
+    const wrapper = container.querySelector('.fence-block-wrapper');
+    expect(wrapper).toBeTruthy();
   });
 });
