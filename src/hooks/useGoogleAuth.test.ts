@@ -128,6 +128,17 @@ describe('useGoogleAuth', () => {
     setupEnvVars();
     setupGoogleApis();
     stubScriptLoading();
+    // matchMedia mock (used by authenticate for iOS detection)
+    window.matchMedia = vi.fn(() => ({
+      matches: false,
+      media: '',
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })) as unknown as typeof window.matchMedia;
   });
 
   afterEach(() => {
@@ -245,6 +256,509 @@ describe('useGoogleAuth', () => {
 
       expect(result.current.isAuthenticated).toBe(true);
       expect(mockTrackEvent).toHaveBeenCalledWith('login', { method: 'Google' });
+    });
+
+    it('should set isAuthenticating=true during auth flow', async () => {
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      expect(result.current.isAuthenticating).toBe(false);
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      expect(result.current.isAuthenticating).toBe(true);
+    });
+
+    it('should clear isAuthenticating after successful auth', async () => {
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const mockState = 'test-state-uuid-2';
+      vi.spyOn(crypto, 'randomUUID').mockReturnValue(mockState as `${string}-${string}-${string}-${string}-${string}`);
+      const sessionStorageMock = {
+        getItem: vi.fn((key: string) => key === 'oauth_state' ? mockState : null),
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+        clear: vi.fn(),
+        length: 0,
+        key: vi.fn(),
+      };
+      Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock, writable: true });
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      expect(result.current.isAuthenticating).toBe(true);
+
+      await act(async () => {
+        tokenClient.callback({
+          access_token: 'new-token',
+          expires_in: 3600,
+          state: mockState,
+        });
+        await new Promise(r => setTimeout(r, 50));
+      });
+
+      expect(result.current.isAuthenticating).toBe(false);
+      expect(result.current.isAuthenticated).toBe(true);
+    });
+
+    it('should clear isAuthenticating on cancelAuth', async () => {
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      expect(result.current.isAuthenticating).toBe(true);
+
+      act(() => {
+        result.current.cancelAuth();
+      });
+
+      expect(result.current.isAuthenticating).toBe(false);
+      expect(result.current.error).toBeNull();
+    });
+
+    it('should set timeout error after OAUTH_POPUP_TIMEOUT_MS', async () => {
+      vi.useFakeTimers();
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+
+      // Wait for init with fake timers
+      await act(async () => {
+        vi.advanceTimersByTime(100);
+      });
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      expect(result.current.isAuthenticating).toBe(true);
+
+      // Advance past the 60s timeout
+      act(() => {
+        vi.advanceTimersByTime(60_000);
+      });
+
+      expect(result.current.isAuthenticating).toBe(false);
+      expect(result.current.error).toBe('auth_timeout');
+
+      vi.useRealTimers();
+    });
+
+    it('should handle error_callback popup_closed without showing error', async () => {
+      let errorCallback: ((err: { type: string }) => void) | undefined;
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn((config: any) => {
+        errorCallback = config.error_callback;
+        return tokenClient;
+      }) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      expect(result.current.isAuthenticating).toBe(true);
+
+      act(() => {
+        errorCallback?.({ type: 'popup_closed' });
+      });
+
+      expect(result.current.isAuthenticating).toBe(false);
+      expect(result.current.error).toBeNull();
+    });
+
+    it('should handle error_callback popup_failed_to_open', async () => {
+      let errorCallback: ((err: { type: string }) => void) | undefined;
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn((config: any) => {
+        errorCallback = config.error_callback;
+        return tokenClient;
+      }) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      act(() => {
+        errorCallback?.({ type: 'popup_failed_to_open' });
+      });
+
+      expect(result.current.isAuthenticating).toBe(false);
+      expect(result.current.error).toBe('auth_popup_blocked');
+    });
+
+    it('should set auth_timeout_ios on iOS when timeout occurs', async () => {
+      vi.useFakeTimers();
+      // Simulate iOS environment
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)',
+        writable: true,
+        configurable: true,
+      });
+
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await act(async () => {
+        vi.advanceTimersByTime(100);
+      });
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(60_000);
+      });
+
+      expect(result.current.isAuthenticating).toBe(false);
+      expect(result.current.error).toBe('auth_timeout_ios');
+
+      vi.useRealTimers();
+      // Reset userAgent
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (X11; Linux x86_64)',
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it('should set auth_popup_blocked_ios on iOS popup_failed_to_open', async () => {
+      // Simulate iOS environment
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)',
+        writable: true,
+        configurable: true,
+      });
+
+      let errorCallback: ((err: { type: string }) => void) | undefined;
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn((config: any) => {
+        errorCallback = config.error_callback;
+        return tokenClient;
+      }) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      act(() => {
+        errorCallback?.({ type: 'popup_failed_to_open' });
+      });
+
+      expect(result.current.error).toBe('auth_popup_blocked_ios');
+
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (X11; Linux x86_64)',
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it('should set auth_popup_blocked_pwa in iOS standalone mode', async () => {
+      // Simulate iOS + standalone (PWA) environment
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)',
+        writable: true,
+        configurable: true,
+      });
+      window.matchMedia = vi.fn((query: string) => ({
+        matches: query === '(display-mode: standalone)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })) as unknown as typeof window.matchMedia;
+
+      let errorCallback: ((err: { type: string }) => void) | undefined;
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn((config: any) => {
+        errorCallback = config.error_callback;
+        return tokenClient;
+      }) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      act(() => {
+        errorCallback?.({ type: 'popup_failed_to_open' });
+      });
+
+      expect(result.current.error).toBe('auth_popup_blocked_pwa');
+
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (X11; Linux x86_64)',
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it('should handle requestAccessToken throwing (catch block)', async () => {
+      const mockRequestAccessToken = vi.fn(() => {
+        throw new Error('popup blocked');
+      });
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      expect(result.current.isAuthenticating).toBe(false);
+      expect(result.current.error).toBe('auth_popup_blocked');
+    });
+
+    it('should handle requestAccessToken throwing on iOS (catch block)', async () => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)',
+        writable: true,
+        configurable: true,
+      });
+
+      const mockRequestAccessToken = vi.fn(() => {
+        throw new Error('popup blocked');
+      });
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      expect(result.current.error).toBe('auth_popup_blocked_ios');
+
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (X11; Linux x86_64)',
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it('should handle unknown error_callback type', async () => {
+      let errorCallback: ((err: { type: string }) => void) | undefined;
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn((config: any) => {
+        errorCallback = config.error_callback;
+        return tokenClient;
+      }) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      act(() => {
+        errorCallback?.({ type: 'some_unknown_error' });
+      });
+
+      expect(result.current.error).toBe('Authentication error: some_unknown_error');
+    });
+
+    it('should set error on invalid state parameter', async () => {
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const mockState = 'valid-state';
+      vi.spyOn(crypto, 'randomUUID').mockReturnValue(mockState as `${string}-${string}-${string}-${string}-${string}`);
+      const sessionStorageMock = {
+        getItem: vi.fn((key: string) => key === 'oauth_state' ? mockState : null),
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+        clear: vi.fn(),
+        length: 0,
+        key: vi.fn(),
+      };
+      Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock, writable: true });
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      // Callback with mismatched state
+      await act(async () => {
+        tokenClient.callback({
+          access_token: 'token',
+          expires_in: 3600,
+          state: 'wrong-state',
+        });
+        await new Promise(r => setTimeout(r, 50));
+      });
+
+      expect(result.current.error).toBe('Authentication failed: invalid state parameter');
+      expect(result.current.isAuthenticated).toBe(false);
+    });
+
+    it('should set error on non-access_denied auth error', async () => {
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const mockState = 'test-state-err';
+      vi.spyOn(crypto, 'randomUUID').mockReturnValue(mockState as `${string}-${string}-${string}-${string}-${string}`);
+      const sessionStorageMock = {
+        getItem: vi.fn((key: string) => key === 'oauth_state' ? mockState : null),
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+        clear: vi.fn(),
+        length: 0,
+        key: vi.fn(),
+      };
+      Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock, writable: true });
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      await act(async () => {
+        tokenClient.callback({
+          error: 'server_error',
+          state: mockState,
+        });
+        await new Promise(r => setTimeout(r, 50));
+      });
+
+      expect(result.current.error).toBe('Authentication error: server_error');
+    });
+
+    it('should not show error on access_denied (user cancelled)', async () => {
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn(() => tokenClient) as any;
+
+      const mockState = 'test-state-cancel';
+      vi.spyOn(crypto, 'randomUUID').mockReturnValue(mockState as `${string}-${string}-${string}-${string}-${string}`);
+      const sessionStorageMock = {
+        getItem: vi.fn((key: string) => key === 'oauth_state' ? mockState : null),
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+        clear: vi.fn(),
+        length: 0,
+        key: vi.fn(),
+      };
+      Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock, writable: true });
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      await act(async () => {
+        tokenClient.callback({
+          error: 'access_denied',
+          state: mockState,
+        });
+        await new Promise(r => setTimeout(r, 50));
+      });
+
+      expect(result.current.isAuthenticating).toBe(false);
+      expect(result.current.error).toBeNull();
+      expect(result.current.isAuthenticated).toBe(false);
     });
   });
 

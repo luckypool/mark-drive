@@ -104,6 +104,7 @@ vi.mock('../components/ui', () => ({
   ),
   SettingsMenu: () => <div data-testid="settings-menu" />,
   GoogleLogo: ({ size }: any) => <span data-testid="google-logo" data-size={size} />,
+  OAuthOverlay: () => null,
 }));
 
 vi.mock('../components/markdown', () => ({

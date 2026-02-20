@@ -316,6 +316,18 @@ export const ja: Translations = {
     linkCopied: 'コピーしました！',
   },
 
+  // OAuth Overlay
+  auth: {
+    authenticating: 'Googleでサインイン中...',
+    cancel: 'キャンセル',
+    timeoutError: 'サインインがタイムアウトしました。もう一度お試しください。',
+    timeoutErrorIos: 'サインインがタイムアウトしました。サインイン画面が表示されなかった場合は、Safariの設定を確認してください。',
+    popupBlocked: 'サインインポップアップがブロックされました。このサイトのポップアップを許可してから再度お試しください。',
+    popupBlockedIos: 'サインインポップアップがブロックされました。Safariの設定で「サイト越えトラッキングを防ぐ」をオフにしてください。',
+    popupBlockedPwa: 'このモードではポップアップがサポートされていません。SafariでMarkDriveを開いてサインインしてください。',
+    thirdPartyCookieHint: '「Googleアカウントにアクセスできません」と表示される場合、Safariの設定で「サイト越えトラッキングを防ぐ」をオフにしてください。',
+  },
+
   // Add to Home Screen
   addToHomeScreen: {
     title: 'ホーム画面に追加',

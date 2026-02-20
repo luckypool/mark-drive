@@ -21,7 +21,7 @@ import {
   IoAlertCircle,
   IoLinkOutline,
 } from 'react-icons/io5';
-import { Button, SettingsMenu, GoogleLogo } from '../components/ui';
+import { Button, SettingsMenu, GoogleLogo, OAuthOverlay } from '../components/ui';
 import { MarkdownRenderer } from '../components/markdown';
 import { useGoogleAuth, useShare, useTheme, useLanguage, useMarkdownEditor, getFileHandle } from '../hooks';
 import { CodeMirrorEditor } from '../components/editor/CodeMirrorEditor';
@@ -60,7 +60,7 @@ export default function ViewerPage() {
     return result as unknown as ViewerParams;
   }, [searchParams, location.state]);
 
-  const { fetchFileContent, isLoading: isAuthLoading, accessToken, authenticate } = useGoogleAuth();
+  const { fetchFileContent, isLoading: isAuthLoading, isAuthenticating, error: authError, accessToken, authenticate, cancelAuth } = useGoogleAuth();
   const { shareContent, isProcessing } = useShare();
 
   const [content, setContent] = useState<string | null>(params.content || null);
@@ -603,6 +603,15 @@ export default function ViewerPage() {
           </div>
         </div>
       )}
+
+      {/* OAuth 認証オーバーレイ */}
+      <OAuthOverlay
+        isAuthenticating={isAuthenticating}
+        error={authError}
+        onCancel={cancelAuth}
+        onRetry={authenticate}
+        onDismissError={cancelAuth}
+      />
     </div>
   );
 }

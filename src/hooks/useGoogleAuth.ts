@@ -32,6 +32,9 @@ const TOKEN_EXPIRY_KEY = 'googleDriveTokenExpiry';
 const SCOPE_VERSION_KEY = 'googleDriveScopeVersion';
 const OAUTH_STATE_KEY = 'oauth_state';
 
+// OAuth ポップアップタイムアウト（秒）
+const OAUTH_POPUP_TIMEOUT_MS = 60_000;
+
 // Google API の型定義
 declare global {
   interface Window {
@@ -42,6 +45,7 @@ declare global {
             client_id: string;
             scope: string;
             callback: (response: TokenResponse) => void;
+            error_callback?: (error: PopupError) => void;
           }) => TokenClient;
           revoke: (token: string, callback: () => void) => void;
         };
@@ -55,6 +59,11 @@ declare global {
       };
     };
   }
+}
+
+interface PopupError {
+  type: string;
+  message?: string;
 }
 
 interface TokenClient {
@@ -93,6 +102,7 @@ export interface UseGoogleAuthReturn {
   isLoading: boolean;
   isApiLoaded: boolean;
   isAuthenticated: boolean;
+  isAuthenticating: boolean;
   accessToken: string | null;
   error: string | null;
   results: DriveFile[];
@@ -101,6 +111,7 @@ export interface UseGoogleAuthReturn {
   search: (query: string) => Promise<void>;
   loadRecentFiles: () => Promise<void>;
   authenticate: () => void;
+  cancelAuth: () => void;
   logout: () => void;
   fetchFileContent: (fileId: string, signal?: AbortSignal) => Promise<string | null>;
   clearResults: () => void;
@@ -179,6 +190,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [isApiLoaded, setIsApiLoaded] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isTokenRestored, setIsTokenRestored] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<DriveFile[]>([]);
@@ -189,6 +201,8 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   const tokenClientRef = useRef<TokenClient | null>(null);
   const pickerInited = useRef(false);
   const gisInited = useRef(false);
+  const authTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const errorCallbackRef = useRef<((err: PopupError) => void) | null>(null);
 
   // 初期化時にトークンを復元
   useEffect(() => {
@@ -236,6 +250,10 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
           client_id: CLIENT_ID,
           scope: SCOPES,
           callback: () => {},
+          error_callback: (err: PopupError) => {
+            // ref 経由で最新の error_callback を呼ぶ
+            errorCallbackRef.current?.(err);
+          },
         });
         gisInited.current = true;
         checkApisLoaded();
@@ -259,6 +277,21 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     loadGoogleApi();
   }, []);
 
+  // 認証タイムアウト・状態をクリア
+  const clearAuthState = useCallback(() => {
+    if (authTimeoutRef.current) {
+      clearTimeout(authTimeoutRef.current);
+      authTimeoutRef.current = null;
+    }
+    setIsAuthenticating(false);
+  }, []);
+
+  // 認証キャンセル
+  const cancelAuth = useCallback(() => {
+    clearAuthState();
+    setError(null);
+  }, [clearAuthState]);
+
   // 認証
   const authenticate = useCallback(() => {
     if (!isApiLoaded) {
@@ -267,11 +300,32 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     }
 
     if (tokenClientRef.current) {
+      // iOS Safari / PWA モードでのポップアップブロック検出
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+        ('standalone' in navigator && (navigator as unknown as { standalone: boolean }).standalone);
+
+      setIsAuthenticating(true);
+      setError(null);
+
       // CSRF対策: state パラメータを生成して保存
       const state = crypto.randomUUID();
       sessionStorage.setItem(OAUTH_STATE_KEY, state);
 
+      // タイムアウト設定（60秒で自動キャンセル）
+      authTimeoutRef.current = setTimeout(() => {
+        clearAuthState();
+        if (isIOS) {
+          setError('auth_timeout_ios');
+        } else {
+          setError('auth_timeout');
+        }
+      }, OAUTH_POPUP_TIMEOUT_MS);
+
       tokenClientRef.current.callback = async (response: TokenResponse) => {
+        clearAuthState();
+
         // state パラメータを検証
         const expectedState = sessionStorage.getItem(OAUTH_STATE_KEY);
         sessionStorage.removeItem(OAUTH_STATE_KEY);
@@ -282,7 +336,12 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         }
 
         if (response.error) {
-          setError(`Authentication error: ${response.error}`);
+          // access_denied = ユーザーがキャンセルした
+          if (response.error === 'access_denied') {
+            setError(null);
+          } else {
+            setError(`Authentication error: ${response.error}`);
+          }
           return;
         }
         setAccessToken(response.access_token);
@@ -293,9 +352,40 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         const info = await fetchUserInfo(response.access_token);
         if (info) setUserInfo(info);
       };
-      tokenClientRef.current.requestAccessToken({ prompt: '', state });
+
+      // error_callback を設定（GIS がポップアップを開けなかった場合等に呼ばれる）
+      errorCallbackRef.current = (err: PopupError) => {
+        clearAuthState();
+        if (err.type === 'popup_failed_to_open') {
+          if (isIOS && isStandalone) {
+            setError('auth_popup_blocked_pwa');
+          } else if (isIOS) {
+            setError('auth_popup_blocked_ios');
+          } else {
+            setError('auth_popup_blocked');
+          }
+        } else if (err.type === 'popup_closed') {
+          // ユーザーがポップアップを閉じた - エラー表示不要
+          setError(null);
+        } else {
+          setError(`Authentication error: ${err.type}`);
+        }
+      };
+
+      try {
+        tokenClientRef.current.requestAccessToken({ prompt: '', state });
+      } catch {
+        clearAuthState();
+        if (isIOS && isStandalone) {
+          setError('auth_popup_blocked_pwa');
+        } else if (isIOS) {
+          setError('auth_popup_blocked_ios');
+        } else {
+          setError('auth_popup_blocked');
+        }
+      }
     }
-  }, [isApiLoaded]);
+  }, [isApiLoaded, clearAuthState]);
 
   // ログアウト
   const logout = useCallback(() => {
@@ -467,6 +557,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     isLoading: isLoading || !isTokenRestored,
     isApiLoaded,
     isAuthenticated,
+    isAuthenticating,
     accessToken,
     error,
     results,
@@ -475,6 +566,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     search,
     loadRecentFiles,
     authenticate,
+    cancelAuth,
     logout,
     fetchFileContent,
     clearResults,

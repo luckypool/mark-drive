@@ -8,7 +8,7 @@ import {
   IoClose,
   IoFolderOpenOutline,
 } from 'react-icons/io5';
-import { GoogleLogo } from '../components/ui';
+import { GoogleLogo, OAuthOverlay } from '../components/ui';
 import { useGoogleAuth, useLanguage } from '../hooks';
 import { trackEvent } from '../utils/analytics';
 import styles from './SearchPage.module.css';
@@ -17,7 +17,10 @@ export default function SearchPage() {
   const { t } = useLanguage();
   const {
     isAuthenticated,
+    isAuthenticating,
+    error: authError,
     authenticate,
+    cancelAuth,
     openDrivePicker,
   } = useGoogleAuth();
 
@@ -88,6 +91,15 @@ export default function SearchPage() {
           </div>
         )}
       </div>
+
+      {/* OAuth 認証オーバーレイ */}
+      <OAuthOverlay
+        isAuthenticating={isAuthenticating}
+        error={authError}
+        onCancel={cancelAuth}
+        onRetry={authenticate}
+        onDismissError={cancelAuth}
+      />
     </div>
   );
 }

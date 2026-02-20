@@ -314,6 +314,18 @@ export const en = {
     linkCopied: 'Copied!',
   },
 
+  // OAuth Overlay
+  auth: {
+    authenticating: 'Signing in with Google...',
+    cancel: 'Cancel',
+    timeoutError: 'Sign-in timed out. Please try again.',
+    timeoutErrorIos: 'Sign-in timed out. If the sign-in screen did not appear, please check your Safari settings.',
+    popupBlocked: 'The sign-in popup was blocked. Please allow popups for this site and try again.',
+    popupBlockedIos: 'The sign-in popup was blocked. In Safari Settings, try disabling "Prevent Cross-Site Tracking".',
+    popupBlockedPwa: 'Popups are not supported in this mode. Please open MarkDrive in Safari and try signing in.',
+    thirdPartyCookieHint: 'If you see "Couldn\'t sign in", go to Safari Settings and disable "Prevent Cross-Site Tracking".',
+  },
+
   // Add to Home Screen
   addToHomeScreen: {
     title: 'Add to Home Screen',
@@ -649,6 +661,16 @@ export type Translations = {
     exportPdf: string;
     copyLink: string;
     linkCopied: string;
+  };
+  auth: {
+    authenticating: string;
+    cancel: string;
+    timeoutError: string;
+    timeoutErrorIos: string;
+    popupBlocked: string;
+    popupBlockedIos: string;
+    popupBlockedPwa: string;
+    thirdPartyCookieHint: string;
   };
   addToHomeScreen: {
     title: string;
