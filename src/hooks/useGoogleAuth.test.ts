@@ -703,6 +703,42 @@ describe('useGoogleAuth', () => {
 
       expect(mockSetStarred).toHaveBeenCalledWith(true);
     });
+
+    it('should work without gapi.client (skips setToken)', async () => {
+      authenticateHook();
+
+      const mockBuild = vi.fn(() => ({ setVisible: vi.fn() }));
+      const mockBuilderInstance = {
+        addView: vi.fn().mockReturnThis(),
+        setOAuthToken: vi.fn().mockReturnThis(),
+        setDeveloperKey: vi.fn().mockReturnThis(),
+        setAppId: vi.fn().mockReturnThis(),
+        setOrigin: vi.fn().mockReturnThis(),
+        setSize: vi.fn().mockReturnThis(),
+        setCallback: vi.fn().mockReturnThis(),
+        enableFeature: vi.fn().mockReturnThis(),
+        build: mockBuild,
+      };
+
+      window.google.picker.PickerBuilder = function() { return mockBuilderInstance; } as any;
+      window.google.picker.DocsView = function() { return { setMimeTypes: vi.fn(), setMode: vi.fn(), setOwnedByMe: vi.fn() }; } as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      // 初期化完了後に gapi.client を削除して setToken が呼ばれないことを検証
+      const originalClient = window.gapi.client;
+      delete (window.gapi as any).client;
+
+      await act(async () => {
+        result.current.openDrivePicker();
+      });
+
+      expect(mockBuild).toHaveBeenCalled();
+
+      // gapi.client を復元
+      window.gapi.client = originalClient;
+    });
   });
 
 });
