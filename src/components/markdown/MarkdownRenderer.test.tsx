@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MarkdownRenderer } from './MarkdownRenderer';
 
 // Mock useTheme
@@ -145,5 +145,92 @@ describe('MarkdownRenderer', () => {
     const { container } = render(<MarkdownRenderer content="test" themeMode="light" />);
     const styleTag = container.querySelector('style');
     expect(styleTag!.innerHTML).not.toContain('.katex .katex-html');
+  });
+
+  it('should render code block with syntax highlighting when language is specified', () => {
+    const { container } = render(
+      <MarkdownRenderer content={'```javascript\nconst x = 1;\n```'} />
+    );
+    const wrapper = container.querySelector('.fence-block-wrapper');
+    expect(wrapper).toBeTruthy();
+    const langLabel = container.querySelector('.fence-block-language');
+    expect(langLabel).toBeTruthy();
+    expect(langLabel!.textContent).toBe('javascript');
+  });
+
+  it('should render code block without language as indented-code-block', () => {
+    const { container } = render(
+      <MarkdownRenderer content={'```\nplain code\n```'} />
+    );
+    const indented = container.querySelector('.indented-code-block');
+    expect(indented).toBeTruthy();
+    expect(indented!.textContent).toContain('plain code');
+  });
+
+  it('should render mermaid code block', () => {
+    const { container } = render(
+      <MarkdownRenderer content={'```mermaid\ngraph TD\n    A-->B\n```'} />
+    );
+    // Mermaid diagram renders in a div with mermaid-diagram class
+    const diagram = container.querySelector('.mermaid-diagram');
+    expect(diagram).toBeTruthy();
+  });
+
+  it('should call onLinkPress when clicking a link with handler', () => {
+    const onLinkPress = vi.fn();
+    render(
+      <MarkdownRenderer
+        content="Click [here](https://example.com)"
+        onLinkPress={onLinkPress}
+      />
+    );
+    const link = screen.getByText('here');
+    fireEvent.click(link);
+    expect(onLinkPress).toHaveBeenCalledWith('https://example.com');
+  });
+
+  it('should not call onLinkPress when handler is not provided', () => {
+    render(<MarkdownRenderer content="Click [here](https://example.com)" />);
+    const link = screen.getByText('here');
+    // Should not throw when clicking without handler
+    fireEvent.click(link);
+    expect(link.closest('a')?.getAttribute('href')).toBe('https://example.com');
+  });
+
+  it('should render with light theme', () => {
+    const { container } = render(
+      <MarkdownRenderer content="# Hello" themeMode="light" />
+    );
+    const styleTag = container.querySelector('style');
+    expect(styleTag).toBeTruthy();
+    // Light theme should not contain dark KaTeX override
+    expect(styleTag!.innerHTML).not.toContain('.katex .katex-html');
+  });
+
+  it('should render blockquote', () => {
+    const { container } = render(
+      <MarkdownRenderer content="> This is a quote" />
+    );
+    const blockquote = container.querySelector('blockquote');
+    expect(blockquote).toBeTruthy();
+    expect(blockquote!.textContent).toContain('This is a quote');
+  });
+
+  it('should render unordered list', () => {
+    const { container } = render(
+      <MarkdownRenderer content={'- Item 1\n- Item 2'} />
+    );
+    const list = container.querySelector('ul');
+    expect(list).toBeTruthy();
+    const items = container.querySelectorAll('li');
+    expect(items.length).toBe(2);
+  });
+
+  it('should render horizontal rule', () => {
+    const { container } = render(
+      <MarkdownRenderer content={'Above\n\n---\n\nBelow'} />
+    );
+    const hr = container.querySelector('hr');
+    expect(hr).toBeTruthy();
   });
 });

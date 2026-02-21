@@ -433,6 +433,49 @@ describe('markdownToHtml - Math (KaTeX)', () => {
   });
 });
 
+describe('markdownToHtml - Mermaid error fallback', () => {
+  it('should fallback when individual mermaid block render fails', async () => {
+    const mermaid = (await import('mermaid')).default;
+    const renderSpy = vi.spyOn(mermaid, 'render').mockRejectedValue(new Error('Invalid syntax'));
+    const html = await markdownToHtml('```mermaid\ngraph TD\n    A-->B\n```');
+    expect(html).toContain('<pre');
+    expect(html).toContain('graph TD');
+    // Should show warning-styled fallback
+    expect(html).toContain('#ffc107');
+    renderSpy.mockRestore();
+  });
+
+  it('should fallback when mermaid module fails to load', async () => {
+    // Mock mermaid import to throw
+    vi.doMock('mermaid', () => {
+      throw new Error('Module not found');
+    });
+
+    // Re-import to pick up the mock
+    const { markdownToHtml: freshMarkdownToHtml } = await import('./markdownToHtml');
+    const html = await freshMarkdownToHtml('```mermaid\ngraph TD\n    A-->B\n```');
+    expect(html).toContain('<pre');
+    expect(html).toContain('graph TD');
+
+    vi.doUnmock('mermaid');
+  });
+});
+
+describe('markdownToHtml - Block element detection', () => {
+  it('should not wrap <div> starting blocks in <p> tags', async () => {
+    // Mermaid blocks get replaced with <div> wrapped SVG
+    // Ensure that when content starts with <div>, it's not wrapped in <p>
+    const html = await markdownToHtml('```mermaid\ngraph TD\n    A-->B\n```');
+    // The output should not wrap fallback <pre> blocks in <p> tags
+    expect(html).not.toMatch(/<p[^>]*><pre/);
+  });
+
+  it('should not wrap <pre> starting blocks in <p> tags', async () => {
+    const html = await markdownToHtml('```js\nconst x = 1;\n```');
+    expect(html).not.toMatch(/<p[^>]*><pre/);
+  });
+});
+
 describe('markdownToHtml - Math error fallback', () => {
   it('should fallback to code display when katex.renderToString throws for block $$', async () => {
     const katex = await import('katex');

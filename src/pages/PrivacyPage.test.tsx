@@ -20,7 +20,16 @@ vi.mock('../hooks', () => ({
           lastUpdated: 'Last updated: 2025-01-01',
           sections: {
             overview: { title: 'Overview', body: 'Overview body text' },
-            data: { title: 'Data Collection', body: 'Data body text' },
+            data: {
+              title: 'Data Collection',
+              body: 'First paragraph\n\nSecond paragraph',
+              items: ['Item A', 'Item B', 'Item C'],
+            },
+            contact: {
+              title: 'Contact',
+              body: 'Contact body text',
+              url: 'https://github.com/example/issues',
+            },
           },
         },
       },
@@ -99,6 +108,37 @@ describe('PrivacyPage', () => {
     expect(screen.getByText('Overview')).toBeTruthy();
     expect(screen.getByText('Overview body text')).toBeTruthy();
     expect(screen.getByText('Data Collection')).toBeTruthy();
-    expect(screen.getByText('Data body text')).toBeTruthy();
+    expect(screen.getByText('First paragraph')).toBeTruthy();
+  });
+
+  it('should render section items as a list', async () => {
+    const PrivacyPage = await loadComponent();
+    renderWithProviders(<PrivacyPage />);
+    expect(screen.getByText('Item A')).toBeTruthy();
+    expect(screen.getByText('Item B')).toBeTruthy();
+    expect(screen.getByText('Item C')).toBeTruthy();
+  });
+
+  it('should render additional paragraphs from body split by double newline', async () => {
+    const PrivacyPage = await loadComponent();
+    renderWithProviders(<PrivacyPage />);
+    expect(screen.getByText('Second paragraph')).toBeTruthy();
+  });
+
+  it('should render contact link button when section has url', async () => {
+    const PrivacyPage = await loadComponent();
+    renderWithProviders(<PrivacyPage />);
+    const githubButton = screen.getByText('GitHub Issues').closest('button');
+    expect(githubButton).toBeTruthy();
+  });
+
+  it('should call window.open when clicking contact link', async () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    const PrivacyPage = await loadComponent();
+    renderWithProviders(<PrivacyPage />);
+    const githubButton = screen.getByText('GitHub Issues').closest('button')!;
+    fireEvent.click(githubButton);
+    expect(openSpy).toHaveBeenCalledWith('https://github.com/example/issues', '_blank');
+    openSpy.mockRestore();
   });
 });

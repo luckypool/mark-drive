@@ -4,6 +4,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
+  fetchUserInfo,
   searchMarkdownFiles,
   listRecentMarkdownFiles,
   fetchFileContent,
@@ -54,6 +55,50 @@ const mockFiles: DriveFile[] = [
     size: '512',
   },
 ];
+
+describe('fetchUserInfo', () => {
+  it('should return user info on success', async () => {
+    mockFetch({
+      user: {
+        displayName: 'Test User',
+        emailAddress: 'test@example.com',
+        photoLink: 'https://example.com/photo.jpg',
+      },
+    });
+    const info = await fetchUserInfo('test-token');
+    expect(info).toEqual({
+      email: 'test@example.com',
+      displayName: 'Test User',
+      photoUrl: 'https://example.com/photo.jpg',
+    });
+  });
+
+  it('should return null for photoUrl when photoLink is absent', async () => {
+    mockFetch({
+      user: {
+        displayName: 'Test User',
+        emailAddress: 'test@example.com',
+      },
+    });
+    const info = await fetchUserInfo('test-token');
+    expect(info).not.toBeNull();
+    expect(info!.photoUrl).toBeNull();
+  });
+
+  it('should return null on API error', async () => {
+    mockFetch({}, false, 'Unauthorized');
+    const info = await fetchUserInfo('invalid-token');
+    expect(info).toBeNull();
+  });
+
+  it('should return null on network error', async () => {
+    globalThis.fetch = vi.fn(async () => {
+      throw new Error('Network error');
+    });
+    const info = await fetchUserInfo('test-token');
+    expect(info).toBeNull();
+  });
+});
 
 describe('listRecentMarkdownFiles', () => {
   it('should return only .md and .markdown files', async () => {
@@ -110,6 +155,11 @@ describe('searchMarkdownFiles', () => {
     const files = await searchMarkdownFiles('test-token', "test's");
     expect(files).toHaveLength(0);
   });
+
+  it('should throw on API error', async () => {
+    mockFetch({}, false, 'Internal Server Error');
+    await expect(searchMarkdownFiles('test-token', 'readme')).rejects.toThrow('Search failed');
+  });
 });
 
 describe('fetchFileContent', () => {
@@ -136,6 +186,14 @@ describe('fetchFileInfo', () => {
   it('should return null on error', async () => {
     mockFetch({}, false, 'Not Found');
     const info = await fetchFileInfo('test-token', 'invalid-id');
+    expect(info).toBeNull();
+  });
+
+  it('should return null on network exception', async () => {
+    globalThis.fetch = vi.fn(async () => {
+      throw new Error('Network error');
+    });
+    const info = await fetchFileInfo('test-token', 'file-id');
     expect(info).toBeNull();
   });
 });
