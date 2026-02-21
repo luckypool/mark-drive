@@ -16,8 +16,9 @@ vi.mock('../../hooks', () => ({
         timeoutErrorIos: 'Sign-in timed out (iOS).',
         popupBlocked: 'Popup was blocked.',
         popupBlockedIos: 'Popup was blocked (iOS).',
-        popupBlockedPwa: 'Popups not supported in this mode.',
+        popupBlockedPwa: 'Google Sign-in may not work from Home Screen.',
         thirdPartyCookieHint: 'Disable "Prevent Cross-Site Tracking".',
+        openInSafari: 'Open in Safari',
       },
       viewer: {
         retry: 'Retry',
@@ -98,10 +99,17 @@ describe('OAuthOverlay', () => {
     expect(screen.getByText('Disable "Prevent Cross-Site Tracking".')).toBeTruthy();
   });
 
-  it('should show PWA popup blocked error without hint', () => {
+  it('should show PWA popup blocked error with hint and Safari link', () => {
     render(<OAuthOverlay {...defaultProps} error="auth_popup_blocked_pwa" />);
-    expect(screen.getByText('Popups not supported in this mode.')).toBeTruthy();
-    expect(screen.queryByText('Disable "Prevent Cross-Site Tracking".')).toBeNull();
+    expect(screen.getByText('Google Sign-in may not work from Home Screen.')).toBeTruthy();
+    expect(screen.getByText('Disable "Prevent Cross-Site Tracking".')).toBeTruthy();
+    // Should show "Open in Safari" link instead of "Retry" button
+    const safariLink = screen.getByText('Open in Safari');
+    expect(safariLink).toBeTruthy();
+    expect(safariLink.tagName).toBe('A');
+    expect(safariLink.getAttribute('target')).toBe('_blank');
+    // Should not show Retry button
+    expect(screen.queryByText('Retry')).toBeNull();
   });
 
   // --- Error action buttons ---

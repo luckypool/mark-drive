@@ -324,8 +324,9 @@ export const ja: Translations = {
     timeoutErrorIos: 'サインインがタイムアウトしました。サインイン画面が表示されなかった場合は、Safariの設定を確認してください。',
     popupBlocked: 'サインインポップアップがブロックされました。このサイトのポップアップを許可してから再度お試しください。',
     popupBlockedIos: 'サインインポップアップがブロックされました。Safariの設定で「サイト越えトラッキングを防ぐ」をオフにしてください。',
-    popupBlockedPwa: 'このモードではポップアップがサポートされていません。SafariでMarkDriveを開いてサインインしてください。',
-    thirdPartyCookieHint: '「Googleアカウントにアクセスできません」と表示される場合、Safariの設定で「サイト越えトラッキングを防ぐ」をオフにしてください。',
+    popupBlockedPwa: 'ホーム画面から開いた場合、Googleサインインが正常に動作しないことがあります。Safariで直接開いてサインインしてください。',
+    thirdPartyCookieHint: '「Googleアカウントにアクセスできません」と表示される場合は、Safariの設定 →「サイト越えトラッキングを防ぐ」をオフにしてください。',
+    openInSafari: 'Safariで開く',
   },
 
   // Add to Home Screen

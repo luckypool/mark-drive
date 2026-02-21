@@ -365,8 +365,13 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
             setError('auth_popup_blocked');
           }
         } else if (err.type === 'popup_closed') {
-          // ユーザーがポップアップを閉じた - エラー表示不要
-          setError(null);
+          // iOS PWA モードでは、Google の Cookie エラーでユーザーがポップアップを
+          // 閉じた可能性が高いため、対処方法を案内する
+          if (isIOS && isStandalone) {
+            setError('auth_popup_blocked_pwa');
+          } else {
+            setError(null);
+          }
         } else {
           setError(`Authentication error: ${err.type}`);
         }
