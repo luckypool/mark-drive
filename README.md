@@ -8,6 +8,12 @@
 
 [mark-drive.com](https://mark-drive.com/)
 
+[![CI](https://github.com/luckypool/mark-drive/actions/workflows/ci.yml/badge.svg)](https://github.com/luckypool/mark-drive/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/luckypool/mark-drive/graph/badge.svg)](https://codecov.io/gh/luckypool/mark-drive)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite&logoColor=white)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/luckypool)
 
 <br />
