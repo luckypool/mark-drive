@@ -59,6 +59,7 @@ vi.mock('../components/ui', () => ({
   UserMenu: ({ isAuthenticated }: any) => <div data-testid="user-menu" data-authenticated={isAuthenticated} />,
   GoogleLogo: ({ size }: any) => <span data-testid="google-logo" />,
   OAuthOverlay: () => null,
+  DriveFileBrowser: () => <div data-testid="drive-file-browser" />,
 }));
 
 vi.mock('../components/ui/AddToHomeScreenBanner', () => ({
@@ -79,6 +80,7 @@ const mockAuthState = {
   authenticate: mockAuthenticate,
   logout: mockLogout,
   openDrivePicker: mockOpenDrivePicker,
+  driveFileBrowserProps: null as any,
 };
 
 const mockPickerState = {
@@ -245,6 +247,7 @@ beforeEach(() => {
     authenticate: mockAuthenticate,
     logout: mockLogout,
     openDrivePicker: mockOpenDrivePicker,
+    driveFileBrowserProps: null,
   });
 
   // Reset picker settings

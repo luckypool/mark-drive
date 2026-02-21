@@ -9,3 +9,4 @@ export { FontSettingsPanel } from './FontSettingsPanel';
 export { Tooltip } from './Tooltip';
 export { GoogleLogo } from './GoogleLogo';
 export { OAuthOverlay } from './OAuthOverlay';
+export { DriveFileBrowser } from './DriveFileBrowser';

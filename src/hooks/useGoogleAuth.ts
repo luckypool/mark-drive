@@ -14,6 +14,8 @@ import {
 } from '../services/googleDrive';
 import { storage } from '../services/storage';
 import { trackEvent } from '../utils/analytics';
+import { isIOS, isStandaloneMode, isIosPwa } from '../utils/platform';
+import type { DriveFileBrowserProps } from '../components/ui/DriveFileBrowser';
 
 // 環境変数から設定を取得
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || '';
@@ -116,6 +118,7 @@ export interface UseGoogleAuthReturn {
   fetchFileContent: (fileId: string, signal?: AbortSignal) => Promise<string | null>;
   clearResults: () => void;
   openDrivePicker: (options?: OpenDrivePickerOptions) => Promise<PickerResult | null>;
+  driveFileBrowserProps: DriveFileBrowserProps | null;
 }
 
 // スクリプトを動的に読み込む
@@ -197,6 +200,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   const [recentFiles, setRecentFiles] = useState<DriveFile[]>([]);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [driveFileBrowserState, setDriveFileBrowserState] = useState<DriveFileBrowserProps | null>(null);
 
   const tokenClientRef = useRef<TokenClient | null>(null);
   const pickerInited = useRef(false);
@@ -301,10 +305,8 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
 
     if (tokenClientRef.current) {
       // iOS Safari / PWA モードでのポップアップブロック検出
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-        ('standalone' in navigator && (navigator as unknown as { standalone: boolean }).standalone);
+      const iosDevice = isIOS();
+      const isStandalone = isStandaloneMode();
 
       setIsAuthenticating(true);
       setError(null);
@@ -316,7 +318,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
       // タイムアウト設定（60秒で自動キャンセル）
       authTimeoutRef.current = setTimeout(() => {
         clearAuthState();
-        if (isIOS) {
+        if (iosDevice) {
           setError('auth_timeout_ios');
         } else {
           setError('auth_timeout');
@@ -357,9 +359,9 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
       errorCallbackRef.current = (err: PopupError) => {
         clearAuthState();
         if (err.type === 'popup_failed_to_open') {
-          if (isIOS && isStandalone) {
+          if (iosDevice && isStandalone) {
             setError('auth_popup_blocked_pwa');
-          } else if (isIOS) {
+          } else if (iosDevice) {
             setError('auth_popup_blocked_ios');
           } else {
             setError('auth_popup_blocked');
@@ -367,7 +369,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         } else if (err.type === 'popup_closed') {
           // iOS PWA モードでは、Google の Cookie エラーでユーザーがポップアップを
           // 閉じた可能性が高いため、対処方法を案内する
-          if (isIOS && isStandalone) {
+          if (iosDevice && isStandalone) {
             setError('auth_popup_blocked_pwa');
           } else {
             setError(null);
@@ -381,9 +383,9 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         tokenClientRef.current.requestAccessToken({ prompt: '', state });
       } catch {
         clearAuthState();
-        if (isIOS && isStandalone) {
+        if (iosDevice && isStandalone) {
           setError('auth_popup_blocked_pwa');
-        } else if (isIOS) {
+        } else if (iosDevice) {
           setError('auth_popup_blocked_ios');
         } else {
           setError('auth_popup_blocked');
@@ -506,6 +508,22 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         return;
       }
 
+      // iOS PWA モードでは Google Picker が動作しないため、アプリ内ファイルブラウザを表示
+      if (isIosPwa()) {
+        setDriveFileBrowserState({
+          accessToken,
+          onSelect: (result) => {
+            setDriveFileBrowserState(null);
+            resolve(result);
+          },
+          onCancel: () => {
+            setDriveFileBrowserState(null);
+            resolve(null);
+          },
+        });
+        return;
+      }
+
       if (!pickerInited.current) {
         setError('Picker API が読み込まれていません');
         resolve(null);
@@ -576,5 +594,6 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     fetchFileContent,
     clearResults,
     openDrivePicker,
+    driveFileBrowserProps: driveFileBrowserState,
   };
 }

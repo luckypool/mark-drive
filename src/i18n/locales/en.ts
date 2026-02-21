@@ -327,6 +327,17 @@ export const en = {
     openInSafari: 'Open in Safari',
   },
 
+  // Drive File Browser (iOS PWA)
+  driveBrowser: {
+    title: 'Select a File',
+    searchPlaceholder: 'Search Markdown files...',
+    recentFiles: 'Recent Files',
+    noResults: 'No files found',
+    loading: 'Loading...',
+    error: 'Failed to load files',
+    safariHint: 'To access new files, open them in Safari first.',
+  },
+
   // Add to Home Screen
   addToHomeScreen: {
     title: 'Add to Home Screen',
@@ -673,6 +684,15 @@ export type Translations = {
     popupBlockedPwa: string;
     thirdPartyCookieHint: string;
     openInSafari: string;
+  };
+  driveBrowser: {
+    title: string;
+    searchPlaceholder: string;
+    recentFiles: string;
+    noResults: string;
+    loading: string;
+    error: string;
+    safariHint: string;
   };
   addToHomeScreen: {
     title: string;
