@@ -407,6 +407,56 @@ describe('useGoogleAuth', () => {
       expect(result.current.error).toBeNull();
     });
 
+    it('should set auth_popup_blocked_pwa on popup_closed in iOS PWA mode', async () => {
+      // Simulate iOS + standalone (PWA) environment
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)',
+        writable: true,
+        configurable: true,
+      });
+      window.matchMedia = vi.fn((query: string) => ({
+        matches: query === '(display-mode: standalone)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })) as unknown as typeof window.matchMedia;
+
+      let errorCallback: ((err: { type: string }) => void) | undefined;
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn((config: any) => {
+        errorCallback = config.error_callback;
+        return tokenClient;
+      }) as any;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      act(() => {
+        result.current.authenticate();
+      });
+
+      act(() => {
+        errorCallback?.({ type: 'popup_closed' });
+      });
+
+      expect(result.current.isAuthenticating).toBe(false);
+      expect(result.current.error).toBe('auth_popup_blocked_pwa');
+
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (X11; Linux x86_64)',
+        writable: true,
+        configurable: true,
+      });
+    });
+
     it('should handle error_callback popup_failed_to_open', async () => {
       let errorCallback: ((err: { type: string }) => void) | undefined;
       const mockRequestAccessToken = vi.fn();

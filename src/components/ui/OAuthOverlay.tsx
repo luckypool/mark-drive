@@ -19,6 +19,12 @@ const ERROR_KEY_MAP: Record<string, keyof typeof import('../../i18n/locales/en')
 const IOS_HINT_ERRORS = new Set([
   'auth_timeout_ios',
   'auth_popup_blocked_ios',
+  'auth_popup_blocked_pwa',
+]);
+
+// PWA モードで「Safari で開く」リンクを表示すべきエラー
+const PWA_OPEN_IN_SAFARI_ERRORS = new Set([
+  'auth_popup_blocked_pwa',
 ]);
 
 interface OAuthOverlayProps {
@@ -49,6 +55,7 @@ export function OAuthOverlay({
   // エラー表示
   if (errorKey) {
     const showHint = error ? IOS_HINT_ERRORS.has(error) : false;
+    const showOpenInSafari = error ? PWA_OPEN_IN_SAFARI_ERRORS.has(error) : false;
 
     return (
       <div className={styles.overlay} role="dialog" aria-modal="true">
@@ -58,13 +65,24 @@ export function OAuthOverlay({
             <p className={styles.hint}>{t.auth.thirdPartyCookieHint}</p>
           )}
           <div className={styles.errorActions}>
-            <button
-              type="button"
-              className={styles.retryButton}
-              onClick={onRetry}
-            >
-              {t.viewer.retry}
-            </button>
+            {showOpenInSafari ? (
+              <a
+                href={window.location.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.retryButton}
+              >
+                {t.auth.openInSafari}
+              </a>
+            ) : (
+              <button
+                type="button"
+                className={styles.retryButton}
+                onClick={onRetry}
+              >
+                {t.viewer.retry}
+              </button>
+            )}
             <button
               type="button"
               className={styles.dismissButton}

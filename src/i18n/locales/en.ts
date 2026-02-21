@@ -322,8 +322,9 @@ export const en = {
     timeoutErrorIos: 'Sign-in timed out. If the sign-in screen did not appear, please check your Safari settings.',
     popupBlocked: 'The sign-in popup was blocked. Please allow popups for this site and try again.',
     popupBlockedIos: 'The sign-in popup was blocked. In Safari Settings, try disabling "Prevent Cross-Site Tracking".',
-    popupBlockedPwa: 'Popups are not supported in this mode. Please open MarkDrive in Safari and try signing in.',
-    thirdPartyCookieHint: 'If you see "Couldn\'t sign in", go to Safari Settings and disable "Prevent Cross-Site Tracking".',
+    popupBlockedPwa: 'Google Sign-in may not work when opened from the Home Screen. Please open MarkDrive in Safari to sign in.',
+    thirdPartyCookieHint: 'If you see "Couldn\'t sign you in", go to Settings > Safari and disable "Prevent Cross-Site Tracking".',
+    openInSafari: 'Open in Safari',
   },
 
   // Add to Home Screen
@@ -671,6 +672,7 @@ export type Translations = {
     popupBlockedIos: string;
     popupBlockedPwa: string;
     thirdPartyCookieHint: string;
+    openInSafari: string;
   };
   addToHomeScreen: {
     title: string;

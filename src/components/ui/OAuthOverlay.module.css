@@ -112,6 +112,8 @@
   font-weight: 500;
   cursor: pointer;
   transition: opacity 150ms ease;
+  text-decoration: none;
+  text-align: center;
 }
 
 .retryButton:hover {
