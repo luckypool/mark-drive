@@ -30,4 +30,9 @@
     <priority>0.4</priority>
     <changefreq>monthly</changefreq>
   </url>
+  <url>
+    <loc>https://mark-drive.com/support</loc>
+    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
+  </url>
 </urlset>
