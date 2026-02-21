@@ -329,6 +329,17 @@ export const ja: Translations = {
     openInSafari: 'Safariで開く',
   },
 
+  // Drive File Browser (iOS PWA)
+  driveBrowser: {
+    title: 'ファイルを選択',
+    searchPlaceholder: 'Markdownファイルを検索...',
+    recentFiles: '最近のファイル',
+    noResults: 'ファイルが見つかりません',
+    loading: '読み込み中...',
+    error: 'ファイルの読み込みに失敗しました',
+    safariHint: '新しいファイルにアクセスするには、まずSafariで開いてください。',
+  },
+
   // Add to Home Screen
   addToHomeScreen: {
     title: 'ホーム画面に追加',

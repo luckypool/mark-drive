@@ -1339,6 +1339,104 @@ describe('useGoogleAuth', () => {
       // gapi.client を復元
       window.gapi.client = originalClient;
     });
+
+    it('should show DriveFileBrowser in iOS PWA mode instead of Picker', async () => {
+      authenticateHook();
+
+      // Simulate iOS + standalone (PWA) environment
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)',
+        writable: true,
+        configurable: true,
+      });
+      window.matchMedia = vi.fn((query: string) => ({
+        matches: query === '(display-mode: standalone)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })) as unknown as typeof window.matchMedia;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      // driveFileBrowserProps should initially be null
+      expect(result.current.driveFileBrowserProps).toBeNull();
+
+      // Open drive picker should set driveFileBrowserProps instead of building Picker
+      let pickerPromise: Promise<any>;
+      act(() => {
+        pickerPromise = result.current.openDrivePicker();
+      });
+
+      // driveFileBrowserProps should now be set
+      expect(result.current.driveFileBrowserProps).not.toBeNull();
+      expect(result.current.driveFileBrowserProps!.accessToken).toBe('valid-token');
+
+      // Simulate user selecting a file
+      await act(async () => {
+        result.current.driveFileBrowserProps!.onSelect({ id: 'file-1', name: 'test.md' });
+      });
+
+      const pickerResult = await pickerPromise!;
+      expect(pickerResult).toEqual({ id: 'file-1', name: 'test.md' });
+      expect(result.current.driveFileBrowserProps).toBeNull();
+
+      // Restore
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (X11; Linux x86_64)',
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it('should resolve null when DriveFileBrowser is cancelled in iOS PWA mode', async () => {
+      authenticateHook();
+
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)',
+        writable: true,
+        configurable: true,
+      });
+      window.matchMedia = vi.fn((query: string) => ({
+        matches: query === '(display-mode: standalone)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })) as unknown as typeof window.matchMedia;
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      let pickerPromise: Promise<any>;
+      act(() => {
+        pickerPromise = result.current.openDrivePicker();
+      });
+
+      expect(result.current.driveFileBrowserProps).not.toBeNull();
+
+      // Simulate cancel
+      await act(async () => {
+        result.current.driveFileBrowserProps!.onCancel();
+      });
+
+      const pickerResult = await pickerPromise!;
+      expect(pickerResult).toBeNull();
+      expect(result.current.driveFileBrowserProps).toBeNull();
+
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (X11; Linux x86_64)',
+        writable: true,
+        configurable: true,
+      });
+    });
   });
 
 });

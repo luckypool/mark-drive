@@ -23,7 +23,7 @@ import {
   IoSettingsOutline,
   IoPlayOutline,
 } from 'react-icons/io5';
-import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo, OAuthOverlay } from '../components/ui';
+import { Button, LoadingSpinner, FAB, SettingsMenu, UserMenu, GoogleLogo, OAuthOverlay, DriveFileBrowser } from '../components/ui';
 import { AddToHomeScreenBanner } from '../components/ui/AddToHomeScreenBanner';
 import { useGoogleAuth, useTheme, useLanguage, usePickerSettings } from '../hooks';
 import { useFilePicker } from '../hooks';
@@ -60,6 +60,7 @@ export default function HomePage() {
     cancelAuth,
     logout,
     openDrivePicker,
+    driveFileBrowserProps,
   } = useGoogleAuth();
 
   const { openPicker } = useFilePicker();
@@ -688,6 +689,9 @@ export default function HomePage() {
         onRetry={authenticate}
         onDismissError={cancelAuth}
       />
+
+      {/* iOS PWA 用 Drive ファイルブラウザ */}
+      {driveFileBrowserProps && <DriveFileBrowser {...driveFileBrowserProps} />}
     </div>
   );
 }

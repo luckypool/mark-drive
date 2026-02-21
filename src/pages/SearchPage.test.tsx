@@ -21,6 +21,7 @@ vi.mock('react-icons/io5', () => ({
 vi.mock('../components/ui', () => ({
   GoogleLogo: ({ size }: any) => <span data-testid="google-logo" />,
   OAuthOverlay: () => null,
+  DriveFileBrowser: () => <div data-testid="drive-file-browser" />,
 }));
 
 const mockAuthenticate = vi.fn();
@@ -30,6 +31,7 @@ const mockAuthState = {
   isAuthenticated: false,
   authenticate: mockAuthenticate,
   openDrivePicker: mockOpenDrivePicker,
+  driveFileBrowserProps: null as any,
 };
 
 vi.mock('../hooks', () => ({
@@ -65,6 +67,7 @@ beforeEach(() => {
     isAuthenticated: false,
     authenticate: mockAuthenticate,
     openDrivePicker: mockOpenDrivePicker,
+    driveFileBrowserProps: null,
   });
 
   window.matchMedia = vi.fn(() => ({

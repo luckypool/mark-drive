@@ -8,7 +8,7 @@ import {
   IoClose,
   IoFolderOpenOutline,
 } from 'react-icons/io5';
-import { GoogleLogo, OAuthOverlay } from '../components/ui';
+import { GoogleLogo, OAuthOverlay, DriveFileBrowser } from '../components/ui';
 import { useGoogleAuth, useLanguage } from '../hooks';
 import { trackEvent } from '../utils/analytics';
 import styles from './SearchPage.module.css';
@@ -22,6 +22,7 @@ export default function SearchPage() {
     authenticate,
     cancelAuth,
     openDrivePicker,
+    driveFileBrowserProps,
   } = useGoogleAuth();
 
   const navigate = useNavigate();
@@ -100,6 +101,9 @@ export default function SearchPage() {
         onRetry={authenticate}
         onDismissError={cancelAuth}
       />
+
+      {/* iOS PWA 用 Drive ファイルブラウザ */}
+      {driveFileBrowserProps && <DriveFileBrowser {...driveFileBrowserProps} />}
     </div>
   );
 }
