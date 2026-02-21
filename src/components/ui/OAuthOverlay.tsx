@@ -54,8 +54,8 @@ export function OAuthOverlay({
 
   // エラー表示
   if (errorKey) {
-    const showHint = error ? IOS_HINT_ERRORS.has(error) : false;
-    const showOpenInSafari = error ? PWA_OPEN_IN_SAFARI_ERRORS.has(error) : false;
+    const showHint = IOS_HINT_ERRORS.has(error!);
+    const showOpenInSafari = PWA_OPEN_IN_SAFARI_ERRORS.has(error!);
 
     return (
       <div className={styles.overlay} role="dialog" aria-modal="true">
