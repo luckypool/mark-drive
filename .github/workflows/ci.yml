@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: oven-sh/setup-bun@v2
 
@@ -32,3 +34,4 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           override_commit: ${{ github.event.pull_request.head.sha || github.sha }}
           override_branch: ${{ github.head_ref || github.ref_name }}
+          override_pr: ${{ github.event.pull_request.number }}
