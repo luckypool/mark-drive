@@ -327,6 +327,7 @@ export const ja: Translations = {
     popupBlockedPwa: 'ホーム画面から開いた場合、Googleサインインが正常に動作しないことがあります。Safariで直接開いてサインインしてください。',
     thirdPartyCookieHint: '「Googleアカウントにアクセスできません」と表示される場合は、Safariの設定 →「サイト越えトラッキングを防ぐ」をオフにしてください。',
     openInSafari: 'Safariで開く',
+    sessionExpired: 'Googleセッションの有効期限が切れました。続けるには再度サインインしてください。',
   },
 
   // Drive File Browser (iOS PWA)

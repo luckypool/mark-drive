@@ -12,18 +12,32 @@ vi.mock('../utils/analytics', () => ({
   trackEvent: (...args: unknown[]) => mockTrackEvent(...args),
 }));
 
-vi.mock('../services/googleDrive', () => ({
-  fetchUserInfo: vi.fn(async () => ({ email: 'test@example.com', name: 'Test User', picture: '' })),
-  searchMarkdownFiles: vi.fn(async () => [
-    { id: '1', name: 'result.md', mimeType: 'text/markdown', modifiedTime: '2025-01-01' },
-  ]),
-  listRecentMarkdownFiles: vi.fn(async () => [
-    { id: '2', name: 'recent.md', mimeType: 'text/markdown', modifiedTime: '2025-01-01' },
-  ]),
-  fetchFileContent: vi.fn(async () => '# File content'),
-}));
+vi.mock('../services/googleDrive', () => {
+  class MockUnauthorizedError extends Error {
+    readonly status: number;
+    constructor(status = 401) {
+      super('unauthorized');
+      this.name = 'UnauthorizedError';
+      this.status = status;
+    }
+  }
+  return {
+    fetchUserInfo: vi.fn(async () => ({ email: 'test@example.com', name: 'Test User', picture: '' })),
+    searchMarkdownFiles: vi.fn(async () => [
+      { id: '1', name: 'result.md', mimeType: 'text/markdown', modifiedTime: '2025-01-01' },
+    ]),
+    listRecentMarkdownFiles: vi.fn(async () => [
+      { id: '2', name: 'recent.md', mimeType: 'text/markdown', modifiedTime: '2025-01-01' },
+    ]),
+    fetchFileContent: vi.fn(async () => '# File content'),
+    UnauthorizedError: MockUnauthorizedError,
+  };
+});
 
 const googleDrive = await import('../services/googleDrive');
+const MockUnauthorizedError = googleDrive.UnauthorizedError as unknown as new (
+  status?: number
+) => Error;
 
 // --- localStorage mock ---
 
@@ -982,6 +996,253 @@ describe('useGoogleAuth', () => {
           await result.current.fetchFileContent('file-123');
         })
       ).rejects.toThrow('Aborted');
+    });
+  });
+
+  // --- silent refresh / withReauth ---
+
+  describe('silent refresh on 401', () => {
+    function setupAuthenticated(opts?: {
+      captureClient?: (client: any) => void;
+      captureErrorCallback?: (cb: (err: { type: string }) => void) => void;
+    }) {
+      const futureExpiry = String(Date.now() + 60 * 60 * 1000);
+      storageMock.getItem.mockImplementation((key: string) => {
+        if (key === 'googleDriveScopeVersion') return '3';
+        if (key === 'googleDriveAccessToken') return 'stale-token';
+        if (key === 'googleDriveTokenExpiry') return futureExpiry;
+        return null;
+      });
+
+      const mockRequestAccessToken = vi.fn();
+      const tokenClient: any = {
+        requestAccessToken: mockRequestAccessToken,
+        callback: vi.fn(),
+      };
+      window.google.accounts.oauth2.initTokenClient = vi.fn((config: any) => {
+        opts?.captureErrorCallback?.(config.error_callback);
+        return tokenClient;
+      }) as any;
+      opts?.captureClient?.(tokenClient);
+      return { tokenClient, mockRequestAccessToken };
+    }
+
+    it('retries the call transparently after silent refresh succeeds', async () => {
+      let capturedClient: any;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureClient: (c) => {
+          capturedClient = c;
+        },
+      });
+
+      // 1 回目は 401、2 回目は成功
+      vi.mocked(googleDrive.searchMarkdownFiles)
+        .mockRejectedValueOnce(new MockUnauthorizedError(401))
+        .mockResolvedValueOnce([
+          { id: 'x', name: 'after-refresh.md', mimeType: 'text/markdown', modifiedTime: '2025-01-01' },
+        ]);
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      // サイレント再取得が呼ばれたらトークン client.callback を発火
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => {
+            capturedClient.callback({
+              access_token: 'fresh-token',
+              expires_in: 3600,
+            });
+          }, 0);
+        }
+      });
+
+      await act(async () => {
+        await result.current.search('query');
+      });
+
+      expect(mockRequestAccessToken).toHaveBeenCalledWith({ prompt: 'none' });
+      expect(vi.mocked(googleDrive.searchMarkdownFiles)).toHaveBeenCalledTimes(2);
+      expect(result.current.results[0].name).toBe('after-refresh.md');
+      expect(result.current.accessToken).toBe('fresh-token');
+      expect(result.current.error).toBeNull();
+    });
+
+    it('sets auth_session_expired when silent refresh error_callback fires', async () => {
+      let capturedErrorCallback: ((err: { type: string }) => void) | undefined;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureErrorCallback: (cb) => {
+          capturedErrorCallback = cb;
+        },
+      });
+
+      vi.mocked(googleDrive.searchMarkdownFiles).mockRejectedValue(
+        new MockUnauthorizedError(401)
+      );
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => capturedErrorCallback?.({ type: 'user_logged_out' }), 0);
+        }
+      });
+
+      await act(async () => {
+        await result.current.search('query');
+      });
+
+      expect(result.current.error).toBe('auth_session_expired');
+      expect(result.current.isAuthenticated).toBe(false);
+      expect(result.current.accessToken).toBeNull();
+      expect(storageMock.removeItem).toHaveBeenCalledWith('googleDriveAccessToken');
+    });
+
+    it('sets auth_session_expired when silent refresh requestAccessToken throws', async () => {
+      let capturedClient: any;
+      setupAuthenticated({
+        captureClient: (c) => {
+          capturedClient = c;
+        },
+      });
+
+      vi.mocked(googleDrive.searchMarkdownFiles).mockRejectedValue(
+        new MockUnauthorizedError(401)
+      );
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      capturedClient.requestAccessToken = vi.fn((opts: any) => {
+        if (opts?.prompt === 'none') {
+          throw new Error('silent failed');
+        }
+      });
+
+      await act(async () => {
+        await result.current.search('query');
+      });
+
+      expect(result.current.error).toBe('auth_session_expired');
+      expect(result.current.isAuthenticated).toBe(false);
+    });
+
+    it('does not retry on non-auth errors', async () => {
+      const { mockRequestAccessToken } = setupAuthenticated();
+
+      vi.mocked(googleDrive.searchMarkdownFiles).mockRejectedValueOnce(
+        new Error('Network timeout')
+      );
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      await act(async () => {
+        await result.current.search('query');
+      });
+
+      // prompt: 'none' は呼ばれていないこと
+      expect(
+        mockRequestAccessToken.mock.calls.filter(
+          (c) => c[0]?.prompt === 'none'
+        )
+      ).toHaveLength(0);
+      expect(result.current.error).toBe('Network timeout');
+    });
+
+    it('recovers loadRecentFiles via silent refresh', async () => {
+      let capturedClient: any;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureClient: (c) => {
+          capturedClient = c;
+        },
+      });
+
+      vi.mocked(googleDrive.listRecentMarkdownFiles)
+        .mockRejectedValueOnce(new MockUnauthorizedError(401))
+        .mockResolvedValueOnce([
+          { id: 'r', name: 'refreshed.md', mimeType: 'text/markdown', modifiedTime: '2025-01-01' },
+        ]);
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => {
+            capturedClient.callback({ access_token: 'fresh2', expires_in: 3600 });
+          }, 0);
+        }
+      });
+
+      await act(async () => {
+        await result.current.loadRecentFiles();
+      });
+
+      expect(result.current.recentFiles[0].name).toBe('refreshed.md');
+      expect(result.current.error).toBeNull();
+    });
+
+    it('recovers fetchFileContent via silent refresh', async () => {
+      let capturedClient: any;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureClient: (c) => {
+          capturedClient = c;
+        },
+      });
+
+      vi.mocked(googleDrive.fetchFileContent)
+        .mockRejectedValueOnce(new MockUnauthorizedError(401))
+        .mockResolvedValueOnce('# refreshed content');
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => {
+            capturedClient.callback({ access_token: 'fresh3', expires_in: 3600 });
+          }, 0);
+        }
+      });
+
+      let content: string | null = null;
+      await act(async () => {
+        content = await result.current.fetchFileContent('file-xyz');
+      });
+
+      expect(content).toBe('# refreshed content');
+    });
+
+    it('fetchFileContent returns null on session expired without leaking error', async () => {
+      let capturedErrorCallback: ((err: { type: string }) => void) | undefined;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureErrorCallback: (cb) => {
+          capturedErrorCallback = cb;
+        },
+      });
+
+      vi.mocked(googleDrive.fetchFileContent).mockRejectedValue(
+        new MockUnauthorizedError(401)
+      );
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => capturedErrorCallback?.({ type: 'invalid_request' }), 0);
+        }
+      });
+
+      let content: string | null | undefined;
+      await act(async () => {
+        content = await result.current.fetchFileContent('file-xyz');
+      });
+
+      expect(content).toBeNull();
+      expect(result.current.error).toBe('auth_session_expired');
     });
   });
 

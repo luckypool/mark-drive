@@ -11,6 +11,7 @@ import {
   searchMarkdownFiles,
   listRecentMarkdownFiles,
   fetchFileContent as fetchDriveFileContent,
+  UnauthorizedError,
 } from '../services/googleDrive';
 import { storage } from '../services/storage';
 import { trackEvent } from '../utils/analytics';
@@ -36,6 +37,9 @@ const OAUTH_STATE_KEY = 'oauth_state';
 
 // OAuth ポップアップタイムアウト（秒）
 const OAUTH_POPUP_TIMEOUT_MS = 60_000;
+
+// サイレント再取得のタイムアウト（ハングを防ぐ安全網）
+const SILENT_REFRESH_TIMEOUT_MS = 10_000;
 
 // Google API の型定義
 declare global {
@@ -207,6 +211,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
   const gisInited = useRef(false);
   const authTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const errorCallbackRef = useRef<((err: PopupError) => void) | null>(null);
+  const silentRefreshPromiseRef = useRef<Promise<string | null> | null>(null);
 
   // 初期化時にトークンを復元
   useEffect(() => {
@@ -410,6 +415,104 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     clearStoredToken();
   }, [accessToken]);
 
+  // ブラウザに Google セッションが残っていれば UI を出さずに access_token を再発行する。
+  // ITP や 3rd-party cookie 規制で失敗することがあり、その場合は null を返す。
+  const silentRefresh = useCallback((): Promise<string | null> => {
+    if (silentRefreshPromiseRef.current) {
+      return silentRefreshPromiseRef.current;
+    }
+    const client = tokenClientRef.current;
+    if (!client) {
+      return Promise.resolve(null);
+    }
+
+    const prevErrorCallback = errorCallbackRef.current;
+    let settled = false;
+    let resolver: (token: string | null) => void = () => {};
+
+    const promise = new Promise<string | null>((resolve) => {
+      resolver = resolve;
+    });
+
+    const settle = (token: string | null) => {
+      if (settled) return;
+      settled = true;
+      errorCallbackRef.current = prevErrorCallback;
+      resolver(token);
+    };
+
+    client.callback = async (response: TokenResponse) => {
+      if (response.error || !response.access_token) {
+        settle(null);
+        return;
+      }
+      await saveToken(response.access_token, response.expires_in || 3600);
+      setAccessToken(response.access_token);
+      setIsAuthenticated(true);
+      setError(null);
+      settle(response.access_token);
+    };
+
+    errorCallbackRef.current = () => settle(null);
+
+    const timeoutId = setTimeout(() => settle(null), SILENT_REFRESH_TIMEOUT_MS);
+
+    try {
+      // prompt: 'none' は UI を一切出さないサイレントモード。
+      // ブラウザに Google セッションがなければ即座にエラーコールバックが呼ばれる。
+      client.requestAccessToken({ prompt: 'none' });
+    } catch {
+      settle(null);
+    }
+
+    silentRefreshPromiseRef.current = promise;
+    promise.finally(() => {
+      clearTimeout(timeoutId);
+      silentRefreshPromiseRef.current = null;
+    });
+
+    return promise;
+  }, []);
+
+  // サイレント再取得も失敗して完全に再認証が必要になった状態。
+  // userInfo は残して「前回サインイン済みだった」表示を可能にする。
+  const handleSessionExpired = useCallback(async () => {
+    setAccessToken(null);
+    setIsAuthenticated(false);
+    setResults([]);
+    setRecentFiles([]);
+    await clearStoredToken();
+    setError('auth_session_expired');
+  }, []);
+
+  // Drive API 呼び出しを 401/403 自動回復でラップする。
+  // 失敗時は UnauthorizedError を再 throw するので呼び出し元で識別可能。
+  const callWithReauth = useCallback(
+    async <T>(token: string, fn: (t: string) => Promise<T>): Promise<T> => {
+      try {
+        return await fn(token);
+      } catch (err) {
+        if (!(err instanceof UnauthorizedError)) {
+          throw err;
+        }
+        const newToken = await silentRefresh();
+        if (!newToken) {
+          await handleSessionExpired();
+          throw err;
+        }
+        try {
+          return await fn(newToken);
+        } catch (retryErr) {
+          if (retryErr instanceof UnauthorizedError) {
+            await handleSessionExpired();
+          }
+          throw retryErr;
+        }
+      }
+    },
+    [silentRefresh, handleSessionExpired]
+  );
+
   // 検索
   const search = useCallback(async (query: string) => {
     if (!accessToken) {
@@ -426,15 +529,21 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     setError(null);
 
     try {
-      const files = await searchMarkdownFiles(accessToken, query);
+      const files = await callWithReauth(accessToken, (t) =>
+        searchMarkdownFiles(t, query)
+      );
       setResults(files);
     } catch (err) {
+      // UnauthorizedError はセッション切れ扱いで handleSessionExpired が error を設定済み
+      if (err instanceof UnauthorizedError) {
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Search failed');
       console.error('Search error:', err);
     } finally {
       setIsLoading(false);
     }
-  }, [accessToken]);
+  }, [accessToken, callWithReauth]);
 
   // 最近のファイルを取得
   const loadRecentFiles = useCallback(async () => {
@@ -446,15 +555,20 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
     setError(null);
 
     try {
-      const files = await listRecentMarkdownFiles(accessToken);
+      const files = await callWithReauth(accessToken, (t) =>
+        listRecentMarkdownFiles(t)
+      );
       setRecentFiles(files);
     } catch (err) {
+      if (err instanceof UnauthorizedError) {
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Failed to load recent files');
       console.error('Load recent files error:', err);
     } finally {
       setIsLoading(false);
     }
-  }, [accessToken]);
+  }, [accessToken, callWithReauth]);
 
   // ファイル内容を取得
   const fetchFileContent = useCallback(
@@ -472,16 +586,18 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
 
       try {
         console.log('[fetchFileContent] API呼び出し開始');
-        const result = await fetchDriveFileContent(
-          accessToken,
-          fileId,
-          signal
+        const result = await callWithReauth(accessToken, (t) =>
+          fetchDriveFileContent(t, fileId, signal)
         );
         console.log('[fetchFileContent] API呼び出し成功, 長さ:', result?.length);
         return result;
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
           throw err;
+        }
+        if (err instanceof UnauthorizedError) {
+          // handleSessionExpired が error を設定済み
+          return null;
         }
         console.error('[fetchFileContent] エラー:', err);
         setError(
@@ -490,7 +606,7 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         return null;
       }
     },
-    [accessToken, isTokenRestored, isAuthenticated]
+    [accessToken, isTokenRestored, isAuthenticated, callWithReauth]
   );
 
   // 検索結果をクリア

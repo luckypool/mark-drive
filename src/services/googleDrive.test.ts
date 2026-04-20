@@ -10,16 +10,23 @@ import {
   fetchFileContent,
   fetchFileInfo,
   isMarkdownFile,
+  UnauthorizedError,
 } from './googleDrive';
 import type { DriveFile } from '../types/googleDrive';
 
 // Mock fetch
 const originalFetch = globalThis.fetch;
 
-function mockFetch(response: unknown, ok = true, statusText = 'OK') {
+function mockFetch(
+  response: unknown,
+  ok = true,
+  statusText = 'OK',
+  status = ok ? 200 : 500
+) {
   globalThis.fetch = vi.fn(async () =>
     ({
       ok,
+      status,
       statusText,
       json: async () => response,
       text: async () => (typeof response === 'string' ? response : JSON.stringify(response)),
@@ -195,6 +202,54 @@ describe('fetchFileInfo', () => {
     });
     const info = await fetchFileInfo('test-token', 'file-id');
     expect(info).toBeNull();
+  });
+});
+
+describe('UnauthorizedError handling', () => {
+  it('searchMarkdownFiles throws UnauthorizedError on 401', async () => {
+    mockFetch({}, false, 'Unauthorized', 401);
+    await expect(searchMarkdownFiles('stale-token', 'q')).rejects.toBeInstanceOf(
+      UnauthorizedError
+    );
+  });
+
+  it('searchMarkdownFiles throws UnauthorizedError on 403', async () => {
+    mockFetch({}, false, 'Forbidden', 403);
+    await expect(searchMarkdownFiles('stale-token', 'q')).rejects.toBeInstanceOf(
+      UnauthorizedError
+    );
+  });
+
+  it('listRecentMarkdownFiles throws UnauthorizedError on 401', async () => {
+    mockFetch({}, false, 'Unauthorized', 401);
+    await expect(listRecentMarkdownFiles('stale-token')).rejects.toBeInstanceOf(
+      UnauthorizedError
+    );
+  });
+
+  it('fetchFileContent throws UnauthorizedError on 401', async () => {
+    mockFetch('', false, 'Unauthorized', 401);
+    await expect(
+      fetchFileContent('stale-token', 'file-id')
+    ).rejects.toBeInstanceOf(UnauthorizedError);
+  });
+
+  it('UnauthorizedError carries status code', async () => {
+    mockFetch({}, false, 'Forbidden', 403);
+    try {
+      await searchMarkdownFiles('stale-token', 'q');
+      expect.fail('should have thrown');
+    } catch (err) {
+      expect(err).toBeInstanceOf(UnauthorizedError);
+      expect((err as UnauthorizedError).status).toBe(403);
+    }
+  });
+
+  it('non-auth errors stay as plain Error', async () => {
+    mockFetch({}, false, 'Internal Server Error', 500);
+    await expect(searchMarkdownFiles('token', 'q')).rejects.not.toBeInstanceOf(
+      UnauthorizedError
+    );
   });
 });
 

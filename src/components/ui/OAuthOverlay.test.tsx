@@ -19,6 +19,7 @@ vi.mock('../../hooks', () => ({
         popupBlockedPwa: 'Google Sign-in may not work from Home Screen.',
         thirdPartyCookieHint: 'Disable "Prevent Cross-Site Tracking".',
         openInSafari: 'Open in Safari',
+        sessionExpired: 'Your Google session has expired.',
       },
       viewer: {
         retry: 'Retry',
@@ -124,6 +125,23 @@ describe('OAuthOverlay', () => {
     render(<OAuthOverlay {...defaultProps} error="auth_timeout" />);
     fireEvent.click(screen.getByText('Cancel'));
     expect(defaultProps.onDismissError).toHaveBeenCalledOnce();
+  });
+
+  // --- Session expired ---
+
+  it('should show session expired message with retry button', () => {
+    render(<OAuthOverlay {...defaultProps} error="auth_session_expired" />);
+    expect(screen.getByText('Your Google session has expired.')).toBeTruthy();
+    expect(screen.getByText('Retry')).toBeTruthy();
+    expect(screen.getByText('Cancel')).toBeTruthy();
+    // Session expired should not show the third-party cookie hint
+    expect(screen.queryByText('Disable "Prevent Cross-Site Tracking".')).toBeNull();
+  });
+
+  it('should invoke onRetry from session expired dialog', () => {
+    render(<OAuthOverlay {...defaultProps} error="auth_session_expired" />);
+    fireEvent.click(screen.getByText('Retry'));
+    expect(defaultProps.onRetry).toHaveBeenCalledOnce();
   });
 
   // --- Priority: error takes precedence over authenticating ---

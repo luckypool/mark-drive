@@ -15,6 +15,23 @@ const MARKDOWN_MIME_TYPES = ['text/markdown', 'text/x-markdown', 'text/plain'];
 const FOLDER_MIME_TYPE = 'application/vnd.google-apps.folder';
 
 /**
+ * 認証失敗（アクセストークン失効・権限不足など）を示すエラー。
+ * 呼び出し元でサイレント再取得のトリガーに利用する。
+ */
+export class UnauthorizedError extends Error {
+  readonly status: number;
+  constructor(status: number) {
+    super(`Unauthorized (status ${status})`);
+    this.name = 'UnauthorizedError';
+    this.status = status;
+  }
+}
+
+function isAuthFailure(response: Response): boolean {
+  return response.status === 401 || response.status === 403;
+}
+
+/**
  * 検索クエリをサニタイズ（シングルクォートをエスケープ）
  */
 function sanitizeQuery(query: string): string {
@@ -81,6 +98,9 @@ export async function searchMarkdownFiles(
   );
 
   if (!response.ok) {
+    if (isAuthFailure(response)) {
+      throw new UnauthorizedError(response.status);
+    }
     throw new Error(`Search failed: ${response.statusText}`);
   }
 
@@ -110,6 +130,9 @@ export async function fetchFileContent(
   });
 
   if (!response.ok) {
+    if (isAuthFailure(response)) {
+      throw new UnauthorizedError(response.status);
+    }
     throw new Error(`Failed to fetch file: ${response.statusText}`);
   }
 
@@ -175,6 +198,9 @@ export async function listRecentMarkdownFiles(
   );
 
   if (!response.ok) {
+    if (isAuthFailure(response)) {
+      throw new UnauthorizedError(response.status);
+    }
     throw new Error(`Failed to list files: ${response.statusText}`);
   }
 
