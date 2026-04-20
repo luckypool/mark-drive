@@ -1151,6 +1151,69 @@ describe('useGoogleAuth', () => {
       expect(result.current.error).toBe('Network timeout');
     });
 
+    it('loadRecentFiles sets error and bails on session expired', async () => {
+      let capturedErrorCallback: ((err: { type: string }) => void) | undefined;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureErrorCallback: (cb) => {
+          capturedErrorCallback = cb;
+        },
+      });
+
+      vi.mocked(googleDrive.listRecentMarkdownFiles).mockRejectedValue(
+        new MockUnauthorizedError(401)
+      );
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => capturedErrorCallback?.({ type: 'user_logged_out' }), 0);
+        }
+      });
+
+      await act(async () => {
+        await result.current.loadRecentFiles();
+      });
+
+      expect(result.current.error).toBe('auth_session_expired');
+      expect(result.current.recentFiles).toEqual([]);
+    });
+
+    it('loadRecentFiles surfaces non-auth error messages', async () => {
+      setupAuthenticated();
+      vi.mocked(googleDrive.listRecentMarkdownFiles).mockRejectedValueOnce(
+        new Error('Quota exceeded')
+      );
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      await act(async () => {
+        await result.current.loadRecentFiles();
+      });
+
+      expect(result.current.error).toBe('Quota exceeded');
+    });
+
+    it('fetchFileContent surfaces non-auth error messages', async () => {
+      setupAuthenticated();
+      vi.mocked(googleDrive.fetchFileContent).mockRejectedValueOnce(
+        new Error('Boom')
+      );
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      let content: string | null | undefined;
+      await act(async () => {
+        content = await result.current.fetchFileContent('file-xyz');
+      });
+
+      expect(content).toBeNull();
+      expect(result.current.error).toBe('Boom');
+    });
+
     it('recovers loadRecentFiles via silent refresh', async () => {
       let capturedClient: any;
       const { mockRequestAccessToken } = setupAuthenticated({
@@ -1213,6 +1276,191 @@ describe('useGoogleAuth', () => {
       });
 
       expect(content).toBe('# refreshed content');
+    });
+
+    it('dedups concurrent silent refreshes into a single token request', async () => {
+      let capturedClient: any;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureClient: (c) => {
+          capturedClient = c;
+        },
+      });
+
+      // search / loadRecentFiles それぞれで 401 → 成功を返す
+      vi.mocked(googleDrive.searchMarkdownFiles)
+        .mockRejectedValueOnce(new MockUnauthorizedError(401))
+        .mockResolvedValueOnce([
+          { id: 'a', name: 'a.md', mimeType: 'text/markdown', modifiedTime: '2025-01-01' },
+        ]);
+      vi.mocked(googleDrive.listRecentMarkdownFiles)
+        .mockRejectedValueOnce(new MockUnauthorizedError(401))
+        .mockResolvedValueOnce([
+          { id: 'b', name: 'b.md', mimeType: 'text/markdown', modifiedTime: '2025-01-01' },
+        ]);
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      // サイレント再取得のコールバックを少し遅らせて、並行実行中に 2 本目が入るようにする
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => {
+            capturedClient.callback({
+              access_token: 'dedup-token',
+              expires_in: 3600,
+            });
+          }, 20);
+        }
+      });
+
+      await act(async () => {
+        await Promise.all([
+          result.current.search('q'),
+          result.current.loadRecentFiles(),
+        ]);
+      });
+
+      // requestAccessToken({ prompt: 'none' }) は 1 回だけ呼ばれる
+      const silentCalls = mockRequestAccessToken.mock.calls.filter(
+        (c) => c[0]?.prompt === 'none'
+      );
+      expect(silentCalls).toHaveLength(1);
+      expect(result.current.results[0].name).toBe('a.md');
+      expect(result.current.recentFiles[0].name).toBe('b.md');
+    });
+
+    it('falls back to session expired when tokenClient is not initialized', async () => {
+      const futureExpiry = String(Date.now() + 60 * 60 * 1000);
+      storageMock.getItem.mockImplementation((key: string) => {
+        if (key === 'googleDriveScopeVersion') return '3';
+        if (key === 'googleDriveAccessToken') return 'stale-token';
+        if (key === 'googleDriveTokenExpiry') return futureExpiry;
+        return null;
+      });
+
+      // initTokenClient が null を返し、tokenClientRef.current が未設定になる状況を再現
+      window.google.accounts.oauth2.initTokenClient = vi.fn(
+        () => null as any
+      ) as any;
+
+      vi.mocked(googleDrive.searchMarkdownFiles).mockRejectedValue(
+        new MockUnauthorizedError(401)
+      );
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      await act(async () => {
+        await result.current.search('query');
+      });
+
+      expect(result.current.error).toBe('auth_session_expired');
+      expect(result.current.accessToken).toBeNull();
+    });
+
+    it('silent refresh callback treats response.error as failure', async () => {
+      let capturedClient: any;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureClient: (c) => {
+          capturedClient = c;
+        },
+      });
+
+      vi.mocked(googleDrive.searchMarkdownFiles).mockRejectedValue(
+        new MockUnauthorizedError(401)
+      );
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => {
+            // Google からエラー付きレスポンスが返るパターン
+            capturedClient.callback({
+              error: 'interaction_required',
+              access_token: '',
+            });
+          }, 0);
+        }
+      });
+
+      await act(async () => {
+        await result.current.search('query');
+      });
+
+      expect(result.current.error).toBe('auth_session_expired');
+      expect(result.current.isAuthenticated).toBe(false);
+    });
+
+    it('handles second 401 after successful silent refresh by signaling session expired', async () => {
+      let capturedClient: any;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureClient: (c) => {
+          capturedClient = c;
+        },
+      });
+
+      // 初回も再試行も 401 を返す
+      vi.mocked(googleDrive.searchMarkdownFiles)
+        .mockRejectedValueOnce(new MockUnauthorizedError(401))
+        .mockRejectedValueOnce(new MockUnauthorizedError(401));
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => {
+            capturedClient.callback({
+              access_token: 'fresh-but-still-bad',
+              expires_in: 3600,
+            });
+          }, 0);
+        }
+      });
+
+      await act(async () => {
+        await result.current.search('query');
+      });
+
+      expect(result.current.error).toBe('auth_session_expired');
+      expect(result.current.isAuthenticated).toBe(false);
+      expect(vi.mocked(googleDrive.searchMarkdownFiles)).toHaveBeenCalledTimes(2);
+    });
+
+    it('re-throws non-auth errors from retry after silent refresh succeeded', async () => {
+      let capturedClient: any;
+      const { mockRequestAccessToken } = setupAuthenticated({
+        captureClient: (c) => {
+          capturedClient = c;
+        },
+      });
+
+      vi.mocked(googleDrive.searchMarkdownFiles)
+        .mockRejectedValueOnce(new MockUnauthorizedError(401))
+        .mockRejectedValueOnce(new Error('Network down'));
+
+      const { result } = renderHook(() => useGoogleAuth());
+      await waitForInit();
+
+      mockRequestAccessToken.mockImplementation((opts: any) => {
+        if (opts?.prompt === 'none') {
+          setTimeout(() => {
+            capturedClient.callback({
+              access_token: 'fresh-token',
+              expires_in: 3600,
+            });
+          }, 0);
+        }
+      });
+
+      await act(async () => {
+        await result.current.search('query');
+      });
+
+      // 非認証エラーはそのまま setError に流れ、session_expired ではない
+      expect(result.current.error).toBe('Network down');
     });
 
     it('fetchFileContent returns null on session expired without leaking error', async () => {
