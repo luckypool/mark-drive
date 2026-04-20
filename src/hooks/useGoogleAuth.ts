@@ -15,7 +15,7 @@ import {
 } from '../services/googleDrive';
 import { storage } from '../services/storage';
 import { trackEvent } from '../utils/analytics';
-import { isIOS, isStandaloneMode, isIosPwa } from '../utils/platform';
+import { isIOS, isStandaloneMode } from '../utils/platform';
 import type { DriveFileBrowserProps } from '../components/ui/DriveFileBrowser';
 
 // 環境変数から設定を取得
@@ -624,8 +624,10 @@ export function useGoogleAuth(): UseGoogleAuthReturn {
         return;
       }
 
-      // iOS PWA モードでは Google Picker が動作しないため、アプリ内ファイルブラウザを表示
-      if (isIosPwa()) {
+      // iOS Safari / PWA では ITP により Google Picker の iframe が Google の
+      // Cookie にアクセスできず "Can't access your Google Account" エラーになる。
+      // そのためアプリ内ファイルブラウザで代替する。
+      if (isIOS()) {
         setDriveFileBrowserState({
           accessToken,
           onSelect: (result) => {
