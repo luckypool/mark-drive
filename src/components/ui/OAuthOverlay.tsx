@@ -13,6 +13,7 @@ const ERROR_KEY_MAP: Record<string, keyof typeof import('../../i18n/locales/en')
   auth_popup_blocked: 'popupBlocked',
   auth_popup_blocked_ios: 'popupBlockedIos',
   auth_popup_blocked_pwa: 'popupBlockedPwa',
+  auth_session_expired: 'sessionExpired',
 };
 
 // iOS Safari でサードパーティ Cookie のヒントを表示すべきエラー

@@ -325,6 +325,7 @@ export const en = {
     popupBlockedPwa: 'Google Sign-in may not work when opened from the Home Screen. Please open MarkDrive in Safari to sign in.',
     thirdPartyCookieHint: 'If you see "Couldn\'t sign you in", go to Settings > Safari and disable "Prevent Cross-Site Tracking".',
     openInSafari: 'Open in Safari',
+    sessionExpired: 'Your Google session has expired. Please sign in again to continue.',
   },
 
   // Drive File Browser (iOS PWA)
@@ -684,6 +685,7 @@ export type Translations = {
     popupBlockedPwa: string;
     thirdPartyCookieHint: string;
     openInSafari: string;
+    sessionExpired: string;
   };
   driveBrowser: {
     title: string;
